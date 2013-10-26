@@ -1,0 +1,10 @@
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\Prism.General\bin\Release\Prism.General.dll
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\Prism.General\bin\Release\Prism.General.pdb
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\Prism.General\bin\Release\clrzmq.dll
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\Prism.General\bin\Release\Newtonsoft.Json.dll
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\Prism.General\bin\Release\clrzmq.pdb
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\Prism.General\bin\Release\Newtonsoft.Json.pdb
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\Prism.General\bin\Release\Newtonsoft.Json.xml
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\Prism.General\obj\Release\Prism.General.csprojResolveAssemblyReference.cache
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\Prism.General\obj\Release\Prism.General.dll
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\Prism.General\obj\Release\Prism.General.pdb

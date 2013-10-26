@@ -1,0 +1,15 @@
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\bin\Release\ShockwaveFlashControl.dll
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\bin\Release\ShockwaveFlashControl.pdb
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\bin\Release\Interop.ShockwaveFlashObjects.dll
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\bin\Release\AxInterop.ShockwaveFlashObjects.dll
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\obj\Release\Interop.ShockwaveFlashObjects.dll
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\obj\Release\AxInterop.ShockwaveFlashObjects.dll
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\obj\Release\ShockwaveFlashControl.csproj.ResolveComReference.cache
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\obj\Release\ShockwaveFlashControl.baml
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\obj\Release\ShockwaveFlashControl.g.cs
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\obj\Release\ShockwaveFlashControl_MarkupCompile.cache
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\obj\Release\ShockwaveFlashControl.g.resources
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\obj\Release\Prism.Controls.AxShockwaveFlashControl.resources
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\obj\Release\ShockwaveFlashControl.csproj.GenerateResource.Cache
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\obj\Release\ShockwaveFlashControl.dll
+C:\Users\vulsi_000\Documents\Projects\GrodnoTrolleybus\trunk\Pickup\Concept\pu\Common\ShockwaveFlashControl\obj\Release\ShockwaveFlashControl.pdb

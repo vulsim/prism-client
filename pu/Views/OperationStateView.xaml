@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="Prism.Views.OperationStateView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:res="clr-namespace:Prism.Properties"
+             xmlns:model="clr-namespace:Prism.ViewModels"
+             xmlns:class="clr-namespace:Prism.Classes"
+             xmlns:auto="clr-namespace:Prism.General.Automation;assembly=Prism.General"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="500">
+    <Grid>
+        <Grid.Resources>
+            <DataTemplate DataType="{x:Type model:OperationStateTileViewModel}">
+                <Grid Height="140" Width="140">
+                    <Grid Name="tileGrid" Background="#A4A4A4" HorizontalAlignment="Center" VerticalAlignment="Center" Height="130" Width="130">
+                        <TextBlock Name="titleLabel" Height="24" Margin="10,10,10,0" FontFamily="Segoe UI" FontWeight="Normal" FontSize="18" FontStretch="ExtraExpanded" Text="{Binding Title}"  VerticalAlignment="Top" Foreground="White" TextTrimming="CharacterEllipsis" TextAlignment="Left" />
+                        <TextBlock Name="descriptionLabel" Height="62" Margin="10,34,10,0" FontFamily="Segoe UI" FontWeight="DemiBold" FontSize="12" FontStretch="ExtraExpanded" Text="{Binding Description}" VerticalAlignment="Top" Foreground="White" TextAlignment="Left" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" />
+                    </Grid>
+                </Grid>
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.C}">
+                        <Setter TargetName="tileGrid" Property="Background" Value="#D20000"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.B}">
+                        <Setter TargetName="tileGrid" Property="Background" Value="#F0D800"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.A}">
+                        <Setter TargetName="tileGrid" Property="Background" Value="#69D200"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.Idle}">
+                        <Setter TargetName="tileGrid" Property="Background" Value="#A4A4A4"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.Unknown}">
+                        <Setter TargetName="tileGrid" Property="Background" Value="#A4A4A4"/>
+                    </DataTrigger>
+                    <!--<DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}, Mode=FindAncestor}, Path=IsSelected}" Value="True">
+                        <Setter TargetName="tileGrid" Property="Background" Value="Red"/>
+                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    </DataTrigger> -->             
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </Grid.Resources>
+        <Controls:Panorama Name="operationStatePanorama" ItemBox="140" ItemsSource="{Binding OperationGroups}" UseSnapBackScrolling="True" TextOptions.TextRenderingMode="ClearType" HeaderFontFamily="Segoe UI" HeaderFontColor="White" HeaderFontSize="12">
+
+        </Controls:Panorama>
+    </Grid>
+</UserControl>
