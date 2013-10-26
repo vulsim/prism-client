@@ -7,7 +7,8 @@
              xmlns:res="clr-namespace:Prism.Properties"
              xmlns:class="clr-namespace:Prism.Classes"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="500">   
+             d:DesignHeight="300" d:DesignWidth="500"
+             Loaded="UserControl_Loaded">   
     <Grid>        
         <Grid.Resources>
             <class:PresentationControlCategoryConverter x:Key="PresentationCategoryConverter" />
@@ -17,13 +18,13 @@
         </Grid>
         <Grid Margin="0,20,0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="300" MinWidth="200" MaxWidth="300"/>
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0" >
-                <ListBox Name="operationControlList" Margin="10,10,10,10" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionChanged="operationControlList_SelectionChanged">
+                <ListBox Name="operationControlList" Margin="10,10,10,10" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" SelectionChanged="operationControlList_SelectionChanged">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid Height="50">
@@ -37,7 +38,7 @@
                             <GroupStyle.HeaderTemplate>
                                 <DataTemplate>
                                     <Grid Height="50">
-                                        <Label Content="{Binding Path=Name, ConverterParameter=lowercase, Converter={StaticResource ResourceKey=PresentationCategoryConverter}}" Foreground="White" FontFamily="Segoe UI" FontSize="26" FontWeight="Light" Margin="10,0,10,0" Height="50" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                        <Label Content="{Binding Path=Name, ConverterParameter=lowercase, Converter={StaticResource ResourceKey=PresentationCategoryConverter}}" Foreground="White" FontFamily="Segoe UI" FontSize="28" FontWeight="Light" Margin="10,0,10,0" Height="50" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                     </Grid>
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>

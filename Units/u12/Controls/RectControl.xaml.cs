@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 using Prism.General;
 using Prism.Controls;
 using Prism.Units.Classes;
@@ -51,10 +52,10 @@ namespace Prism.Units.Controls
                     new ParamCombination(Unit.Processing.Params[String.Format("rect{0}_state_tc_switch", Index)], ParamState.B)
                 }, ParamState.Idle),
 
-                /*new ParamRelation(new List<ParamCombination> 
+                new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Unit.Processing.Params[String.Format("rect{0}_alarm_pa_switch_fault", Index)], ParamState.C)
-                }, ParamState.Idle),*/
+                }, ParamState.Idle),
 
                 new ParamRelation(new List<ParamCombination> 
                 { 
@@ -74,10 +75,10 @@ namespace Prism.Units.Controls
                     new ParamCombination(Unit.Processing.Params[String.Format("rect{0}_state_tc_switch", Index)], ParamState.B)
                 }, ParamState.Idle),
 
-                /*new ParamRelation(new List<ParamCombination> 
+                new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Unit.Processing.Params[String.Format("rect{0}_alarm_pa_switch_fault", Index)], ParamState.C)
-                }, ParamState.Idle),*/
+                }, ParamState.Idle),
 
                 new ParamRelation(new List<ParamCombination> 
                 { 
@@ -154,7 +155,7 @@ namespace Prism.Units.Controls
             };
         }
 
-        private void paOnButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void paOnButton_Click(object sender, RoutedEventArgs e)
         {
             paOnButton.IsEnabled = false;
             paOffButton.IsEnabled = false;
@@ -166,7 +167,7 @@ namespace Prism.Units.Controls
             {
                 MainThread.EnqueueTask(delegate()
                 {
-                    if (!value.Value.Equals("A"))
+                    if (error != null || value == null || !value.Value.Equals("A"))
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
@@ -175,7 +176,7 @@ namespace Prism.Units.Controls
             });
         }
 
-        private void paOffButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void paOffButton_Click(object sender, RoutedEventArgs e)
         {
             paOnButton.IsEnabled = false;
             paOffButton.IsEnabled = false;
@@ -187,7 +188,7 @@ namespace Prism.Units.Controls
             {
                 MainThread.EnqueueTask(delegate()
                 {
-                    if (!value.Value.Equals("B"))
+                    if (error != null || value == null || !value.Value.Equals("B"))
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
@@ -196,7 +197,7 @@ namespace Prism.Units.Controls
             });
         }
 
-        private void kaOnButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void kaOnButton_Click(object sender, RoutedEventArgs e)
         {
             paOnButton.IsEnabled = false;
             paOffButton.IsEnabled = false;
@@ -208,7 +209,7 @@ namespace Prism.Units.Controls
             {
                 MainThread.EnqueueTask(delegate()
                 {
-                    if (!value.Value.Equals("A"))
+                    if (error != null || value == null || !value.Value.Equals("A"))
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
@@ -217,10 +218,10 @@ namespace Prism.Units.Controls
             });
         }
 
-        private void kaOffButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void kaOffButton_Click(object sender, RoutedEventArgs e)
         {
             paOnButton.IsEnabled = false;
-            paOffButton.IsEnabled = false; 
+            paOffButton.IsEnabled = false;
             kaOnButton.IsEnabled = false;
             kaOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
@@ -229,7 +230,7 @@ namespace Prism.Units.Controls
             {
                 MainThread.EnqueueTask(delegate()
                 {
-                    if (!value.Value.Equals("B"))
+                    if (error != null || value == null || !value.Value.Equals("B"))
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }

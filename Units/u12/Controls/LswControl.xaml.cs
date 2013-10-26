@@ -266,7 +266,7 @@ namespace Prism.Units.Controls
             {
                 MainThread.EnqueueTask(delegate()
                 {
-                    if (!value.Value.Equals("A"))
+                    if (error != null || value == null || !value.Value.Equals("A"))
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
@@ -289,7 +289,7 @@ namespace Prism.Units.Controls
             {
                 MainThread.EnqueueTask(delegate()
                 {
-                    if (!value.Value.Equals("A"))
+                    if (error != null || value == null || !value.Value.Equals("A"))
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
@@ -312,7 +312,7 @@ namespace Prism.Units.Controls
             {
                 MainThread.EnqueueTask(delegate()
                 {
-                    if (!value.Value.Equals("A"))
+                    if (error != null || value == null || !value.Value.Equals("A"))
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
@@ -335,7 +335,7 @@ namespace Prism.Units.Controls
             {
                 MainThread.EnqueueTask(delegate()
                 {
-                    if (!value.Value.Equals("B"))
+                    if (error != null || value == null || !value.Value.Equals("B"))
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
@@ -358,7 +358,7 @@ namespace Prism.Units.Controls
             {
                 MainThread.EnqueueTask(delegate()
                 {
-                    if (!value.Value.Equals("B"))
+                    if (error != null || value == null || !value.Value.Equals("B"))
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
@@ -381,7 +381,7 @@ namespace Prism.Units.Controls
             {
                 MainThread.EnqueueTask(delegate()
                 {
-                    if (!value.Value.Equals("B"))
+                    if (error != null || value == null || !value.Value.Equals("B"))
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }

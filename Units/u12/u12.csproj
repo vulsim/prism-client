@@ -75,6 +75,10 @@
       <Project>{7513575E-334F-4AF3-9C96-863BD801277F}</Project>
       <Name>ShockwaveFlashControl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Prism.Visual\Prism.Visual.csproj">
+      <Project>{33F32871-726B-4C6E-86A6-52BCE7C39158}</Project>
+      <Name>Prism.Visual</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Unit\u12\Schematic.swf">

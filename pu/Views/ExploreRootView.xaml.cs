@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Threading;
 using Prism.Classes;
 using Prism.General;
+using System.Speech.Synthesis;
 
 namespace Prism.Views
 {
@@ -22,6 +23,8 @@ namespace Prism.Views
     /// </summary>
     public partial class ExploreRootView : UserControl
     {
+        private SpeechSynthesizer synthesizer;
+
         public ExploreRootView()
         {
             InitializeComponent();
@@ -30,6 +33,9 @@ namespace Prism.Views
             generalBusyProgress.IsIndeterminate = (generalBusyProgress.Visibility == System.Windows.Visibility.Visible);
             Core.Instance.CoreBusyStateChangedEvent += CoreBusyStateChangedEvent;
             CoreBusyStateChangedEvent(this, Core.Instance.IsCoreBusy);
+
+            synthesizer = new SpeechSynthesizer();
+            synthesizer.SpeakAsync("Whish you where here");
         }
 
         ~ExploreRootView()

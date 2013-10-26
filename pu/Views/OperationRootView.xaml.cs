@@ -27,19 +27,23 @@ namespace Prism.Views
         {
             InitializeComponent();
 
-            foreach (var unit in Core.Instance.Units)
-            {
-                Link link = new Link();
-                link.DisplayName = unit.ShortName;
-                link.Source = unit.Uri;
-                operationTab.Links.Add(link);
-            }
-            operationTab.SelectedSource = Core.Instance.Units.First<Unit>().Uri;
-
             generalBusyProgress.Visibility = Core.Instance.IsCoreBusy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
             generalBusyProgress.IsIndeterminate = (generalBusyProgress.Visibility == System.Windows.Visibility.Visible);
             Core.Instance.CoreBusyStateChangedEvent += CoreBusyStateChangedEvent;
             CoreBusyStateChangedEvent(this, Core.Instance.IsCoreBusy);
+
+            operationTab.SelectedSource = Core.Instance.Units.First<Unit>().Uri;
+
+            MainThread.EnqueueTask(delegate()
+            {
+                foreach (var unit in Core.Instance.Units)
+                {
+                    Link link = new Link();
+                    link.DisplayName = unit.ShortName;
+                    link.Source = unit.Uri;
+                    operationTab.Links.Add(link);
+                }
+            });
         }
 
         ~OperationRootView()
@@ -55,7 +59,7 @@ namespace Prism.Views
                 {
                     generalBusyProgress.Visibility = isBusy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
                     generalBusyProgress.IsIndeterminate = (generalBusyProgress.Visibility == System.Windows.Visibility.Visible);
-                });                
+                });
             }, null);
         }
     }

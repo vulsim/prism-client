@@ -36,18 +36,6 @@ namespace Prism.Views
             collectionView = CollectionViewSource.GetDefaultView(unit.PresentationControls);
             collectionView.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
             operationControlList.ItemsSource = collectionView;
-
-            IPresentationControl firstPresentationControl = unit.PresentationControls.First<IPresentationControl>();
-
-            if (firstPresentationControl != null)
-            {
-                currentPresentationControl = firstPresentationControl.Control;
-
-                if (currentPresentationControl != null)
-                {
-                    containerGrid.Children.Add(currentPresentationControl);
-                }
-            }
         }
 
         private void operationControlList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -62,6 +50,21 @@ namespace Prism.Views
             if (currentPresentationControl != null)
             {
                 containerGrid.Children.Add(currentPresentationControl);
+            }
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            IPresentationControl firstPresentationControl = this.Unit.PresentationControls.First<IPresentationControl>();
+
+            if (currentPresentationControl == null && firstPresentationControl != null)
+            {
+                currentPresentationControl = firstPresentationControl.Control;
+
+                if (currentPresentationControl != null)
+                {
+                    containerGrid.Children.Add(currentPresentationControl);
+                }
             }
         }
     }
