@@ -35,15 +35,15 @@ namespace Prism.Units.Classes
         {
             ChannelValues = new Dictionary<string, string>();
             Params = new Dictionary<string, Param>();
-            
-            Params["leadin1_state_in_switch"] = new Param("leadin1_state_in_switch", ChannelValues, "io,di-rab-908", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1")}));
-            Params["leadin1_state_tc_switch"] = new Param("leadin1_state_tc_switch", ChannelValues, "io,di-rab-916", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));            
-            Params["leadin1_alarm_in_switch_fault"] = new Param("leadin1_alarm_in_switch_fault", ChannelValues, "io,di-rab-910", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["leadin1_alarm_circuit_fault"] = new Param("leadin1_alarm_circuit_fault", ChannelValues, "io,di-rab-912", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["leadin1_alarm_tn_circuit_fault"] = new Param("leadin1_alarm_tn_circuit_fault", ChannelValues, "io,di-tn1-918", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["leadin1_alarm_tn_ru6kv_fault"] = new Param("leadin1_alarm_tn_ru6kv_fault", ChannelValues, "io,di-tn1-920", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["leadin1_alarm_tsn_lost_power"] = new Param("leadin1_alarm_tsn_lost_power", ChannelValues, "io,di-tsn1-ts71", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            
+
+            Params["leadin1_state_in_switch"] = new Param("leadin1_state_in_switch", ChannelValues, "io,di-rab-908", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1") }));
+            Params["leadin1_state_tc_switch"] = new Param("leadin1_state_tc_switch", ChannelValues, "io,di-rab-916", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["leadin1_alarm_in_switch_fault"] = new Param("leadin1_alarm_in_switch_fault", ChannelValues, "io,di-rab-910", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["leadin1_alarm_circuit_fault"] = new Param("leadin1_alarm_circuit_fault", ChannelValues, "io,di-rab-912", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["leadin1_alarm_tn_circuit_fault"] = new Param("leadin1_alarm_tn_circuit_fault", ChannelValues, "io,di-tn1-918", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["leadin1_alarm_tn_ru6kv_fault"] = new Param("leadin1_alarm_tn_ru6kv_fault", ChannelValues, "io,di-tn1-920", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["leadin1_alarm_tsn_lost_power"] = new Param("leadin1_alarm_tsn_lost_power", ChannelValues, "io,di-tsn1-ts71", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+
             Params["leadin1_state"] = new Param("leadin1_state", new List<ParamRelation> 
             { 
                 new ParamRelation(new List<ParamCombination> 
@@ -72,13 +72,13 @@ namespace Prism.Units.Classes
                 }, ParamState.C)
             });
 
-            Params["leadin2_state_in_switch"] = new Param("leadin2_state_in_switch", ChannelValues, "io,di-rez-900", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1")}));
-            Params["leadin2_state_tc_switch"] = new Param("leadin2_state_tc_switch", ChannelValues, "io,di-rez-906", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));            
-            Params["leadin2_alarm_in_switch_fault"] = new Param("leadin2_alarm_in_switch_fault", ChannelValues, "io,di-rez-902", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["leadin2_alarm_circuit_fault"] = new Param("leadin1_alarm_circuit_fault", ChannelValues, "io,di-rez-904", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["leadin2_alarm_tn_circuit_fault"] = new Param("leadin1_alarm_tn_circuit_fault", ChannelValues, "io,di-tn2-918", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["leadin2_alarm_tn_ru6kv_fault"] = new Param("leadin1_alarm_tn_ru6kv_fault", ChannelValues, "io,di-tn2-741", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["leadin2_alarm_tsn_lost_power"] = new Param("leadin1_alarm_tsn_lost_power", ChannelValues, "io,di-tsn2-ts71", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
+            Params["leadin2_state_in_switch"] = new Param("leadin2_state_in_switch", ChannelValues, "io,di-rez-900", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1") }));
+            Params["leadin2_state_tc_switch"] = new Param("leadin2_state_tc_switch", ChannelValues, "io,di-rez-906", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["leadin2_alarm_in_switch_fault"] = new Param("leadin2_alarm_in_switch_fault", ChannelValues, "io,di-rez-902", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["leadin2_alarm_circuit_fault"] = new Param("leadin1_alarm_circuit_fault", ChannelValues, "io,di-rez-904", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["leadin2_alarm_tn_circuit_fault"] = new Param("leadin1_alarm_tn_circuit_fault", ChannelValues, "io,di-tn2-918", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["leadin2_alarm_tn_ru6kv_fault"] = new Param("leadin1_alarm_tn_ru6kv_fault", ChannelValues, "io,di-tn2-741", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["leadin2_alarm_tsn_lost_power"] = new Param("leadin1_alarm_tsn_lost_power", ChannelValues, "io,di-tsn2-ts71", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["leadin2_state"] = new Param("leadin2_state", new List<ParamRelation> 
             { 
@@ -107,17 +107,17 @@ namespace Prism.Units.Classes
                     
                 }, ParamState.C)
             });
-            
-            Params["rect1_state_pa_switch"] = new Param("rect1_state_pa_switch", ChannelValues, "io,di-pa1-911", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1")}));
-            Params["rect1_state_qs_switch"] = new Param("rect1_state_qs_switch", ChannelValues, "io,di-ru1-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["rect1_state_qf_switch"] = new Param("rect1_state_qf_switch", ChannelValues, "io,di-ru1-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["rect1_state_tc_switch"] = new Param("rect1_state_tc_switch", ChannelValues, "io,di-ru1-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["rect1_alarm_circuit_fault"] = new Param("rect1_alarm_circuit_fault", ChannelValues, "io,di-ka1-n02", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect1_alarm_pa_switch_fault"] = new Param("rect1_alarm_pa_switch_fault", ChannelValues, "io,di-pa1-1003", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect1_alarm_rec_fault"] = new Param("rect1_alarm_rec_fault", ChannelValues, "io,di-v1-67", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect1_alarm_rec_gas_warn"] = new Param("rect1_alarm_rec_gas_warn", ChannelValues, "io,di-v1-86", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect1_alarm_rec_overload"] = new Param("rect1_alarm_rec_overload", ChannelValues, "io,di-v1-111", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect1_alarm_rec_rpz600v_fault"] = new Param("rect1_alarm_rec_rpz600v_fault", ChannelValues, "io,di-v1-106", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
+
+            Params["rect1_state_pa_switch"] = new Param("rect1_state_pa_switch", ChannelValues, "io,di-pa1-911", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1") }));
+            Params["rect1_state_qs_switch"] = new Param("rect1_state_qs_switch", ChannelValues, "io,di-ru1-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["rect1_state_qf_switch"] = new Param("rect1_state_qf_switch", ChannelValues, "io,di-ru1-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["rect1_state_tc_switch"] = new Param("rect1_state_tc_switch", ChannelValues, "io,di-ru1-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["rect1_alarm_circuit_fault"] = new Param("rect1_alarm_circuit_fault", ChannelValues, "io,di-ka1-n02", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect1_alarm_pa_switch_fault"] = new Param("rect1_alarm_pa_switch_fault", ChannelValues, "io,di-pa1-1003", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect1_alarm_rec_fault"] = new Param("rect1_alarm_rec_fault", ChannelValues, "io,di-v1-67", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect1_alarm_rec_gas_warn"] = new Param("rect1_alarm_rec_gas_warn", ChannelValues, "io,di-v1-86", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect1_alarm_rec_overload"] = new Param("rect1_alarm_rec_overload", ChannelValues, "io,di-v1-111", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect1_alarm_rec_rpz600v_fault"] = new Param("rect1_alarm_rec_rpz600v_fault", ChannelValues, "io,di-v1-106", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["rect1_state"] = new Param("rect1_state", new List<ParamRelation> 
             { 
@@ -148,18 +148,18 @@ namespace Prism.Units.Classes
                 { 
                     
                 }, ParamState.C)
-            });           
+            });
 
-            Params["rect2_state_pa_switch"] = new Param("rect2_state_pa_switch", ChannelValues, "io,di-pa2-911", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1")}));
-            Params["rect2_state_qs_switch"] = new Param("rect2_state_qs_switch", ChannelValues, "io,di-ru2-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["rect2_state_qf_switch"] = new Param("rect2_state_qf_switch", ChannelValues, "io,di-ru2-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["rect2_state_tc_switch"] = new Param("rect2_state_tc_switch", ChannelValues, "io,di-ru2-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["rect2_alarm_circuit_fault"] = new Param("rect2_alarm_circuit_fault", ChannelValues, "io,di-ka2-n02", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect2_alarm_pa_switch_fault"] = new Param("rect2_alarm_pa_switch_fault", ChannelValues, "io,di-pa2-1003", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect2_alarm_rec_fault"] = new Param("rect2_alarm_rec_fault", ChannelValues, "io,di-v2-67", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect2_alarm_rec_gas_warn"] = new Param("rect2_alarm_rec_gas_warn", ChannelValues, "io,di-v2-86", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect2_alarm_rec_overload"] = new Param("rect2_alarm_rec_overload", ChannelValues, "io,di-v2-111", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect2_alarm_rec_rpz600v_fault"] = new Param("rect2_alarm_rec_rpz600v_fault", ChannelValues, "io,di-v2-106", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
+            Params["rect2_state_pa_switch"] = new Param("rect2_state_pa_switch", ChannelValues, "io,di-pa2-911", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1") }));
+            Params["rect2_state_qs_switch"] = new Param("rect2_state_qs_switch", ChannelValues, "io,di-ru2-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["rect2_state_qf_switch"] = new Param("rect2_state_qf_switch", ChannelValues, "io,di-ru2-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["rect2_state_tc_switch"] = new Param("rect2_state_tc_switch", ChannelValues, "io,di-ru2-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["rect2_alarm_circuit_fault"] = new Param("rect2_alarm_circuit_fault", ChannelValues, "io,di-ka2-n02", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect2_alarm_pa_switch_fault"] = new Param("rect2_alarm_pa_switch_fault", ChannelValues, "io,di-pa2-1003", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect2_alarm_rec_fault"] = new Param("rect2_alarm_rec_fault", ChannelValues, "io,di-v2-67", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect2_alarm_rec_gas_warn"] = new Param("rect2_alarm_rec_gas_warn", ChannelValues, "io,di-v2-86", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect2_alarm_rec_overload"] = new Param("rect2_alarm_rec_overload", ChannelValues, "io,di-v2-111", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect2_alarm_rec_rpz600v_fault"] = new Param("rect2_alarm_rec_rpz600v_fault", ChannelValues, "io,di-v2-106", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["rect2_state"] = new Param("rect2_state", new List<ParamRelation> 
             { 
@@ -190,18 +190,18 @@ namespace Prism.Units.Classes
                 { 
                     
                 }, ParamState.C)
-            }); 
+            });
 
-            Params["rect3_state_pa_switch"] = new Param("rect3_state_pa_switch", ChannelValues, "io,di-pa3-911", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1")}));
-            Params["rect3_state_qs_switch"] = new Param("rect3_state_qs_switch", ChannelValues, "io,di-ru3-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["rect3_state_qf_switch"] = new Param("rect3_state_qf_switch", ChannelValues, "io,di-ru3-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["rect3_state_tc_switch"] = new Param("rect3_state_tc_switch", ChannelValues, "io,di-ru3-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["rect3_alarm_circuit_fault"] = new Param("rect3_alarm_circuit_fault", ChannelValues, "io,di-ka3-n02", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect3_alarm_pa_switch_fault"] = new Param("rect3_alarm_pa_switch_fault", ChannelValues, "io,di-pa3-1003", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect3_alarm_rec_fault"] = new Param("rect3_alarm_rec_fault", ChannelValues, "io,di-v3-67", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect3_alarm_rec_gas_warn"] = new Param("rect3_alarm_rec_gas_warn", ChannelValues, "io,di-v3-86", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect3_alarm_rec_overload"] = new Param("rect3_alarm_rec_overload", ChannelValues, "io,di-v3-111", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["rect3_alarm_rec_rpz600v_fault"] = new Param("rect3_alarm_rec_rpz600v_fault", ChannelValues, "io,di-v3-106", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
+            Params["rect3_state_pa_switch"] = new Param("rect3_state_pa_switch", ChannelValues, "io,di-pa3-911", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1") }));
+            Params["rect3_state_qs_switch"] = new Param("rect3_state_qs_switch", ChannelValues, "io,di-ru3-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["rect3_state_qf_switch"] = new Param("rect3_state_qf_switch", ChannelValues, "io,di-ru3-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["rect3_state_tc_switch"] = new Param("rect3_state_tc_switch", ChannelValues, "io,di-ru3-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["rect3_alarm_circuit_fault"] = new Param("rect3_alarm_circuit_fault", ChannelValues, "io,di-ka3-n02", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect3_alarm_pa_switch_fault"] = new Param("rect3_alarm_pa_switch_fault", ChannelValues, "io,di-pa3-1003", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect3_alarm_rec_fault"] = new Param("rect3_alarm_rec_fault", ChannelValues, "io,di-v3-67", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect3_alarm_rec_gas_warn"] = new Param("rect3_alarm_rec_gas_warn", ChannelValues, "io,di-v3-86", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect3_alarm_rec_overload"] = new Param("rect3_alarm_rec_overload", ChannelValues, "io,di-v3-111", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["rect3_alarm_rec_rpz600v_fault"] = new Param("rect3_alarm_rec_rpz600v_fault", ChannelValues, "io,di-v3-106", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["rect3_state"] = new Param("rect3_state", new List<ParamRelation> 
             { 
@@ -232,15 +232,15 @@ namespace Prism.Units.Classes
                 { 
                     
                 }, ParamState.C)
-            }); 
+            });
 
-            Params["lsw1_state_qs_switch"] = new Param("lsw1_state_qs_switch", ChannelValues, "io,di-ul1-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw1_state_qf_switch"] = new Param("lsw1_state_qf_switch", ChannelValues, "io,di-ul1-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw1_state_tc_switch"] = new Param("lsw1_state_tc_switch", ChannelValues, "io,di-ul1-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw1_state_spare_switch"] = new Param("lsw1_state_spare_switch", ChannelValues, "io,di-ul1-719", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw1_alarm_short_fault"] = new Param("lsw1_alarm_short_fault", ChannelValues, "io,di-ul1-716", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["lsw1_alarm_circuit_fault"] = new Param("lsw1_alarm_circuit_fault", ChannelValues, "io,di-ul1-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["lsw1_alarm_600v_lost_power"] = new Param("lsw1_alarm_600v_lost_power", ChannelValues, "io,di-ul1-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
+            Params["lsw1_state_qs_switch"] = new Param("lsw1_state_qs_switch", ChannelValues, "io,di-ul1-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw1_state_qf_switch"] = new Param("lsw1_state_qf_switch", ChannelValues, "io,di-ul1-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw1_state_tc_switch"] = new Param("lsw1_state_tc_switch", ChannelValues, "io,di-ul1-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw1_state_spare_switch"] = new Param("lsw1_state_spare_switch", ChannelValues, "io,di-ul1-719", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw1_alarm_short_fault"] = new Param("lsw1_alarm_short_fault", ChannelValues, "io,di-ul1-716", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["lsw1_alarm_circuit_fault"] = new Param("lsw1_alarm_circuit_fault", ChannelValues, "io,di-ul1-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["lsw1_alarm_600v_lost_power"] = new Param("lsw1_alarm_600v_lost_power", ChannelValues, "io,di-ul1-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["lsw1_state"] = new Param("lsw1_state", new List<ParamRelation> 
             { 
@@ -265,14 +265,14 @@ namespace Prism.Units.Classes
                     
                 }, ParamState.C)
             });
-       
-            Params["lsw2_state_qs_switch"] = new Param("lsw2_state_qs_switch", ChannelValues, "io,di-ul2-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw2_state_qf_switch"] = new Param("lsw2_state_qf_switch", ChannelValues, "io,di-ul2-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw2_state_tc_switch"] = new Param("lsw2_state_tc_switch", ChannelValues, "io,di-ul2-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw2_state_spare_switch"] = new Param("lsw2_state_spare_switch", ChannelValues, "io,di-ul2-719", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw2_alarm_short_fault"] = new Param("lsw2_alarm_short_fault", ChannelValues, "io,di-ul2-716", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["lsw2_alarm_circuit_fault"] = new Param("lsw2_alarm_circuit_fault", ChannelValues, "io,di-ul2-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["lsw2_alarm_600v_lost_power"] = new Param("lsw2_alarm_600v_lost_power", ChannelValues, "io,di-ul2-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
+
+            Params["lsw2_state_qs_switch"] = new Param("lsw2_state_qs_switch", ChannelValues, "io,di-ul2-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw2_state_qf_switch"] = new Param("lsw2_state_qf_switch", ChannelValues, "io,di-ul2-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw2_state_tc_switch"] = new Param("lsw2_state_tc_switch", ChannelValues, "io,di-ul2-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw2_state_spare_switch"] = new Param("lsw2_state_spare_switch", ChannelValues, "io,di-ul2-719", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw2_alarm_short_fault"] = new Param("lsw2_alarm_short_fault", ChannelValues, "io,di-ul2-716", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["lsw2_alarm_circuit_fault"] = new Param("lsw2_alarm_circuit_fault", ChannelValues, "io,di-ul2-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["lsw2_alarm_600v_lost_power"] = new Param("lsw2_alarm_600v_lost_power", ChannelValues, "io,di-ul2-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["lsw2_state"] = new Param("lsw2_state", new List<ParamRelation> 
             { 
@@ -298,13 +298,13 @@ namespace Prism.Units.Classes
                 }, ParamState.C)
             });
 
-            Params["lsw3_state_qs_switch"] = new Param("lsw3_state_qs_switch", ChannelValues, "io,di-ul3-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw3_state_qf_switch"] = new Param("lsw3_state_qf_switch", ChannelValues, "io,di-ul3-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw3_state_tc_switch"] = new Param("lsw3_state_tc_switch", ChannelValues, "io,di-ul3-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw3_state_spare_switch"] = new Param("lsw3_state_spare_switch", ChannelValues, "io,di-ul3-719", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw3_alarm_short_fault"] = new Param("lsw3_alarm_short_fault", ChannelValues, "io,di-ul3-716", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["lsw3_alarm_circuit_fault"] = new Param("lsw3_alarm_circuit_fault", ChannelValues, "io,di-ul3-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["lsw3_alarm_600v_lost_power"] = new Param("lsw3_alarm_600v_lost_power", ChannelValues, "io,di-ul3-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
+            Params["lsw3_state_qs_switch"] = new Param("lsw3_state_qs_switch", ChannelValues, "io,di-ul3-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw3_state_qf_switch"] = new Param("lsw3_state_qf_switch", ChannelValues, "io,di-ul3-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw3_state_tc_switch"] = new Param("lsw3_state_tc_switch", ChannelValues, "io,di-ul3-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw3_state_spare_switch"] = new Param("lsw3_state_spare_switch", ChannelValues, "io,di-ul3-719", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw3_alarm_short_fault"] = new Param("lsw3_alarm_short_fault", ChannelValues, "io,di-ul3-716", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["lsw3_alarm_circuit_fault"] = new Param("lsw3_alarm_circuit_fault", ChannelValues, "io,di-ul3-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["lsw3_alarm_600v_lost_power"] = new Param("lsw3_alarm_600v_lost_power", ChannelValues, "io,di-ul3-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["lsw3_state"] = new Param("lsw3_state", new List<ParamRelation> 
             { 
@@ -330,13 +330,13 @@ namespace Prism.Units.Classes
                 }, ParamState.C)
             });
 
-            Params["lsw4_state_qs_switch"] = new Param("lsw4_state_qs_switch", ChannelValues, "io,di-ul4-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw4_state_qf_switch"] = new Param("lsw4_state_qf_switch", ChannelValues, "io,di-ul4-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw4_state_tc_switch"] = new Param("lsw4_state_tc_switch", ChannelValues, "io,di-ul4-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw4_state_spare_switch"] = new Param("lsw4_state_spare_switch", ChannelValues, "io,di-ul4-719", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw4_alarm_short_fault"] = new Param("lsw4_alarm_short_fault", ChannelValues, "io,di-ul4-716", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["lsw4_alarm_circuit_fault"] = new Param("lsw4_alarm_circuit_fault", ChannelValues, "io,di-ul4-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["lsw4_alarm_600v_lost_power"] = new Param("lsw4_alarm_600v_lost_power", ChannelValues, "io,di-ul4-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
+            Params["lsw4_state_qs_switch"] = new Param("lsw4_state_qs_switch", ChannelValues, "io,di-ul4-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw4_state_qf_switch"] = new Param("lsw4_state_qf_switch", ChannelValues, "io,di-ul4-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw4_state_tc_switch"] = new Param("lsw4_state_tc_switch", ChannelValues, "io,di-ul4-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw4_state_spare_switch"] = new Param("lsw4_state_spare_switch", ChannelValues, "io,di-ul4-719", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw4_alarm_short_fault"] = new Param("lsw4_alarm_short_fault", ChannelValues, "io,di-ul4-716", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["lsw4_alarm_circuit_fault"] = new Param("lsw4_alarm_circuit_fault", ChannelValues, "io,di-ul4-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["lsw4_alarm_600v_lost_power"] = new Param("lsw4_alarm_600v_lost_power", ChannelValues, "io,di-ul4-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["lsw4_state"] = new Param("lsw4_state", new List<ParamRelation> 
             { 
@@ -362,13 +362,13 @@ namespace Prism.Units.Classes
                 }, ParamState.C)
             });
 
-            Params["lsw5_state_qs_switch"] = new Param("lsw5_state_qs_switch", ChannelValues, "io,di-ul5-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw5_state_qf_switch"] = new Param("lsw5_state_qf_switch", ChannelValues, "io,di-ul5-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw5_state_tc_switch"] = new Param("lsw5_state_tc_switch", ChannelValues, "io,di-ul5-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw5_state_spare_switch"] = new Param("lsw5_state_spare_switch", ChannelValues, "io,di-ul5-719", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw5_alarm_short_fault"] = new Param("lsw5_alarm_short_fault", ChannelValues, "io,di-ul5-716", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["lsw5_alarm_circuit_fault"] = new Param("lsw5_alarm_circuit_fault", ChannelValues, "io,di-ul5-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
-            Params["lsw5_alarm_600v_lost_power"] = new Param("lsw5_alarm_600v_lost_power", ChannelValues, "io,di-ul5-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
+            Params["lsw5_state_qs_switch"] = new Param("lsw5_state_qs_switch", ChannelValues, "io,di-ul5-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw5_state_qf_switch"] = new Param("lsw5_state_qf_switch", ChannelValues, "io,di-ul5-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw5_state_tc_switch"] = new Param("lsw5_state_tc_switch", ChannelValues, "io,di-ul5-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw5_state_spare_switch"] = new Param("lsw5_state_spare_switch", ChannelValues, "io,di-ul5-719", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw5_alarm_short_fault"] = new Param("lsw5_alarm_short_fault", ChannelValues, "io,di-ul5-716", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["lsw5_alarm_circuit_fault"] = new Param("lsw5_alarm_circuit_fault", ChannelValues, "io,di-ul5-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["lsw5_alarm_600v_lost_power"] = new Param("lsw5_alarm_600v_lost_power", ChannelValues, "io,di-ul5-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["lsw5_state"] = new Param("lsw5_state", new List<ParamRelation> 
             { 
@@ -394,10 +394,10 @@ namespace Prism.Units.Classes
                 }, ParamState.C)
             });
 
-            Params["lsw9_state_qs_switch"] = new Param("lsw9_state_qs_switch", ChannelValues, "io,di-zap-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw9_state_qf_switch"] = new Param("lsw9_state_qf_switch", ChannelValues, "io,di-zap-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw9_state_tc_switch"] = new Param("lsw9_state_tc_switch", ChannelValues, "io,di-zap-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1")}));
-            Params["lsw9_alarm_circuit_fault"] = new Param("lsw9_alarm_circuit_fault", ChannelValues, "io,di-zap-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1")}));
+            Params["lsw9_state_qs_switch"] = new Param("lsw9_state_qs_switch", ChannelValues, "io,di-zap-710", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw9_state_qf_switch"] = new Param("lsw9_state_qf_switch", ChannelValues, "io,di-zap-712", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw9_state_tc_switch"] = new Param("lsw9_state_tc_switch", ChannelValues, "io,di-zap-708", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["lsw9_alarm_circuit_fault"] = new Param("lsw9_alarm_circuit_fault", ChannelValues, "io,di-zap-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["lsw9_state"] = new Param("lsw9_state", new List<ParamRelation> 
             { 
@@ -575,7 +575,7 @@ namespace Prism.Units.Classes
                     
                 }, ParamState.C)
             });
-            
+
             Params["common_group4_state"] = new Param("common_group4_state", new List<ParamRelation> 
             { 
                 new ParamRelation(new List<ParamCombination> 
@@ -681,7 +681,7 @@ namespace Prism.Units.Classes
             producerSettings.Channels.Add(new ProducerChannel("io", "di-ru3-712"));
             producerSettings.Channels.Add(new ProducerChannel("io", "di-ka3-n02"));
             producerSettings.Channels.Add(new ProducerChannel("io", "di-pa3-1003"));
-            producerSettings.Channels.Add(new ProducerChannel("io", "di-pa3-911"));            
+            producerSettings.Channels.Add(new ProducerChannel("io", "di-pa3-911"));
             producerSettings.Channels.Add(new ProducerChannel("io", "di-ul1-708"));
             producerSettings.Channels.Add(new ProducerChannel("io", "di-ul1-710"));
             producerSettings.Channels.Add(new ProducerChannel("io", "di-ul1-712"));
@@ -735,8 +735,8 @@ namespace Prism.Units.Classes
             producer = new Producer(producerSettings);
             producer.Start();
 
-            autoUpdateTimer = new System.Timers.Timer(60000);
-            autoUpdateTimer.Elapsed += ProducerAutoUpdateEvent;            
+            autoUpdateTimer = new System.Timers.Timer(10000);
+            autoUpdateTimer.Elapsed += ProducerAutoUpdateEvent;
 
             ThreadPool.QueueUserWorkItem(delegate(object target)
             {
@@ -786,9 +786,6 @@ namespace Prism.Units.Classes
             }
 
             IsAutoUpdateInProgress = true;
-            int channelCounter = producerSettings.Channels.Count;
-            ManualResetEvent continueEvent = new ManualResetEvent(false);
-
             ThreadPool.QueueUserWorkItem(delegate(object target)
             {
                 if (ProcessingChangeStateEvent != null)
@@ -796,26 +793,20 @@ namespace Prism.Units.Classes
                     ProcessingChangeStateEvent(this);
                 }
             }, null);
+            
+            ManualResetEvent continueEvent = new ManualResetEvent(false);
+            System.Timers.Timer queryUnvaliableTimer = new System.Timers.Timer(10000);
 
-            System.Timers.Timer queryUnvaliableTimer = new System.Timers.Timer(60000);
             queryUnvaliableTimer.Elapsed += delegate(object s, ElapsedEventArgs ev)
             {
-                if (IsQueryAvaliable)
-                {
-                    IsQueryAvaliable = false;
-
-                    ThreadPool.QueueUserWorkItem(delegate(object target)
-                    {
-                        if (ProcessingChangeStateEvent != null)
-                        {
-                            ProcessingChangeStateEvent(this);
-                        }
-                    }, null);
-                }
+                IsQueryAvaliable = false;
                 queryUnvaliableTimer.Stop();
                 queryUnvaliableTimer = null;
+                continueEvent.Set();
             };
             queryUnvaliableTimer.Start();
+
+            int channelCounter = producerSettings.Channels.Count;
 
             foreach (var channel in producerSettings.Channels)
             {
@@ -824,6 +815,17 @@ namespace Prism.Units.Classes
                     if (error == null)
                     {
                         ChannelValues[value.Group + "," + value.Channel] = value.Value;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            ChannelValues.Remove(value.Group + "," + value.Channel);
+                        }
+                        catch (SystemException err)
+                        {
+
+                        }
                     }
 
                     channelCounter--;
@@ -836,23 +838,30 @@ namespace Prism.Units.Classes
             }
             continueEvent.WaitOne();
 
-            if (queryUnvaliableTimer != null)
+            if (channelCounter < producerSettings.Channels.Count)
             {
-                queryUnvaliableTimer.Stop();
-            }
-            IsQueryAvaliable = true;
-            IsAutoUpdateInProgress = false;
+                if (queryUnvaliableTimer != null)
+                {
+                    queryUnvaliableTimer.Stop();
+                }
 
+                IsQueryAvaliable = true;
+
+                ThreadPool.QueueUserWorkItem(delegate(object target)
+                {
+                    if (ProcessingUpdateEvent != null)
+                    {
+                        ProcessingUpdateEvent(this);
+                    }
+                }, null);
+            }
+
+            IsAutoUpdateInProgress = false;
             ThreadPool.QueueUserWorkItem(delegate(object target)
             {
                 if (ProcessingChangeStateEvent != null)
                 {
                     ProcessingChangeStateEvent(this);
-                }
-
-                if (ProcessingUpdateEvent != null)
-                {
-                    ProcessingUpdateEvent(this);
                 }
             }, null);
         }

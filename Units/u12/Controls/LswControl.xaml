@@ -2,9 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:control="clr-namespace:Prism.Visual.Controls;assembly=Prism.Visual"
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
              Loaded="UserControl_Loaded">
     <Grid>
         <Grid.RowDefinitions>
@@ -19,42 +19,29 @@
         </Grid>
 
         <Grid Grid.Row="1">
-            <TextBlock Margin="20,20,20,20" Name="descText" TextWrapping="Wrap" Text="Внимание, функция телеуправления будет доступна если управляемый объект переведен в режим телеуправления и отсутствуют блокирующие состояния. Перед началом управления убедитесь, что объект находиться в правильном состоянии."/>
+            <TextBlock Margin="20,20,20,20" Name="descText" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Внимание, функция телеуправления будет доступна если управляемый объект переведен в режим телеуправления и отсутствуют блокирующие состояния. Перед началом управления убедитесь, что объект находиться в правильном состоянии."/>
         </Grid>
 
         <Grid Grid.Row="2">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="125"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="125"/>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Name="onButton" Width="120" Height="120" Grid.Column="1" IsEnabled="False">
-                    <StackPanel>
-                        <Image Source="/u12;component/Resources/icon.lsw.on.png" Width="64" Height="64" />
-                        <TextBlock>Включить</TextBlock>
-                    </StackPanel>
-                </Button>
-                <Button Name="offButton" Width="120" Height="120" Grid.Column="2" IsEnabled="False">
-                    <StackPanel>
-                        <Image Source="/u12;component/Resources/icon.lsw.off.png" Width="64" Height="64" />
-                        <TextBlock>Отключить</TextBlock>
-                    </StackPanel>
-                </Button>
-                <Button Name="spareButton" Width="120" Height="120" Grid.Column="3" IsEnabled="False">
-                    <StackPanel>
-                        <Image Source="/u12;component/Resources/icon.lsw.spare.png" Width="64" Height="64" />
-                        <TextBlock>Перевести на ЗШ</TextBlock>
-                    </StackPanel>
-                </Button>
+                <control:FuseImageButton Name="onButton" Width="120" Height="120" Grid.Column="1" Margin="5,0,0,0" IsEnabled="False" ImageSource="/u12;component/Resources/icon.lsw.on.png" Text="Включить" />
+                <control:FuseImageButton Name="offButton" Width="120" Height="120" Grid.Column="3" Margin="0,0,0,0" IsEnabled="False" ImageSource="/u12;component/Resources/icon.lsw.off.png" Text="Отключить" />
+                <control:FuseImageButton Name="spareButton" Width="120" Height="120" Grid.Column="5" Margin="0,0,5,0" IsEnabled="False" ImageSource="/u12;component/Resources/icon.lsw.spare.png" Text="Перевести на ЗШ" />
 
-                <Grid Grid.Column="5">
+                <Grid Grid.Column="7">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="50" />
@@ -62,24 +49,13 @@
                         <RowDefinition Height="50" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <Button Name="qsOnButton" Margin="5,5,5,5" Grid.Row="1" IsEnabled="False" MouseDoubleClick="qsOnButton_MouseDoubleClick">
-                        <StackPanel>
-                            <TextBlock>Включить QS</TextBlock>
-                        </StackPanel>
-                    </Button>
-                    <Button Name="qfOnButton" Margin="5,5,5,5" Grid.Row="2" IsEnabled="False" MouseDoubleClick="qfOnButton_MouseDoubleClick">
-                        <StackPanel>
-                            <TextBlock>Включить QF</TextBlock>
-                        </StackPanel>
-                    </Button>
-                    <Button Name="spareOnButton" Margin="5,5,5,5" Grid.Row="3" IsEnabled="False" MouseDoubleClick="spareOnButton_MouseDoubleClick">
-                        <StackPanel>
-                            <TextBlock>Включить РЗШ</TextBlock>
-                        </StackPanel>
-                    </Button>
+
+                    <control:FuseButton Name="qsOnButton" Margin="5,5,5,5" Grid.Row="1" IsEnabled="False" Text="Включить QS" Click="qsOnButton_Click" />
+                    <control:FuseButton Name="qfOnButton" Margin="5,5,5,5" Grid.Row="2" IsEnabled="False" Text="Включить QF" Click="qfOnButton_Click" />
+                    <control:FuseButton Name="spareOnButton" Margin="5,5,5,5" Grid.Row="3" IsEnabled="False" Text="Включить РЗШ" Click="spareOnButton_Click" />
                 </Grid>
 
-                <Grid Grid.Column="6">
+                <Grid Grid.Column="8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="50" />
@@ -87,21 +63,10 @@
                         <RowDefinition Height="50" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <Button Name="qsOffButton" Margin="5,5,5,5" Grid.Row="1" IsEnabled="False" MouseDoubleClick="qsOffButton_MouseDoubleClick">
-                        <StackPanel>
-                            <TextBlock>Отключить QS</TextBlock>
-                        </StackPanel>
-                    </Button>
-                    <Button Name="qfOffButton" Margin="5,5,5,5" Grid.Row="2" IsEnabled="False" MouseDoubleClick="qfOffButton_MouseDoubleClick">
-                        <StackPanel>
-                            <TextBlock>Отключить QF</TextBlock>
-                        </StackPanel>
-                    </Button>
-                    <Button Name="spareOffButton" Margin="5,5,5,5" Grid.Row="3" IsEnabled="False" MouseDoubleClick="spareOffButton_MouseDoubleClick">
-                        <StackPanel>
-                            <TextBlock>Отключить РЗШ</TextBlock>
-                        </StackPanel>
-                    </Button>
+
+                    <control:FuseButton Name="qsOffButton" Margin="5,5,5,5" Grid.Row="1" IsEnabled="False" Text="Отключить QS" Click="qsOffButton_Click" />
+                    <control:FuseButton Name="qfOffButton" Margin="5,5,5,5" Grid.Row="2" IsEnabled="False" Text="Отключить QF" Click="qfOffButton_Click" />
+                    <control:FuseButton Name="spareOffButton" Margin="5,5,5,5" Grid.Row="3" IsEnabled="False" Text="Отключить РЗШ" Click="spareOffButton_Click" />               
                 </Grid>
             </Grid>
         </Grid>
@@ -109,10 +74,10 @@
         <Grid Grid.Row="3" Name="errorMessagBlock" Visibility="Hidden">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" MaxWidth="500"/>
             </Grid.ColumnDefinitions>
             <Image Grid.Column="0" Source="/u12;component/Resources/icon.warning.png" Width="64" Height="64" VerticalAlignment="Top" />
-            <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="Внимание, команда управления завершилась с ошибкой или была выполнена, но результат не привел к изменению состояния объекта управления. Попробуйте повторить поппытку управления еще раз."/>
+            <TextBlock Grid.Column="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Внимание, команда управления завершилась с ошибкой или была выполнена, но результат не привел к изменению состояния объекта управления. Попробуйте повторить поппытку управления еще раз."/>
         </Grid>
     </Grid>
 </UserControl>

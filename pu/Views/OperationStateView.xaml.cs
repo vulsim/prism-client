@@ -11,6 +11,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
+using FirstFloor.ModernUI.Presentation;
+using Prism.Classes;
+using Prism.General;
 using Prism.ViewModels;
 
 namespace Prism.Views
@@ -20,10 +24,31 @@ namespace Prism.Views
     /// </summary>
     public partial class OperationStateView : UserControl
     {
+        public List<OperationStateTileViewModel> OperationStateItems { get; set; }
+
         public OperationStateView()
         {
+            OperationStateItems = new List<OperationStateTileViewModel>();
+
             InitializeComponent();
-            this.DataContext = new OperationStateViewModel();
+
+            foreach (var unit in Core.Instance.Units)
+            {
+                OperationStateItems.Add(new OperationStateTileViewModel(unit));                
+            }
         }
+
+        private void ListBox_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (operationListBox.SelectedItem != null)
+            {
+                OperationStateTileViewModel selectedItem = (OperationStateTileViewModel)operationListBox.SelectedItem;
+
+                //MessageBox.Show(MainWindow.Instance.ContentSource.OriginalString.ToString());
+
+
+                MainWindow.Instance.ContentSource = new Uri("/Views/OperationRootView.xaml", UriKind.Relative);
+            }            
+        }     
     }
 }

@@ -10,12 +10,13 @@ using Prism.General.Automation;
 
 namespace Prism.ViewModels
 {
-    class OperationStateTileViewModel : INotifyPropertyChanged
+    public class OperationStateTileViewModel : INotifyPropertyChanged
     {
-        private Unit Unit;
+        public Unit Unit;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public string Index { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public ParamState State { get; set; }
@@ -26,6 +27,7 @@ namespace Prism.ViewModels
             Title = Unit.ShortName;
             Description = Unit.Address;
             State = Unit.State;
+            Index = Unit.SymbolicName;
 
             Unit.UnitStateChangedEvent += UnitStateChangedEvent;
         }

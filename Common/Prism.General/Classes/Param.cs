@@ -77,20 +77,20 @@ namespace Prism.General.Automation
         }
 
         public ParamState GetState(string value)
-	{
-		if (value != null)
-		{
-			foreach (var mapValue in Map)
-			{
-				if (value.Equals(mapValue.Value))
-				{
-                    return mapValue.State;
-				}
-			}
-		}
+        {
+            if (value != null)
+            {
+                foreach (var mapValue in Map)
+                {
+                    if (value.Equals(mapValue.Value))
+                    {
+                        return mapValue.State;
+                    }
+                }
+            }
 
-		return ParamState.Unknown;
-	}
+            return ParamState.Unknown;
+        }
     }
 
     public class Param
@@ -102,36 +102,32 @@ namespace Prism.General.Automation
         {
             get
             {
-                if (AssignType == ParamAssignType.Store)
-                {
-                    try
-                    {
-                        return Map.GetState(Store[Key]);
-                    }
-                    catch (SystemException e)
-                    {
+                ParamState paramState = ParamState.Unknown;
 
-                    }
-                }
-                else
+                try
                 {
-                    try
+                    if (AssignType == ParamAssignType.Store)
+                    {
+                        paramState = Map.GetState(Store[Key]);
+                    }
+                    else
                     {
                         foreach (var relation in Relations)
                         {
                             if (relation.Match)
                             {
-                                return relation.State;
+                                paramState = relation.State;
+                                break;
                             }
                         }
                     }
-                    catch (SystemException e)
-                    {
+                }
+                catch (SystemException e)
+                {
 
-                    }
                 }
 
-                return ParamState.Unknown;
+                return paramState;
             }
         }
 
@@ -141,7 +137,7 @@ namespace Prism.General.Automation
         private Dictionary<string, string> Store;
         private List<ParamRelation> Relations;
         private ParamMap Map;
-        private string Key;        
+        private string Key;
 
         public Param(string name, List<ParamRelation> relations)
         {

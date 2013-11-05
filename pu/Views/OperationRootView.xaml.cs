@@ -33,7 +33,7 @@ namespace Prism.Views
             CoreBusyStateChangedEvent(this, Core.Instance.IsCoreBusy);
 
             operationTab.SelectedSource = Core.Instance.Units.First<Unit>().Uri;
-
+            
             MainThread.EnqueueTask(delegate()
             {
                 foreach (var unit in Core.Instance.Units)

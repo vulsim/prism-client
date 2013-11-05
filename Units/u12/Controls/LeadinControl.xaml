@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:control="clr-namespace:Prism.Visual.Controls;assembly=Prism.Visual"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        
+    <Grid>        
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
             <RowDefinition Height="100"/>
@@ -19,36 +19,31 @@
         </Grid>
         
         <Grid Grid.Row="1">
-            <TextBlock Margin="20,20,20,20" Name="descText" TextWrapping="Wrap" Text="Внимание, функция телеуправления будет доступна если управляемый объект переведен в режим телеуправления и отсутствуют блокирующие состояния. Перед началом управления убедитесь, что объект находиться в правильном состоянии."/>            
+            <TextBlock Margin="20,20,20,20" Name="descText" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Внимание, функция телеуправления будет доступна если управляемый объект переведен в режим телеуправления и отсутствуют блокирующие состояния. Перед началом управления убедитесь, что объект находиться в правильном состоянии."/>            
         </Grid>
 
         <Grid Grid.Row="2">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="125"/>
+                    <ColumnDefinition Width="25"/>
+                    <ColumnDefinition Width="125"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Name="onButton" Width="120" Height="120" Grid.Column="1" IsEnabled="False" Click='onButton_Click'>                  
-                    <StackPanel>
-                        <Image Source="/u12;component/Resources/icon.leadin.on.png" Width="64" Height="64" />
-                        <TextBlock>Включить</TextBlock>
-                    </StackPanel>
-                </Button>
-                
-                <Button Name="offButton" Width="120" Height="120" Grid.Column="2" IsEnabled="False" Click="offButton_Click">
-                    <StackPanel>
-                        <Image Source="/u12;component/Resources/icon.leadin.off.png" Width="64" Height="64" />
-                        <TextBlock>Отключить</TextBlock>
-                    </StackPanel>
-                </Button>
+                <control:FuseImageButton Name="onButton" Width="120" Height="120" Grid.Column="1" Margin="5,0,0,0" IsEnabled="False" ImageSource="/u12;component/Resources/icon.leadin.on.png" Text="Включить"/>
+                <control:FuseImageButton Name="offButton" Width="120" Height="120" Grid.Column="3" Margin="0,0,5,0" IsEnabled="False" ImageSource="/u12;component/Resources/icon.leadin.off.png" Text="Отключить"/>
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="3">
-            
+        <Grid Grid.Row="3" Name="errorMessagBlock" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="*" MaxWidth="500"/>
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column="0" Source="/u12;component/Resources/icon.warning.png" Width="64" Height="64" VerticalAlignment="Top" />
+            <TextBlock Grid.Column="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Внимание, команда управления завершилась с ошибкой или была выполнена, но результат не привел к изменению состояния объекта управления. Попробуйте повторить поппытку управления еще раз."/>
         </Grid>
     </Grid>
 </UserControl>

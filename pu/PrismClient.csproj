@@ -26,7 +26,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>5</ApplicationRevision>
+    <ApplicationRevision>6</ApplicationRevision>
     <ApplicationVersion>0.7.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -119,7 +119,9 @@
     <Compile Include="Classes\Unit.cs" />
     <Compile Include="Providers\StationsViewContentLoader.cs" />
     <Compile Include="ViewModels\OperationStateTileViewModel.cs" />
-    <Compile Include="ViewModels\OperationStateViewModel.cs" />
+    <Compile Include="Views\AlarmsView.xaml.cs">
+      <DependentUpon>AlarmsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ExploreRootView.xaml.cs">
       <DependentUpon>ExploreRootView.xaml</DependentUpon>
     </Compile>
@@ -135,6 +137,10 @@
     <Compile Include="Windows\SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\AlarmsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ExploreRootView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

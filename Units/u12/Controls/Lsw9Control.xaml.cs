@@ -104,7 +104,7 @@ namespace Prism.Units.Controls
             qfOffButton.IsEnabled = (qfOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
         }
 
-        private void qfOnButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void qfOnButton_Click(object sender, RoutedEventArgs e)
         {
             qfOnButton.IsEnabled = false;
             qfOffButton.IsEnabled = false;
@@ -123,7 +123,7 @@ namespace Prism.Units.Controls
             });
         }
 
-        private void qfOffButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void qfOffButton_Click(object sender, RoutedEventArgs e)
         {
             qfOnButton.IsEnabled = false;
             qfOffButton.IsEnabled = false;

@@ -13,9 +13,9 @@ namespace TransportTest
         static void Main(string[] args)
         {
             ProducerSettings settings = new ProducerSettings();
-            settings.ReqAddr = "tcp://127.0.0.1:1233";
-            settings.SubAddr = "tcp://127.0.0.1:1234";
-            settings.Channels.Add(new ProducerChannel("io", "test-001"));
+            settings.ReqAddr = "tcp://192.168.127.2:1233";
+            settings.SubAddr = "tcp://192.168.127.2:1234";
+            settings.Channels.Add(new ProducerChannel("io", "test-002"));
 
             Producer producer = new Producer(settings);
 
@@ -25,13 +25,33 @@ namespace TransportTest
             });
             producer.Start();
 
-            while (true)
+            bool interrupted = false;
+
+            Console.CancelKeyPress += delegate 
+            { 
+                interrupted = true; 
+            };
+
+            producer.WriteChannelValue(new ProducerChannelValue("io", "do-power", "1"), delegate(string error, ProducerChannelValue value)
             {
-                producer.ReadChannelValue(new ProducerChannel("io", "test-002"), delegate(string error, ProducerChannelValue value)
+                if (error != null)
+                {
+                    Console.WriteLine("WC: {0}", error.ToString());
+                }
+                else
+                {
+                    Console.WriteLine("WC: {0},{1} {2}", value.Group, value.Channel, value.Value);
+                }
+            });
+            return;
+
+            while (!interrupted)
+            {
+                producer.ReadChannelValue(new ProducerChannel("alarm", "lsw1-arm-100"), delegate(string error, ProducerChannelValue value)
                 {
                     if (error != null)
                     {
-                        Console.WriteLine("RC: {0}", error.ToString());
+                        //Console.WriteLine("RC: {0}", error.ToString());
                     }
                     else
                     {

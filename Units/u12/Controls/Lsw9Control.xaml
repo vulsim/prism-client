@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
+             xmlns:control="clr-namespace:Prism.Visual.Controls;assembly=Prism.Visual"
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
              Loaded="UserControl_Loaded">
     <Grid>
         <Grid.RowDefinitions>
@@ -19,25 +19,20 @@
         </Grid>
 
         <Grid Grid.Row="1">
-            <TextBlock Margin="20,20,20,20" Name="descText" TextWrapping="Wrap" Text="Внимание, функция телеуправления будет доступна если управляемый объект переведен в режим телеуправления и отсутствуют блокирующие состояния. Перед началом управления убедитесь, что объект находиться в правильном состоянии."/>
+            <TextBlock Margin="20,20,20,20" Name="descText" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Внимание, функция телеуправления будет доступна если управляемый объект переведен в режим телеуправления и отсутствуют блокирующие состояния. Перед началом управления убедитесь, что объект находиться в правильном состоянии."/>
         </Grid>
 
         <Grid Grid.Row="2">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Name="offButton" Width="120" Height="120" Grid.Column="1" IsEnabled="False">
-                    <StackPanel>
-                        <Image Source="/u12;component/Resources/icon.lsw9.off.png" Width="64" Height="64" />
-                        <TextBlock>Отключить</TextBlock>
-                    </StackPanel>
-                </Button>
+                <control:FuseImageButton Name="offButton" Width="120" Height="120" Grid.Column="1" Margin="5,0,5,0" IsEnabled="False" ImageSource="/u12;component/Resources/icon.lsw9.off.png" Text="Отключить" />                
 
                 <Grid Grid.Column="3">
                     <Grid.RowDefinitions>
@@ -46,17 +41,9 @@
                         <RowDefinition Height="50" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <Button Name="qfOnButton" Margin="0,5,0,5" Grid.Row="1" IsEnabled="False" MouseDoubleClick="qfOnButton_MouseDoubleClick">
-                        <StackPanel>
-                            <TextBlock>Включить QF</TextBlock>
-                        </StackPanel>
-                    </Button>
 
-                    <Button Name="qfOffButton" Margin="0,5,0,5" Grid.Row="2" IsEnabled="False" MouseDoubleClick="qfOffButton_MouseDoubleClick">
-                        <StackPanel>
-                            <TextBlock>Отключить QF</TextBlock>
-                        </StackPanel>
-                    </Button>
+                    <control:FuseButton Name="qfOnButton" Margin="5,5,5,5" Grid.Row="1" IsEnabled="False" Text="Включить QF" Click="qfOnButton_Click" />
+                    <control:FuseButton Name="qfOffButton" Margin="5,5,5,5" Grid.Row="2" IsEnabled="False" Text="Отключить QF" Click="qfOffButton_Click" />
                 </Grid>
             </Grid>
         </Grid>
@@ -64,10 +51,10 @@
         <Grid Grid.Row="3" Name="errorMessagBlock" Visibility="Hidden">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" MaxWidth="500"/>
             </Grid.ColumnDefinitions>
             <Image Grid.Column="0" Source="/u12;component/Resources/icon.warning.png" Width="64" Height="64" VerticalAlignment="Top" />
-            <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="Внимание, команда управления завершилась с ошибкой или была выполнена, но результат не привел к изменению состояния объекта управления. Попробуйте повторить поппытку управления еще раз."/>
+            <TextBlock Grid.Column="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Внимание, команда управления завершилась с ошибкой или была выполнена, но результат не привел к изменению состояния объекта управления. Попробуйте повторить поппытку управления еще раз."/>
         </Grid>
     </Grid>
 </UserControl>

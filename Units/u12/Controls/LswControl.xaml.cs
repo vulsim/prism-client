@@ -252,7 +252,7 @@ namespace Prism.Units.Controls
             };
         }
 
-        private void qsOnButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void qsOnButton_Click(object sender, RoutedEventArgs e)
         {
             qsOnButton.IsEnabled = false;
             qsOffButton.IsEnabled = false;
@@ -275,7 +275,7 @@ namespace Prism.Units.Controls
             });
         }
 
-        private void qfOnButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void qfOnButton_Click(object sender, RoutedEventArgs e)
         {
             qsOnButton.IsEnabled = false;
             qsOffButton.IsEnabled = false;
@@ -298,7 +298,7 @@ namespace Prism.Units.Controls
             });
         }
 
-        private void spareOnButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void spareOnButton_Click(object sender, RoutedEventArgs e)
         {
             qsOnButton.IsEnabled = false;
             qsOffButton.IsEnabled = false;
@@ -321,7 +321,7 @@ namespace Prism.Units.Controls
             });
         }
 
-        private void qsOffButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void qsOffButton_Click(object sender, RoutedEventArgs e)
         {
             qsOnButton.IsEnabled = false;
             qsOffButton.IsEnabled = false;
@@ -344,7 +344,7 @@ namespace Prism.Units.Controls
             });
         }
 
-        private void qfOffButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void qfOffButton_Click(object sender, RoutedEventArgs e)
         {
             qsOnButton.IsEnabled = false;
             qsOffButton.IsEnabled = false;
@@ -367,7 +367,7 @@ namespace Prism.Units.Controls
             });
         }
 
-        private void spareOffButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void spareOffButton_Click(object sender, RoutedEventArgs e)
         {
             qsOnButton.IsEnabled = false;
             qsOffButton.IsEnabled = false;
