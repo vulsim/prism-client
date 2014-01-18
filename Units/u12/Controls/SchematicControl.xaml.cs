@@ -92,12 +92,24 @@ namespace Prism.Units.Controls
         {
             MainThread.EnqueueTask(delegate()
             {
-                Param param = Unit.Processing.Params["leadin1_state"];
-
                 foreach (KeyValuePair<string, Param> keyValue in Unit.Processing.Params)
                 {
-                    uint value = (uint)keyValue.Value.State;
-                    Schematic_SetObjectParam("view", keyValue.Key, "number", value.ToString());
+                    Param param = keyValue.Value;
+
+                    if (param.Type == Param.ParamAssignType.Value)
+                    {
+                        string value = param.Value;
+                        
+                        if (value != null)
+                        {
+                            Schematic_SetObjectParam("view", keyValue.Key, "number", value);
+                        }
+                    }
+                    else
+                    {
+                        uint value = (uint)param.State;
+                        Schematic_SetObjectParam("view", keyValue.Key, "number", value.ToString());
+                    }
                 }                
             });
         }

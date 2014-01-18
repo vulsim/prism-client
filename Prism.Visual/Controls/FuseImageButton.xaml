@@ -8,6 +8,7 @@
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid>
         <Button Name="button" Click="button_Click">
+                       
             <StackPanel>
                 <Image Name="image" Source="{Binding ImageSource}" Width="64" Height="64">
                     <Image.Style>
@@ -26,6 +27,6 @@
                 <TextBlock Name="textBlock" Text="{Binding Text}"/>
             </StackPanel>
         </Button>
-        <Grid Background="#22007ACF" Name="overlay" Visibility="Hidden" IsHitTestVisible="False" />
+        <Grid Background="#44CF000E" Name="overlay" Visibility="Hidden" IsHitTestVisible="False" />
     </Grid>
 </UserControl>

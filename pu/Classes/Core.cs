@@ -13,7 +13,7 @@ namespace Prism.Classes
 {
     public delegate void CoreBusyStateChangedEventHandler(object sender, bool isBusy);
     public delegate void CoreGeneralStateChangedEventHandler(object sender, ParamState state);
-
+    
     public class Core
     {        
         public static Core Instance = null;
@@ -59,6 +59,7 @@ namespace Prism.Classes
             {
                 Units = new List<Unit>();
                 Journal = new Journal();
+                AlarmNotificationCenter.Instance = new AlarmNotificationCenter();
             });
 
             contentLoader.Enqueue(Resources.CORE_STARTUP_MESSAGE_1, delegate()
@@ -89,6 +90,11 @@ namespace Prism.Classes
                                 unit.UnitStateChangedEvent += delegate(object sender, ParamState state)
                                 {
                                     CoreUpdateGeneralState();
+                                };
+
+                                unit.UnitAlarmsChangedEvent += delegate(object sender, IEnumerable<IAlarm> alarms)
+                                {
+                                    AlarmNotificationCenter.Instance.Update((Unit)sender);
                                 };
 
                                 unit.Uri = new Uri("unit://" + Units.Count.ToString());

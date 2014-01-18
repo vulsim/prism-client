@@ -95,7 +95,7 @@ namespace Prism.General.Automation
 
     public class Param
     {
-        private enum ParamAssignType { Store, Relation }
+        public enum ParamAssignType { Value, Map, Relation }
         public string Name { get { return NameInternal; } }
 
         public ParamState State
@@ -106,11 +106,11 @@ namespace Prism.General.Automation
 
                 try
                 {
-                    if (AssignType == ParamAssignType.Store)
+                    if (AssignType == ParamAssignType.Map)
                     {
                         paramState = Map.GetState(Store[Key]);
                     }
-                    else
+                    else if (AssignType == ParamAssignType.Relation)
                     {
                         foreach (var relation in Relations)
                         {
@@ -131,6 +131,36 @@ namespace Prism.General.Automation
             }
         }
 
+        public string Value
+        {
+            get
+            {
+                string value = null;
+
+                try
+                {
+                    if (AssignType == ParamAssignType.Value)
+                    {
+                        value = Store[Key];
+                    }                    
+                }
+                catch (SystemException e)
+                {
+
+                }
+
+                return value;
+            }
+        }
+
+        public ParamAssignType Type
+        {
+            get
+            {
+                return AssignType;
+            }
+        }
+
         private string NameInternal;
 
         private ParamAssignType AssignType;
@@ -146,9 +176,17 @@ namespace Prism.General.Automation
             this.Relations = relations;
         }
 
+        public Param(string name, Dictionary<string, string> store, string key)
+        {
+            this.AssignType = ParamAssignType.Value;
+            this.NameInternal = name;
+            this.Store = store;
+            this.Key = key;
+        }
+
         public Param(string name, Dictionary<string, string> store, string key, ParamMap map)
         {
-            this.AssignType = ParamAssignType.Store;
+            this.AssignType = ParamAssignType.Map;
             this.NameInternal = name;
             this.Store = store;
             this.Key = key;

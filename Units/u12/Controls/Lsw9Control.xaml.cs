@@ -26,6 +26,7 @@ namespace Prism.Units.Controls
         private Unit Unit;
         private Param qfOnCtrlState;
         private Param qfOffCtrlState;
+        private Boolean lockUpdate = false;
 
         public Lsw9Control(Unit unit, String title)
         {
@@ -100,16 +101,27 @@ namespace Prism.Units.Controls
 
         private void UpdateState()
         {
+            lsw9StateQfTile.State = Unit.Processing.Params["lsw9_state_qf_switch"].State;
+            lsw9StateQsTile.State = Unit.Processing.Params["lsw9_state_qs_switch"].State;
+            lsw9StateTcTile.State = Unit.Processing.Params["lsw9_state_tc_switch"].State;            
+            lsw9AlarmCircuitTile.State = Unit.Processing.Params["lsw9_alarm_circuit_fault"].State;
+
+            if (lockUpdate)
+            {
+                return;
+            }
+
             qfOnButton.IsEnabled = (qfOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            qfOffButton.IsEnabled = (qfOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
+            offButton.IsEnabled = (qfOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
         }
 
         private void qfOnButton_Click(object sender, RoutedEventArgs e)
         {
             qfOnButton.IsEnabled = false;
-            qfOffButton.IsEnabled = false;
+            offButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            lockUpdate = true;
             Unit.Processing.Operate(new ProducerChannelValue("auto", "lsw9-qf-ctrl", "A"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
@@ -118,17 +130,20 @@ namespace Prism.Units.Controls
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
+                    lockExtendedControl.IsChecked = false;
+                    lockUpdate = false;
                     UpdateState();
                 });
             });
         }
 
-        private void qfOffButton_Click(object sender, RoutedEventArgs e)
+        private void OffButton_Click(object sender, RoutedEventArgs e)
         {
             qfOnButton.IsEnabled = false;
-            qfOffButton.IsEnabled = false;
+            offButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            lockUpdate = true;
             Unit.Processing.Operate(new ProducerChannelValue("auto", "lsw9-qf-ctrl", "B"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
@@ -137,6 +152,8 @@ namespace Prism.Units.Controls
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
+                    lockExtendedControl.IsChecked = false;
+                    lockUpdate = false;
                     UpdateState();
                 });
             });

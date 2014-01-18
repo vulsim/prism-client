@@ -51,6 +51,9 @@
     <Compile Include="Controls\FuseImageButton.xaml.cs">
       <DependentUpon>FuseImageButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\StateTile.xaml.cs">
+      <DependentUpon>StateTile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -65,6 +68,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\FuseImageButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\StateTile.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

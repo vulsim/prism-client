@@ -23,7 +23,7 @@ namespace Prism.Units.Classes
         public IEnumerable<IPresentationControl> PresentationControls { get { return PresentationControlsInternal; } }
 
         private bool LastIsBusy;
-        private ParamState LastState;
+        private ParamState LastState = ParamState.B;
         private List<Alarm> AlarmsInternal;
         private List<PresentationControl> PresentationControlsInternal;
 
@@ -53,18 +53,19 @@ namespace Prism.Units.Classes
                 ManualResetEvent ContinueEvent = new ManualResetEvent(false);
                 MainThread.EnqueueTask(delegate()
                 {
-                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category0, "Схема подстанции", "Краткое описание", new Prism.Units.Controls.SchematicControl(this, "схема подстанции")));                    
-                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category3, "ЛА №1", "Краткое описание", new Prism.Units.Controls.LswControl(this, 1, "линейный автомат №1")));
-                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category3, "ЛА №2", "Краткое описание", new Prism.Units.Controls.LswControl(this, 2, "линейный автомат №2")));
-                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category3, "ЛА №3", "Краткое описание", new Prism.Units.Controls.LswControl(this, 3, "линейный автомат №3")));
-                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category3, "ЛА №4", "Краткое описание", new Prism.Units.Controls.LswControl(this, 4, "линейный автомат №4")));
-                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category3, "ЛА №5", "Краткое описание", new Prism.Units.Controls.LswControl(this, 5, "линейный автомат №5")));
-                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category3, "АЗ", "Краткое описание", new Prism.Units.Controls.Lsw9Control(this, "запасной автомат")));
-                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category2, "ВА №1", "Краткое описание", new Prism.Units.Controls.RectControl(this, 1, "выпрямительный агрегат №1")));
-                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category2, "ВА №2", "Краткое описание", new Prism.Units.Controls.RectControl(this, 2, "выпрямительный агрегат №2")));
-                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category2, "ВА №3", "Краткое описание", new Prism.Units.Controls.RectControl(this, 3, "выпрямительный агрегат №3")));
-                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category1, "Рабочий ввод", "Краткое описание", new Prism.Units.Controls.LeadinControl(this, 1, "рабочий ввод")));
-                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category1, "Резервный ввод", "Краткое описание", new Prism.Units.Controls.LeadinControl(this, 2, "резервный ввод")));                    
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category0, "Схема подстанции", "Общий контроль состояния", new Prism.Units.Controls.SchematicControl(this, "схема подстанции")));
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category3, "ЛА №1", "Контроль и управление", new Prism.Units.Controls.LswControl(this, 1, "линейный автомат №1")));
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category3, "ЛА №2", "Контроль и управление", new Prism.Units.Controls.LswControl(this, 2, "линейный автомат №2")));
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category3, "ЛА №3", "Контроль и управление", new Prism.Units.Controls.LswControl(this, 3, "линейный автомат №3")));
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category3, "ЛА №4", "Контроль и управление", new Prism.Units.Controls.LswControl(this, 4, "линейный автомат №4")));
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category3, "ЛА №5", "Контроль и управление", new Prism.Units.Controls.LswControl(this, 5, "линейный автомат №5")));
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category3, "АЗ", "Контроль и управление", new Prism.Units.Controls.Lsw9Control(this, "запасной автомат")));
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category2, "ВА №1", "Контроль и управление", new Prism.Units.Controls.RectControl(this, 1, "выпрямительный агрегат №1")));
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category2, "ВА №2", "Контроль и управление", new Prism.Units.Controls.RectControl(this, 2, "выпрямительный агрегат №2")));
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category2, "ВА №3", "Контроль и управление", new Prism.Units.Controls.RectControl(this, 3, "выпрямительный агрегат №3")));
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category1, "Рабочий ввод", "Контроль и управление", new Prism.Units.Controls.LeadinControl(this, 1, "рабочий ввод")));
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category1, "Резервный ввод", "Контроль и управление", new Prism.Units.Controls.LeadinControl(this, 2, "резервный ввод")));
+                    PresentationControlsInternal.Add(new PresentationControl(PresentationControlCategory.Category1, "Отходящая линия", "Контроль и управление", new Prism.Units.Controls.LeadinControl(this, 3, "отходящая линия")));
                     ContinueEvent.Set();
                 });
 
@@ -87,11 +88,67 @@ namespace Prism.Units.Classes
 
         private void ProcessingUpdateEvent(object sender)
         {
-            ParamState newState = ParamState.B;
+            Dictionary<string, Alarm> AlarmValues = new Dictionary<string, Alarm>(Processing.AlarmValues);
+            ParamState newState = ParamState.Unknown;
+            bool hasModifiedAlarms = false;
+            int lastAlarmCount = AlarmsInternal.Count;
 
+            AlarmsInternal.RemoveAll(delegate(Alarm a)
+            {
+                return !Processing.AlarmValues.ContainsKey("alarm," + a.Code);
+            });
+
+            hasModifiedAlarms = lastAlarmCount > AlarmsInternal.Count;
+
+            foreach (KeyValuePair<string, Alarm> alarmKeyValue in AlarmValues)
+            {
+                Alarm lastAlarm = AlarmsInternal.Find(delegate(Alarm a)
+                {
+                    return a.Code.Equals(alarmKeyValue.Value.Code);
+                });
+
+                if (lastAlarm != null)
+                {
+                    if (lastAlarm.State != alarmKeyValue.Value.State || !lastAlarm.Description.Equals(alarmKeyValue.Value.Description))
+                    {
+                        lastAlarm.State = alarmKeyValue.Value.State;
+                        lastAlarm.Description = alarmKeyValue.Value.Description;
+                        hasModifiedAlarms = true;
+                    }
+                }
+                else
+                {
+                    hasModifiedAlarms = true;
+                    AlarmsInternal.Add(alarmKeyValue.Value);
+                }
+
+                if (alarmKeyValue.Value.State > newState)
+                {
+                    newState = alarmKeyValue.Value.State;
+                }
+            }
+                     
             if (this.IsOnline)
             {
-                newState = Processing.Params["common_state"].State;
+                if (Processing.Params["common_state"].State > newState)
+                {
+                    newState = Processing.Params["common_state"].State;
+                }
+            }
+            else
+            {
+                newState = ParamState.B;
+            }
+
+            if (hasModifiedAlarms)
+            {
+                if (UnitAlarmsChangedEvent != null)
+                {
+                    MainThread.EnqueueTask(delegate()
+                    {
+                        UnitAlarmsChangedEvent(this, AlarmsInternal);
+                    });
+                }
             }
 
             if (newState != LastState)
@@ -99,7 +156,10 @@ namespace Prism.Units.Classes
                 LastState = newState;
                 if (UnitStateChangedEvent != null)
                 {
-                    UnitStateChangedEvent(this, LastState);
+                    MainThread.EnqueueTask(delegate()
+                    {
+                        UnitStateChangedEvent(this, LastState);
+                    });
                 }
             }
         }
@@ -126,8 +186,7 @@ namespace Prism.Units.Classes
                 {
                     UnitBusyStateChangedEvent(this, LastIsBusy);
                 }
-            }
-            
+            }            
         }
     }
 }

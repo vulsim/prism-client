@@ -21,7 +21,10 @@ namespace Prism.Units.Classes
         private bool IsAutoUpdateInProgress;
         private bool IsQueryAvaliable;
         private uint OperateRetainCount;
+        private int QueryChannelCounter;
+        private int MaxQueryChannelCounter;
 
+        public Dictionary<string, Alarm> AlarmValues;
         public Dictionary<string, string> ChannelValues;
         public Dictionary<string, Param> Params;
 
@@ -33,11 +36,12 @@ namespace Prism.Units.Classes
 
         public Processing(UnitSettings settings)
         {
+            AlarmValues = new Dictionary<string, Alarm>();
             ChannelValues = new Dictionary<string, string>();
             Params = new Dictionary<string, Param>();
 
             Params["leadin1_state_in_switch"] = new Param("leadin1_state_in_switch", ChannelValues, "io,di-rab-908", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1") }));
-            Params["leadin1_state_tc_switch"] = new Param("leadin1_state_tc_switch", ChannelValues, "io,di-rab-916", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
+            Params["leadin1_state_tc_switch"] = new Param("leadin1_state_tc_switch", ChannelValues, "io,di-rab-916", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "1"), new ParamMapValue(ParamState.B, "0") }));
             Params["leadin1_alarm_in_switch_fault"] = new Param("leadin1_alarm_in_switch_fault", ChannelValues, "io,di-rab-910", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
             Params["leadin1_alarm_circuit_fault"] = new Param("leadin1_alarm_circuit_fault", ChannelValues, "io,di-rab-912", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
             Params["leadin1_alarm_tn_circuit_fault"] = new Param("leadin1_alarm_tn_circuit_fault", ChannelValues, "io,di-tn1-918", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
@@ -100,6 +104,33 @@ namespace Prism.Units.Classes
                     new ParamCombination(Params["leadin2_alarm_tn_circuit_fault"], ParamState.Idle),
                     new ParamCombination(Params["leadin2_alarm_tn_ru6kv_fault"], ParamState.Idle),
                     new ParamCombination(Params["leadin2_alarm_tsn_lost_power"], ParamState.Idle)
+                }, ParamState.B),
+
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    
+                }, ParamState.C)
+            });
+
+            Params["ol_state_in_switch"] = new Param("ol_state_in_switch", ChannelValues, "io,di-ol-908", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1") }));
+            Params["ol_state_tc_switch"] = new Param("ol_state_tc_switch", ChannelValues, "io,di-ol-916", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "1"), new ParamMapValue(ParamState.B, "0") }));
+            Params["ol_alarm_switch_fault"] = new Param("ol_alarm_switch_fault", ChannelValues, "io,di-ol-910", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["ol_alarm_circuit_fault"] = new Param("ol_alarm_circuit_fault", ChannelValues, "io,di-ol-912", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+
+            Params["ol_state"] = new Param("ol_state", new List<ParamRelation> 
+            { 
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["ol_state_in_switch"], ParamState.A), 
+                    new ParamCombination(Params["ol_alarm_switch_fault"], ParamState.Idle),
+                    new ParamCombination(Params["ol_alarm_circuit_fault"], ParamState.Idle)
+                }, ParamState.A),
+
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["ol_state_in_switch"], ParamState.B), 
+                    new ParamCombination(Params["ol_alarm_switch_fault"], ParamState.Idle),
+                    new ParamCombination(Params["ol_alarm_circuit_fault"], ParamState.Idle)
                 }, ParamState.B),
 
                 new ParamRelation(new List<ParamCombination> 
@@ -516,7 +547,7 @@ namespace Prism.Units.Classes
                     new ParamCombination(Params["lsw2_state"], ParamState.A),
                     new ParamCombination(Params["lsw3_state"], ParamState.A),
                     new ParamCombination(Params["lsw4_state"], ParamState.A),
-                    new ParamCombination(Params["lsw5_state"], ParamState.A),
+                    /*new ParamCombination(Params["lsw5_state"], ParamState.A),*/
                     new ParamCombination(Params["lsw9_state"], ParamState.B)
                 }, ParamState.A),
 
@@ -526,7 +557,7 @@ namespace Prism.Units.Classes
                     new ParamCombination(Params["lsw2_state"], ParamState.A),
                     new ParamCombination(Params["lsw3_state"], ParamState.A),
                     new ParamCombination(Params["lsw4_state"], ParamState.A),
-                    new ParamCombination(Params["lsw5_state"], ParamState.A),
+                    /*new ParamCombination(Params["lsw5_state"], ParamState.A),*/
                     new ParamCombination(Params["lsw9_state"], ParamState.A)
                 }, ParamState.B),
 
@@ -536,7 +567,7 @@ namespace Prism.Units.Classes
                     new ParamCombination(Params["lsw2_state"], ParamState.B),
                     new ParamCombination(Params["lsw3_state"], ParamState.A),
                     new ParamCombination(Params["lsw4_state"], ParamState.A),
-                    new ParamCombination(Params["lsw5_state"], ParamState.A),
+                    /*new ParamCombination(Params["lsw5_state"], ParamState.A),*/
                     new ParamCombination(Params["lsw9_state"], ParamState.A)
                 }, ParamState.B),
 
@@ -546,7 +577,7 @@ namespace Prism.Units.Classes
                     new ParamCombination(Params["lsw2_state"], ParamState.A),
                     new ParamCombination(Params["lsw3_state"], ParamState.B),
                     new ParamCombination(Params["lsw4_state"], ParamState.A),
-                    new ParamCombination(Params["lsw5_state"], ParamState.A),
+                    /*new ParamCombination(Params["lsw5_state"], ParamState.A),*/
                     new ParamCombination(Params["lsw9_state"], ParamState.A)
                 }, ParamState.B),
 
@@ -556,7 +587,7 @@ namespace Prism.Units.Classes
                     new ParamCombination(Params["lsw2_state"], ParamState.A),
                     new ParamCombination(Params["lsw3_state"], ParamState.A),
                     new ParamCombination(Params["lsw4_state"], ParamState.B),
-                    new ParamCombination(Params["lsw5_state"], ParamState.A),
+                    /*new ParamCombination(Params["lsw5_state"], ParamState.A),*/
                     new ParamCombination(Params["lsw9_state"], ParamState.A)
                 }, ParamState.B),
 
@@ -566,7 +597,7 @@ namespace Prism.Units.Classes
                     new ParamCombination(Params["lsw2_state"], ParamState.A),
                     new ParamCombination(Params["lsw3_state"], ParamState.A),
                     new ParamCombination(Params["lsw4_state"], ParamState.A),
-                    new ParamCombination(Params["lsw5_state"], ParamState.B),
+                    /*new ParamCombination(Params["lsw5_state"], ParamState.B),*/
                     new ParamCombination(Params["lsw9_state"], ParamState.A)
                 }, ParamState.B),
 
@@ -603,36 +634,53 @@ namespace Prism.Units.Classes
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["common_group1_state"], ParamState.A),
-                    new ParamCombination(Params["common_group1_state"], ParamState.A),
-                    new ParamCombination(Params["common_group1_state"], ParamState.A),
-                    new ParamCombination(Params["common_group1_state"], ParamState.A)
+                    new ParamCombination(Params["common_group2_state"], ParamState.A),
+                    new ParamCombination(Params["common_group3_state"], ParamState.A),
+                    new ParamCombination(Params["common_group4_state"], ParamState.A)
                 }, ParamState.A),
 
                 new ParamRelation(new List<ParamCombination> 
                 {
-                    new ParamCombination(Params["common_group1_state"], ParamState.B)
-                }, ParamState.B),
+                    new ParamCombination(Params["common_group1_state"], ParamState.C)
+                }, ParamState.C),
+
+                new ParamRelation(new List<ParamCombination> 
+                {
+                    new ParamCombination(Params["common_group2_state"], ParamState.C)
+                }, ParamState.C),
+
+                new ParamRelation(new List<ParamCombination> 
+                {
+                    new ParamCombination(Params["common_group3_state"], ParamState.C)
+                }, ParamState.C),
+
+                new ParamRelation(new List<ParamCombination> 
+                {
+                    new ParamCombination(Params["common_group4_state"], ParamState.C)
+                }, ParamState.C),
 
                 new ParamRelation(new List<ParamCombination> 
                 {
                     new ParamCombination(Params["common_group2_state"], ParamState.B)
-                }, ParamState.B),
+                }, ParamState.A),
 
                 new ParamRelation(new List<ParamCombination> 
                 {
                     new ParamCombination(Params["common_group3_state"], ParamState.B)
-                }, ParamState.B),
-
-                new ParamRelation(new List<ParamCombination> 
-                {
-                    new ParamCombination(Params["common_group4_state"], ParamState.B)
-                }, ParamState.B),
+                }, ParamState.A),
 
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     
-                }, ParamState.C)
+                }, ParamState.B)
             });
+
+            Params["leadin1_instant_current"] = new Param("leadin1_instant_current", ChannelValues, "io,leadin1_instant_current");
+            Params["leadin1_total_active_energy"] = new Param("leadin1_total_active_energy", ChannelValues, "io,leadin1_total_active_energy");
+            Params["leadin2_instant_current"] = new Param("leadin2_instant_current", ChannelValues, "io,leadin2_instant_current");
+            Params["leadin2_total_active_energy"] = new Param("leadin2_total_active_energy", ChannelValues, "io,leadin2_total_active_energy");
+            Params["ol_instant_current"] = new Param("ol_instant_current", ChannelValues, "io,ol_instant_current");
+            Params["ol_total_active_energy"] = new Param("ol_total_active_energy", ChannelValues, "io,ol_total_active_energy");
 
             producerSettings = new ProducerSettings();
             producerSettings.ReqAddr = settings.Connection.ReqAddr;
@@ -731,17 +779,24 @@ namespace Prism.Units.Classes
             producerSettings.Channels.Add(new ProducerChannel("io", "di-ol-908"));
             producerSettings.Channels.Add(new ProducerChannel("io", "di-ol-916"));
             producerSettings.Channels.Add(new ProducerChannel("io", "di-ol-912"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin1_instant_current"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin1_total_active_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin2_instant_current"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin2_total_active_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "ol_instant_current"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "ol_total_active_energy"));            
 
             producer = new Producer(producerSettings);
+            producer.ChannelValueEvent += ProducerChannelValueEvent;
+            producer.ChannelResetEvent += ProducerChannelResetEvent;
             producer.Start();
 
-            autoUpdateTimer = new System.Timers.Timer(10000);
+            autoUpdateTimer = new System.Timers.Timer(180000);
             autoUpdateTimer.Elapsed += ProducerAutoUpdateEvent;
 
             ThreadPool.QueueUserWorkItem(delegate(object target)
             {
                 ProducerAutoUpdateEvent(null, null);
-                producer.ChannelValueEvent += ProducerChannelValueEvent;
                 autoUpdateTimer.Start();
             }, null);
         }
@@ -750,6 +805,7 @@ namespace Prism.Units.Classes
         {
             autoUpdateTimer.Stop();
             producer.ChannelValueEvent -= ProducerChannelValueEvent;
+            producer.ChannelResetEvent -= ProducerChannelResetEvent;
         }
 
         public void Operate(ProducerChannelValue value, ProcessingOperateCallback cb)
@@ -793,9 +849,9 @@ namespace Prism.Units.Classes
                     ProcessingChangeStateEvent(this);
                 }
             }, null);
-            
+
             ManualResetEvent continueEvent = new ManualResetEvent(false);
-            System.Timers.Timer queryUnvaliableTimer = new System.Timers.Timer(10000);
+            System.Timers.Timer queryUnvaliableTimer = new System.Timers.Timer(30000);
 
             queryUnvaliableTimer.Elapsed += delegate(object s, ElapsedEventArgs ev)
             {
@@ -806,40 +862,90 @@ namespace Prism.Units.Classes
             };
             queryUnvaliableTimer.Start();
 
-            int channelCounter = producerSettings.Channels.Count;
+            this.MaxQueryChannelCounter = producerSettings.Channels.Count;
+            this.QueryChannelCounter = producerSettings.Channels.Count;
 
-            foreach (var channel in producerSettings.Channels)
+            producer.GetChannelList("alarm", delegate(string error, List<ProducerChannel> channels)
             {
-                producer.ReadChannelValue(channel, delegate(string error, ProducerChannelValue value)
+                if (error == null)
                 {
-                    if (error == null)
+                    foreach (var channel in channels)
                     {
-                        ChannelValues[value.Group + "," + value.Channel] = value.Value;
-                    }
-                    else
-                    {
-                        try
+                        if (!channel.Channel.Contains("-manual"))
                         {
-                            ChannelValues.Remove(value.Group + "," + value.Channel);
+                            this.MaxQueryChannelCounter++;
+                            this.QueryChannelCounter++;
                         }
-                        catch (SystemException err)
-                        {
+                    }                    
+                    AlarmValues.Clear();
 
-                        }
-                    }
-
-                    channelCounter--;
-
-                    if (channelCounter <= 0)
+                    foreach (var channel in channels)
                     {
-                        continueEvent.Set();
+                        if (!channel.Channel.Contains("-manual"))
+                        {
+                            AlarmValues[channel.Group + "," + channel.Channel] = new Alarm(channel.Channel, "", ParamState.Unknown);
+
+                            producer.ReadChannelValue(channel, delegate(string error1, ProducerChannelValue value)
+                            {
+                                if (error1 == null)
+                                {
+                                    AlarmValues[value.Group + "," + value.Channel] = this.AlarmFromChannelValue(value);
+                                }
+
+                                this.QueryChannelCounter--;
+                                if (this.QueryChannelCounter == 0)
+                                {
+                                    continueEvent.Set();
+                                }
+                            });
+                        }
                     }
-                });
-            }
+                }
+
+                foreach (var channel in producerSettings.Channels)
+                {
+                    producer.ReadChannelValue(channel, delegate(string error2, ProducerChannelValue value)
+                    {                       
+                        if (error == null && value != null)
+                        {
+                            ChannelValues[value.Group + "," + value.Channel] = value.Value;
+                            this.QueryChannelCounter--;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                ChannelValues.Remove(value.Group + "," + value.Channel);
+                            }
+                            catch (SystemException err)
+                            {
+
+                            }
+                        }
+                        
+                        if (this.QueryChannelCounter == 0)
+                        {
+                            continueEvent.Set();
+                        }
+                    });
+                }
+            });
             continueEvent.WaitOne();
 
-            if (channelCounter < producerSettings.Channels.Count)
+            if (this.QueryChannelCounter < this.MaxQueryChannelCounter)
             {
+                if (this.QueryChannelCounter == 0)
+                {
+                    if (autoUpdateTimer.Interval != 90000)
+                    {
+                        autoUpdateTimer.Interval = 90000;
+                    }
+                }
+                else if (autoUpdateTimer.Interval != 5000)
+                {
+                    autoUpdateTimer.Interval = 5000;
+                }
+
                 if (queryUnvaliableTimer != null)
                 {
                     queryUnvaliableTimer.Stop();
@@ -855,6 +961,18 @@ namespace Prism.Units.Classes
                     }
                 }, null);
             }
+            else
+            {
+                producer.ChannelValueEvent -= ProducerChannelValueEvent;
+                producer.ChannelResetEvent -= ProducerChannelResetEvent;
+
+                producer = new Producer(producerSettings);
+                producer.ChannelValueEvent += ProducerChannelValueEvent;
+                producer.ChannelResetEvent += ProducerChannelResetEvent;
+                producer.Start();
+
+                autoUpdateTimer.Interval = 1000;
+            }
 
             IsAutoUpdateInProgress = false;
             ThreadPool.QueueUserWorkItem(delegate(object target)
@@ -868,15 +986,110 @@ namespace Prism.Units.Classes
 
         private void ProducerChannelValueEvent(object sender, ProducerChannelValue value)
         {
-            ChannelValues[value.Group + "," + value.Channel] = value.Value;
-
-            ThreadPool.QueueUserWorkItem(delegate(object target)
+            if (value.Group.Equals("alarm"))
             {
-                if (ProcessingUpdateEvent != null)
+                if (!value.Channel.Contains("-manual"))
                 {
-                    ProcessingUpdateEvent(this);
+                    AlarmValues["alarm," + value.Channel] = this.AlarmFromChannelValue(value);
+
+                    ThreadPool.QueueUserWorkItem(delegate(object target)
+                    {
+                        if (ProcessingUpdateEvent != null)
+                        {
+                            ProcessingUpdateEvent(this);
+                        }
+                    }, null);
                 }
-            }, null);
+            }
+            else
+            {
+                ChannelValues[value.Group + "," + value.Channel] = value.Value;
+
+                ThreadPool.QueueUserWorkItem(delegate(object target)
+                {
+                    if (ProcessingUpdateEvent != null)
+                    {
+                        ProcessingUpdateEvent(this);
+                    }
+                }, null);
+            }            
+        }
+
+        void ProducerChannelResetEvent(object sender, ProducerChannel channel)
+        {
+            if (channel.Group.Equals("alarm"))
+            {
+                if (!channel.Channel.Contains("-manual"))
+                {
+                    try
+                    {
+                        AlarmValues.Remove("alarm," + channel.Channel);
+                    }
+                    catch (SystemException e)
+                    {
+                    }
+                    
+                    ThreadPool.QueueUserWorkItem(delegate(object target)
+                    {
+                        if (ProcessingUpdateEvent != null)
+                        {
+                            ProcessingUpdateEvent(this);
+                        }
+                    }, null);
+                }
+            }
+            else
+            {
+                try
+                {
+                    ChannelValues.Remove(channel.Group + "," + channel.Channel);
+                }
+                catch (SystemException e)
+                {
+                }
+
+                ThreadPool.QueueUserWorkItem(delegate(object target)
+                {
+                    if (ProcessingUpdateEvent != null)
+                    {
+                        ProcessingUpdateEvent(this);
+                    }
+                }, null);
+            }
+        }
+
+        private Alarm AlarmFromChannelValue(ProducerChannelValue value)
+        {
+            if (value.Group.Equals("alarm"))
+            {
+                string[] splitValue = value.Value.Split(" ".ToCharArray(), 2);
+
+                if (splitValue != null && splitValue.Length == 2)
+                {
+                    ParamState paramState = ParamState.Unknown;
+
+                    if (splitValue[0].Equals("[I]"))
+                    {
+                        paramState = ParamState.Idle;
+                    }
+                    else if (splitValue[0].Equals("[A]"))
+                    {
+                        paramState = ParamState.A;
+                    }
+                    else if (splitValue[0].Equals("[B]"))
+                    {
+                        paramState = ParamState.B;
+                    }
+                    if (splitValue[0].Equals("[C]"))
+                    {
+                        paramState = ParamState.C;
+                    }
+
+                    return new Alarm(value.Channel, splitValue[1], paramState);
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="Prism.Visual.Controls.StateTile"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:auto="clr-namespace:Prism.General.Automation;assembly=Prism.General"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Grid>
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.C}">
+                        <Setter Property="Background" Value="#D20000"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.B}">
+                        <Setter Property="Background" Value="#F0D800"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.A}">
+                        <Setter Property="Background" Value="#69D200"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.Idle}">
+                        <Setter Property="Background" Value="#A4A4A4"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.Unknown}">
+                        <Setter Property="Background">
+                            <Setter.Value>
+                                <LinearGradientBrush EndPoint="4,4" StartPoint="0,0" MappingMode="Absolute" SpreadMethod="Repeat">
+                                    <GradientStop Color="#999999" Offset="0.15"/>
+                                    <GradientStop Color="#252526" Offset="0.15"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
+        <TextBlock Text="{Binding Text}" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.C}">
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.B}">
+                            <Setter Property="Foreground" Value="#7b7b7b"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.A}">
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.Idle}">
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.Unknown}">
+                            <Setter Property="Foreground" Value="White"/>
+                        </DataTrigger>                        
+                    </Style.Triggers>
+                </Style>                
+            </TextBlock.Style>
+        </TextBlock>
+    </Grid>
+</UserControl>

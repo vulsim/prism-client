@@ -6,6 +6,7 @@ using System.Threading;
 using Prism.General;
 using Prism.General.Automation;
 
+
 namespace TransportTest
 {
     class Program
@@ -13,9 +14,9 @@ namespace TransportTest
         static void Main(string[] args)
         {
             ProducerSettings settings = new ProducerSettings();
-            settings.ReqAddr = "tcp://192.168.127.2:1233";
-            settings.SubAddr = "tcp://192.168.127.2:1234";
-            settings.Channels.Add(new ProducerChannel("io", "test-002"));
+            settings.ReqAddr = "tcp://192.168.45.2:1233";
+            settings.SubAddr = "tcp://192.168.45.2:1234";
+            settings.Channels.Add(new ProducerChannel("io", "ol_total_active_energy"));
 
             Producer producer = new Producer(settings);
 
@@ -32,7 +33,7 @@ namespace TransportTest
                 interrupted = true; 
             };
 
-            producer.WriteChannelValue(new ProducerChannelValue("io", "do-power", "1"), delegate(string error, ProducerChannelValue value)
+            /*producer.WriteChannelValue(new ProducerChannelValue("auto", "lsw1-ast-ctrl", "M"), delegate(string error, ProducerChannelValue value)
             {
                 if (error != null)
                 {
@@ -43,15 +44,15 @@ namespace TransportTest
                     Console.WriteLine("WC: {0},{1} {2}", value.Group, value.Channel, value.Value);
                 }
             });
-            return;
+            return;*/
 
             while (!interrupted)
             {
-                producer.ReadChannelValue(new ProducerChannel("alarm", "lsw1-arm-100"), delegate(string error, ProducerChannelValue value)
+                producer.ReadChannelValue(new ProducerChannel("io", "ol_total_active_energy"), delegate(string error, ProducerChannelValue value)
                 {
                     if (error != null)
                     {
-                        //Console.WriteLine("RC: {0}", error.ToString());
+                        Console.WriteLine("RC: {0}", error.ToString());
                     }
                     else
                     {

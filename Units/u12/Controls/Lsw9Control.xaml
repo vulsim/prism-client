@@ -9,8 +9,11 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
 
@@ -19,36 +22,99 @@
         </Grid>
 
         <Grid Grid.Row="1">
-            <TextBlock Margin="20,20,20,20" Name="descText" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Внимание, функция телеуправления будет доступна если управляемый объект переведен в режим телеуправления и отсутствуют блокирующие состояния. Перед началом управления убедитесь, что объект находиться в правильном состоянии."/>
+            <TextBlock Margin="20,5,20,5" Name="descText" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Внимание, функция телеуправления будет доступна если управляемый объект переведен в режим телеуправления и отсутствуют блокирующие состояния. Перед началом управления убедитесь, что объект находиться в правильном состоянии."/>
         </Grid>
 
         <Grid Grid.Row="2">
-            <Grid>
+            <TextBlock Margin="20,0,20,0" FontSize="22" FontWeight="Thin" VerticalAlignment="Center" Text="КОНТРОЛЬ"/>
+        </Grid>
+
+        <Grid Grid.Row="3">
+            <Grid Margin="20,10,20,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <control:StateTile Name="lsw9StateTcTile" Grid.Column="0" Grid.Row="0" Margin="5,5,5,5" Height="28" Text="Телеуправление" State="Unknown" />
+                <control:StateTile Name="lsw9StateQfTile" Grid.Column="1" Grid.Row="0" Margin="5,5,5,5" Height="28" Text="Выкл. QF" State="Unknown" />
+                <control:StateTile Name="lsw9StateQsTile" Grid.Column="1" Grid.Row="1" Margin="5,5,5,5" Height="28" Text="Разъед. QS" State="Unknown" />
+                <control:StateTile Name="lsw9AlarmCircuitTile" Grid.Column="2" Grid.Row="0" Margin="5,5,5,5" Height="28" Text="Неисправн. цепей управл." State="Unknown"/>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="4">
+            <TextBlock Margin="20,0,20,0" FontSize="22" FontWeight="Thin" VerticalAlignment="Center" Text="УПРАВЛЕНИЕ"/>
+        </Grid>
+
+        <Grid Grid.Row="5">
+            <Grid  Margin="20,10,20,10">
+                <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="130"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <control:FuseImageButton Name="offButton" Width="120" Height="120" Grid.Column="1" Margin="5,0,5,0" IsEnabled="False" ImageSource="/u12;component/Resources/icon.lsw9.off.png" Text="Отключить" />                
+                <control:FuseImageButton Name="offButton" Width="120" Height="120" Grid.Column="0" VerticalAlignment="Top" Margin="5,43,5,0" IsEnabled="False" ImageSource="/u12;component/Resources/icon.lsw9.off.png" Text="Отключить" Click="OffButton_Click" />                
 
-                <Grid Grid.Column="3">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="50" />
-                        <RowDefinition Height="50" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+                <Grid Grid.Column="2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="38"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                    <control:FuseButton Name="qfOnButton" Margin="5,5,5,5" Grid.Row="1" IsEnabled="False" Text="Включить QF" Click="qfOnButton_Click" />
-                    <control:FuseButton Name="qfOffButton" Margin="5,5,5,5" Grid.Row="2" IsEnabled="False" Text="Отключить QF" Click="qfOffButton_Click" />
+                        <Grid Grid.Row="0">
+                            <CheckBox x:Name="lockExtendedControl" VerticalAlignment="Center" Margin="5,0,0,0" IsChecked="False" Content="Разблокир. управление" />
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="50" />
+                                </Grid.RowDefinitions>
+                                
+                                <control:FuseButton Name="qfOnButton" Margin="5,5,5,5" Grid.Column="0" Grid.Row="0" IsEnabled="False" Text="Включить QF" Click="qfOnButton_Click" />
+                            </Grid>
+                            <Grid>
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=lockExtendedControl, Path=IsChecked}" Value="False">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ElementName=lockExtendedControl, Path=IsChecked}" Value="True">
+                                                <Setter Property="Visibility" Value="Hidden" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+                                <Grid.Background>
+                                    <LinearGradientBrush EndPoint="4,4" StartPoint="0,0" MappingMode="Absolute" SpreadMethod="Repeat">
+                                        <GradientStop Color="#55999999" Offset="0.15"/>
+                                        <GradientStop Color="#55252526" Offset="0.15"/>
+                                    </LinearGradientBrush>
+                                </Grid.Background>
+                            </Grid>
+                        </Grid>
+                    </Grid>                   
                 </Grid>
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="3" Name="errorMessagBlock" Visibility="Hidden">
+        <Grid Grid.Row="6" Name="errorMessagBlock" Visibility="Hidden">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="*" MaxWidth="500"/>

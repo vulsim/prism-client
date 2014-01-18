@@ -12,11 +12,11 @@ namespace Prism.Classes
     public class Unit
     {
         public IUnit Instance;
-        public Uri Uri;
-        public string FullName;
-        public string ShortName;
-        public string SymbolicName;
-        public string Address;
+        public Uri Uri { get; set; }
+        public string FullName { get; set; }
+        public string ShortName { get; set; }
+        public string SymbolicName { get; set; }
+        public string Address { get; set; }
         public bool IsOnline { get { return Instance.IsOnline; } }
         public bool IsBusy { get { return Instance.IsBusy; } }
         public ParamState State { get { return Instance.State; } }
@@ -26,6 +26,7 @@ namespace Prism.Classes
 
         public event UnitBusyStateChangedEventHandler UnitBusyStateChangedEvent;
         public event UnitStateChangedEventHandler UnitStateChangedEvent;
+        public event UnitAlarmsChangedEventHandler UnitAlarmsChangedEvent;
 
         public Unit(UnitSettings settings, IJournal journal, UnitGeneralCompleteHandler completion)
         {
@@ -61,6 +62,14 @@ namespace Prism.Classes
                 if (UnitStateChangedEvent != null)
                 {
                     UnitStateChangedEvent(this, state);
+                }
+            };
+
+            Instance.UnitAlarmsChangedEvent += delegate(object sender, IEnumerable<IAlarm> alarms)
+            {
+                if (UnitAlarmsChangedEvent != null)
+                {
+                    UnitAlarmsChangedEvent(this, alarms);
                 }
             };
         }

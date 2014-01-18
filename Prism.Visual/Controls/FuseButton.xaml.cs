@@ -44,7 +44,7 @@ namespace Prism.Visual.Controls
         {
             InitializeComponent();
 
-            unlockTimer = new System.Timers.Timer(1000);
+            unlockTimer = new System.Timers.Timer(5000);
             unlockTimer.Elapsed += UnlockTimerEvent;
         }
 
@@ -56,7 +56,15 @@ namespace Prism.Visual.Controls
 
         private void UnlockTimerEvent(object sender, ElapsedEventArgs e)
         {
-            if (IsUnlocked && UnlockedTriggeredCount < 10)
+            unlockTimer.Stop();
+
+            IsUnlocked = false;
+            MainThread.EnqueueTask(delegate()
+            {
+                overlay.Visibility = System.Windows.Visibility.Hidden;
+            });
+
+            /*if (IsUnlocked && UnlockedTriggeredCount < 10)
             {
                 UnlockedTriggeredCount++;
                 MainThread.EnqueueTask(delegate()
@@ -74,16 +82,17 @@ namespace Prism.Visual.Controls
                 {
                     overlay.Visibility = System.Windows.Visibility.Hidden;
                 });
-            }
+            }*/
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
             if (IsUnlocked)
             {
-                if (UnlockedTriggeredCount > 1)
+                //if (UnlockedTriggeredCount > 1)
                 {
                     IsUnlocked = false;
+                    overlay.Visibility = System.Windows.Visibility.Hidden;
                     RoutedEventArgs args = new RoutedEventArgs(ClickEvent, this);
                     RaiseEvent(args);
                 }
@@ -91,7 +100,8 @@ namespace Prism.Visual.Controls
             else
             {
                 IsUnlocked = true;
-                UnlockedTriggeredCount = 0;
+                overlay.Visibility = System.Windows.Visibility.Visible;
+                //UnlockedTriggeredCount = 0;
                 unlockTimer.Start();
             }
         }

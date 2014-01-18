@@ -27,7 +27,7 @@
                 <ListBox Name="operationControlList" Margin="10,10,10,10" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" SelectionChanged="operationControlList_SelectionChanged">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="50">
+                            <Grid Height="46">
                                 <TextBlock Name="titleLabel" Height="20" Margin="5,0,5,0" FontFamily="Segoe UI" FontWeight="Normal" FontSize="16" FontStretch="ExtraExpanded" Text="{Binding Title}"  VerticalAlignment="Top" Foreground="White" TextTrimming="CharacterEllipsis" TextAlignment="Left" />
                                 <TextBlock Name="descriptionLabel" Height="30" Margin="5,22,5,0" FontFamily="Segoe UI" FontWeight="DemiBold" FontSize="12" FontStretch="ExtraExpanded" Text="{Binding Description}" VerticalAlignment="Top" TextAlignment="Left" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" />
                             </Grid>
@@ -37,7 +37,7 @@
                         <GroupStyle>
                             <GroupStyle.HeaderTemplate>
                                 <DataTemplate>
-                                    <Grid Height="50">
+                                    <Grid Height="52">
                                         <Label Content="{Binding Path=Name, ConverterParameter=lowercase, Converter={StaticResource ResourceKey=PresentationCategoryConverter}}" Foreground="White" FontFamily="Segoe UI" FontSize="28" FontWeight="Light" Margin="10,0,10,0" Height="50" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                     </Grid>
                                 </DataTemplate>

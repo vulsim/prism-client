@@ -31,6 +31,7 @@ namespace Prism.Units.Controls
         private Param paOffCtrlState;
         private Param kaOnCtrlState;
         private Param kaOffCtrlState;
+        private Boolean lockUpdate = false;
 
         public RectControl(Unit unit, uint index, String title)
         {
@@ -163,6 +164,7 @@ namespace Prism.Units.Controls
             kaOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            lockUpdate = true;
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("rect{0}-pa-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
@@ -171,6 +173,8 @@ namespace Prism.Units.Controls
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
+                    lockExtendedControl.IsChecked = false;
+                    lockUpdate = false;
                     UpdateState();
                 });
             });
@@ -184,6 +188,7 @@ namespace Prism.Units.Controls
             kaOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            lockUpdate = true;
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("rect{0}-pa-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
@@ -192,6 +197,8 @@ namespace Prism.Units.Controls
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
+                    lockExtendedControl.IsChecked = false;
+                    lockUpdate = false;
                     UpdateState();
                 });
             });
@@ -205,6 +212,7 @@ namespace Prism.Units.Controls
             kaOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            lockUpdate = true;
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("rect{0}-ka-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
@@ -213,6 +221,8 @@ namespace Prism.Units.Controls
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
+                    lockExtendedControl.IsChecked = false;
+                    lockUpdate = false;
                     UpdateState();
                 });
             });
@@ -226,6 +236,7 @@ namespace Prism.Units.Controls
             kaOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            lockUpdate = true;
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("rect{0}-ka-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
@@ -234,6 +245,8 @@ namespace Prism.Units.Controls
                     {
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
+                    lockExtendedControl.IsChecked = false;
+                    lockUpdate = false;
                     UpdateState();
                 });
             });
@@ -241,6 +254,22 @@ namespace Prism.Units.Controls
 
         private void UpdateState()
         {
+            rectStatePaTile.State = Unit.Processing.Params[String.Format("rect{0}_state_pa_switch", Index)].State;
+            rectStateQfTile.State = Unit.Processing.Params[String.Format("rect{0}_state_qf_switch", Index)].State;
+            rectStateQsTile.State = Unit.Processing.Params[String.Format("rect{0}_state_qs_switch", Index)].State;
+            rectStateTcTile.State = Unit.Processing.Params[String.Format("rect{0}_state_tc_switch", Index)].State;
+            rectAlarmCircuitTile.State = Unit.Processing.Params[String.Format("rect{0}_alarm_circuit_fault", Index)].State;
+            rectAlarmGasTile.State = Unit.Processing.Params[String.Format("rect{0}_alarm_rec_gas_warn", Index)].State;
+            rectAlarmOverloadTile.State = Unit.Processing.Params[String.Format("rect{0}_alarm_rec_overload", Index)].State;
+            rectAlarmPaSwitchTile.State = Unit.Processing.Params[String.Format("rect{0}_alarm_pa_switch_fault", Index)].State;
+            rectAlarmRecFaultTile.State = Unit.Processing.Params[String.Format("rect{0}_alarm_rec_fault", Index)].State;
+            rectAlarmRpz600Tile.State = Unit.Processing.Params[String.Format("rect{0}_alarm_rec_rpz600v_fault", Index)].State;
+
+            if (lockUpdate)
+            {
+                return;
+            }
+
             paOnButton.IsEnabled = (paOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
             paOffButton.IsEnabled = (paOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
             kaOnButton.IsEnabled = (kaOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);

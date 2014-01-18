@@ -252,17 +252,23 @@ namespace Prism.General.Automation
             private ZmqSocket CreateSocket(ZmqContext context, string endpoint, List<ProducerChannel> channels)
             {
                 ZmqSocket Socket = context.CreateSocket(SocketType.SUB);
-                Socket.Linger = new TimeSpan(0, 0, 5);
+                /*Socket.Linger = new TimeSpan(0, 0, 5);
                 Socket.ReconnectInterval = new TimeSpan(0, 0, 0, 0, 100);
                 Socket.ReconnectIntervalMax = new TimeSpan(0, 0, 2);
                 Socket.ReceiveTimeout = new TimeSpan(0, 0, 11);
-                Socket.SendTimeout = new TimeSpan(0, 0, 4);
+                Socket.SendTimeout = new TimeSpan(0, 0, 4);*/
+
+                Socket.Linger = new TimeSpan(0, 0, 5);
+                Socket.ReconnectInterval = new TimeSpan(0, 0, 1);
+                Socket.ReconnectIntervalMax = new TimeSpan(0, 0, 5);
+
                 Socket.Connect(endpoint);
 
                 foreach (ProducerChannel channel in channels)
                 {
                     Socket.Subscribe(Encoding.UTF8.GetBytes(String.Format("{0},{1}", channel.Group, channel.Channel)));
                 }
+                Socket.Subscribe(Encoding.UTF8.GetBytes("alarm"));
 
                 return Socket;
             }
@@ -378,11 +384,16 @@ namespace Prism.General.Automation
             private ZmqSocket CreateSocket(ZmqContext context, string endpoint)
             {
                 ZmqSocket Socket = context.CreateSocket(SocketType.REQ);
-                Socket.Linger = new TimeSpan(0, 0, 5);
+                /*Socket.Linger = new TimeSpan(0, 0, 5);
                 Socket.ReconnectInterval = new TimeSpan(0, 0, 0, 0, 100);
                 Socket.ReconnectIntervalMax = new TimeSpan(0, 0, 2);
                 Socket.ReceiveTimeout = new TimeSpan(0, 0, 11);
-                Socket.SendTimeout = new TimeSpan(0, 0, 4);
+                Socket.SendTimeout = new TimeSpan(0, 0, 4);*/
+
+                Socket.Linger = new TimeSpan(0, 0, 5);
+                Socket.ReconnectInterval = new TimeSpan(0, 0, 1);
+                Socket.ReconnectIntervalMax = new TimeSpan(0, 0, 5);
+
                 Socket.Connect(endpoint);
                 return Socket;
             }
@@ -442,7 +453,7 @@ namespace Prism.General.Automation
 
                                                     if (packet.Error != null)
                                                     {
-                                                        cb(packet.Error, null);
+                                                        cb(packet.Error, null);                                                        
                                                     }
                                                     else
                                                     {
@@ -451,7 +462,7 @@ namespace Prism.General.Automation
                                                 }
                                                 catch (SystemException e)
                                                 {
-                                                    cb(e.ToString(), null);
+                                                    cb(e.ToString(), null);                                                  
                                                 }
                                                 break;
                                             }
@@ -475,7 +486,7 @@ namespace Prism.General.Automation
                                                 }
                                                 catch (SystemException e)
                                                 {
-                                                    cb(e.ToString(), null);
+                                                    cb(e.ToString(), null);                                                    
                                                 }
                                                 break;
                                             }
@@ -499,7 +510,7 @@ namespace Prism.General.Automation
                                                 }
                                                 catch (SystemException e)
                                                 {
-                                                    cb(e.ToString(), null);
+                                                    cb(e.ToString(), null);                                                    
                                                 }
                                                 break;
                                             }
@@ -523,7 +534,7 @@ namespace Prism.General.Automation
                                                 }
                                                 catch (SystemException e)
                                                 {
-                                                    cb(e.ToString(), null);
+                                                    cb(e.ToString(), null);                                                    
                                                 }
                                                 break;
                                             }
@@ -596,16 +607,28 @@ namespace Prism.General.Automation
 
         ~Producer()
         {
-            zmqSubWorker.ChannelValueEvent -= ChannelValue;
-            zmqSubWorker.ChannelResetEvent -= ChannelReset;
-            zmqSubWorker.ProcessAbort();
+            Abort();
+            zmqContext.Dispose();
+        }
 
-            foreach (var zmqReqWorker in zmqReqWorkerPool)
+        public void Abort()
+        {
+            if (zmqSubWorker != null)
             {
-                zmqReqWorker.ProcessAbort();
+                zmqSubWorker.ChannelValueEvent -= ChannelValue;
+                zmqSubWorker.ChannelResetEvent -= ChannelReset;
+                zmqSubWorker.ProcessAbort();
+                zmqSubWorker = null;
             }
 
-            zmqContext.Dispose();
+            if (zmqReqWorkerPool != null)
+            {
+                foreach (var zmqReqWorker in zmqReqWorkerPool)
+                {
+                    zmqReqWorker.ProcessAbort();
+                }
+                zmqReqWorkerPool = null;
+            }
         }
 
         private void ChannelValue(object sender, ProducerChannelValue value)

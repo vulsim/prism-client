@@ -7,7 +7,7 @@ namespace Prism.General.Automation
 {
     public interface IAlarm
     {
-        int Code { get; set; }       
+        string Code { get; set; }       
         string Description { get; set; }
         ParamState State { get; set; }
     }

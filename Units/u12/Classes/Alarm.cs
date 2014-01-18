@@ -8,8 +8,15 @@ namespace Prism.Units.Classes
 {
     public class Alarm : IAlarm
     {
-        public int Code { get; set; }
+        public string Code { get; set; }
         public string Description { get; set; }
         public ParamState State { get; set; }
+
+        public Alarm(string code, string description, ParamState state)
+        {
+            this.Code = code;
+            this.Description = description;
+            this.State = state;
+        }
     }
 }

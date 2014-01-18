@@ -12,6 +12,6 @@
                 <TextBlock Name="textBlock" Text="{Binding Text}"/>
             </Grid>            
         </Button>
-        <Grid Background="#22007ACF" Name="overlay" Visibility="Hidden" IsHitTestVisible="False" />
+        <Grid Background="#44CF000E" Name="overlay" Visibility="Hidden" IsHitTestVisible="False" />
     </Grid>
 </UserControl>

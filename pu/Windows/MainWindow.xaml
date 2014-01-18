@@ -5,7 +5,7 @@
   xmlns:res="clr-namespace:Prism.Properties"
   Title="Prism" IsTitleVisible="False" 
   Height="525" Width="720"
-  ContentSource="/Views/ExploreRootView.xaml"
+  ContentSource="/Views/OperationStateView.xaml"
   Loaded="ModernWindow_Loaded"
   Closing="ModernWindow_Closing">
     <mui:ModernWindow.TitleLinks>
@@ -14,7 +14,12 @@
     <mui:ModernWindow.MenuLinkGroups>
         <mui:LinkGroup DisplayName="{x:Static res:Resources.APP_MAINWINDOW_TITLE_EXPLORE}">
             <mui:LinkGroup.Links>
-                <mui:Link Source="/Views/ExploreRootView.xaml" />
+                <mui:Link Source="/Views/OperationStateView.xaml" />
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
+        <mui:LinkGroup DisplayName="{x:Static res:Resources.APP_EXPLOREROOTVIEW_TITLE_ALARMS}">
+            <mui:LinkGroup.Links>
+                <mui:Link Source="/Views/AlarmsView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="{x:Static res:Resources.APP_MAINWINDOW_TITLE_OPERATION}">
@@ -22,10 +27,10 @@
                 <mui:Link Source="/Views/OperationRootView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        <mui:LinkGroup DisplayName="{x:Static res:Resources.APP_MAINWINDOW_TITLE_JOURNAL}">
+        <!-- <mui:LinkGroup DisplayName="{x:Static res:Resources.APP_MAINWINDOW_TITLE_JOURNAL}">
             <mui:LinkGroup.Links>
                 <mui:Link Source="/Views/JournalRootView.xaml" />
             </mui:LinkGroup.Links>
-        </mui:LinkGroup>
+        </mui:LinkGroup>-->
     </mui:ModernWindow.MenuLinkGroups>
 </mui:ModernWindow>
