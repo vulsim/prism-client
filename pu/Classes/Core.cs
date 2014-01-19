@@ -55,23 +55,25 @@ namespace Prism.Classes
                 });            
             });
 
-            contentLoader.Enqueue(Resources.CORE_STARTUP_MESSAGE_0, delegate()
+            contentLoader.Enqueue(Resources.CORE_STARTUP_MESSAGE_0, delegate(object target)
             {
                 Units = new List<Unit>();
                 Journal = new Journal();
                 AlarmNotificationCenter.Instance = new AlarmNotificationCenter();
-            });
+            }, null);
 
-            contentLoader.Enqueue(Resources.CORE_STARTUP_MESSAGE_1, delegate()
+            contentLoader.Enqueue(Resources.CORE_STARTUP_MESSAGE_1, delegate(object target)
             {
                 try 
                 {
                     AssemblySettings assemblySettings = AssemblySettings.Load("assembly.conf");
 
-                    foreach (UnitSettings unitSettings in assemblySettings.Units)
+                    foreach (UnitSettings settings in assemblySettings.Units)
                     {
-                        contentLoader.Enqueue(String.Format(Resources.CORE_STARTUP_MESSAGE_2, unitSettings.FullName), delegate()
+                        contentLoader.Enqueue(String.Format(Resources.CORE_STARTUP_MESSAGE_2, settings.FullName), delegate(object target1)
                         {
+                            UnitSettings unitSettings = (UnitSettings)target1;
+
                             try
                             {
                                 ManualResetEvent ContinueEvent = new ManualResetEvent(false);
@@ -102,10 +104,10 @@ namespace Prism.Classes
                             catch (SystemException e)
                             {
                             }
-                        });
+                        }, settings);  
                     }
 
-                    contentLoader.Enqueue(Resources.CORE_STARTUP_MESSAGE_3, delegate()
+                    contentLoader.Enqueue(Resources.CORE_STARTUP_MESSAGE_3, delegate(object target2)
                     {
                         CoreUpdateGeneralState();
 
@@ -118,12 +120,12 @@ namespace Prism.Classes
 
                             CoreUpdateBusyState();
                         });                                                
-                    });
+                    }, null);
                 }
                 catch (SystemException e)
                 {
                 }                
-            });           
+            }, null);           
         }
 
         public void Shutdown()

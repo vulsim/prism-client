@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F82FFEE6-35B6-4F8D-A132-656286D2D968}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Prism.Units</RootNamespace>
+    <AssemblyName>u11</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MahApps.Metro">
+      <HintPath>..\..\External\MahApps.Metro\MahApps.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Classes\Alarm.cs" />
+    <Compile Include="Classes\PresentationControl.cs" />
+    <Compile Include="Classes\Processing.cs" />
+    <Compile Include="Classes\Unit.cs" />
+    <Compile Include="Controls\LeadinControl.xaml.cs">
+      <DependentUpon>LeadinControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Lsw9Control.xaml.cs">
+      <DependentUpon>Lsw9Control.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LswControl.xaml.cs">
+      <DependentUpon>LswControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RectControl.xaml.cs">
+      <DependentUpon>RectControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SchematicControl.xaml.cs">
+      <DependentUpon>SchematicControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Prism.General\Prism.General.csproj">
+      <Project>{6C708195-CCBC-4AE2-B103-81245A0697B9}</Project>
+      <Name>Prism.General</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\ShockwaveFlashControl\ShockwaveFlashControl.csproj">
+      <Project>{7513575E-334F-4AF3-9C96-863BD801277F}</Project>
+      <Name>ShockwaveFlashControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Prism.Visual\Prism.Visual.csproj">
+      <Project>{33F32871-726B-4C6E-86A6-52BCE7C39158}</Project>
+      <Name>Prism.Visual</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Unit\u11\Schematic.swf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Controls\LeadinControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Lsw9Control.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\LswControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\RectControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SchematicControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\icon.leadin.off.png" />
+    <Resource Include="Resources\icon.leadin.on.png" />
+    <Resource Include="Resources\icon.lsw.off.png" />
+    <Resource Include="Resources\icon.lsw.on.png" />
+    <Resource Include="Resources\icon.lsw.spare.png" />
+    <Resource Include="Resources\icon.lsw9.off.png" />
+    <Resource Include="Resources\icon.lsw9.on.png" />
+    <Resource Include="Resources\icon.rect.off.png" />
+    <Resource Include="Resources\icon.rect.on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\icon.warning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\icon.lsw.main.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\icon.alert.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="Prism.Units.Controls.Lsw9Control"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:control="clr-namespace:Prism.Visual.Controls;assembly=Prism.Visual"
+             xmlns:mahapps="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
+             Loaded="UserControl_Loaded">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="100"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Background="#333333">
+                <TextBlock Margin="20,0,20,5" Name="titleText" FontSize="26" FontWeight="Thin" VerticalAlignment="Center"/>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <TextBlock Margin="20,5,20,5" Name="descText" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Внимание, функция телеуправления будет доступна если управляемый объект переведен в режим телеуправления и отсутствуют блокирующие состояния. Перед началом управления убедитесь, что объект находиться в правильном состоянии."/>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <TextBlock Margin="20,0,20,0" FontSize="22" FontWeight="Thin" VerticalAlignment="Center" Text="КОНТРОЛЬ"/>
+            </Grid>
+
+            <Grid Grid.Row="3">
+                <Grid Margin="20,10,20,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <control:StateTile Name="lsw9StateTcTile" Grid.Column="0" Grid.Row="0" Margin="5,5,5,5" Height="28" Text="Телеуправление" State="Unknown" />
+                    <control:StateTile Name="lsw9StateQfTile" Grid.Column="1" Grid.Row="0" Margin="5,5,5,5" Height="28" Text="Выкл. QF" State="Unknown" />
+                    <control:StateTile Name="lsw9StateQsTile" Grid.Column="1" Grid.Row="1" Margin="5,5,5,5" Height="28" Text="Разъед. QS" State="Unknown" />
+                    <control:StateTile Name="lsw9AlarmCircuitTile" Grid.Column="2" Grid.Row="0" Margin="5,5,5,5" Height="28" Text="Неисправн. цепей управл." State="Unknown"/>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Row="4">
+                <TextBlock Margin="20,0,20,0" FontSize="22" FontWeight="Thin" VerticalAlignment="Center" Text="УПРАВЛЕНИЕ"/>
+            </Grid>
+
+            <Grid Grid.Row="5">
+                <Grid  Margin="20,10,20,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <control:FuseImageButton Name="onButton" Width="120" Height="120" Grid.Column="0" VerticalAlignment="Top" Margin="5,43,0,0" IsEnabled="False" ImageSource="/u11;component/Resources/icon.lsw9.on.png" Text="Включить" Click="onButton_Click" />
+                    <control:FuseImageButton Name="offButton" Width="120" Height="120" Grid.Column="2" VerticalAlignment="Top" Margin="0,43,5,0" IsEnabled="False" ImageSource="/u11;component/Resources/icon.lsw9.off.png" Text="Отключить" Click="OffButton_Click" />
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Row="6" Name="errorMessagBlock" Visibility="Hidden">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" MaxWidth="500"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Source="/u11;component/Resources/icon.warning.png" Width="64" Height="64" VerticalAlignment="Top" />
+                <TextBlock Grid.Column="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Внимание, команда управления завершилась с ошибкой или была выполнена, но результат не привел к изменению состояния объекта управления. Попробуйте повторить поппытку управления еще раз."/>
+            </Grid>
+        </Grid>
+        <Grid Name="overlay" Background="#DC252526">
+            <mahapps:ProgressRing Name="progress" IsActive="False" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <StackPanel Name="alertMessageBlock" Visibility="Hidden" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Image Source="/u11;component/Resources/icon.alert.png" Width="48" Height="48" />
+                <TextBlock Text="Отсутствует подключение" FontFamily="Segoe UI" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Grid>        
+    </Grid>
+</UserControl>

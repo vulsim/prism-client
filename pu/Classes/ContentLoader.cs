@@ -6,18 +6,20 @@ using System.Threading;
 
 namespace Prism.Classes
 {
-    public delegate void ContentLoaderHandler();
+    public delegate void ContentLoaderHandler(object target);
     public delegate void ContentLoaderProgressHandler(uint stage, string description);
 
     class ContentLoaderItem
     {
         public string Description;
         public ContentLoaderHandler Handler;
+        public object Target;
 
-        public ContentLoaderItem(string description, ContentLoaderHandler handler)
+        public ContentLoaderItem(string description, ContentLoaderHandler handler, object target)
         {
             this.Description = description;
             this.Handler = handler;
+            this.Target = target;
         }
     }    
 
@@ -41,7 +43,7 @@ namespace Prism.Classes
                     {
                         ContentLoaderItem item = LoaderQueue.Dequeue();
                         progress(itemIndex++, item.Description);
-                        item.Handler();
+                        item.Handler(item.Target);
                     }
                     else 
                     {
@@ -63,9 +65,9 @@ namespace Prism.Classes
             }            
         }
 
-        public void Enqueue(string description, ContentLoaderHandler handler)
+        public void Enqueue(string description, ContentLoaderHandler handler, object target)
         {
-            LoaderQueue.Enqueue(new ContentLoaderItem(description, handler));
+            LoaderQueue.Enqueue(new ContentLoaderItem(description, handler, target));
             ContinueLoaderThreadEvent.Set();
         }
     }

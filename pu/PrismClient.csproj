@@ -26,7 +26,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationRevision>3</ApplicationRevision>
     <ApplicationVersion>0.9.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -213,6 +213,7 @@
     <Resource Include="Resources\logo.about.png" />
     <Resource Include="icon.app.ico" />
     <Resource Include="Resources\icon.app.ico" />
+    <Content Include="Unit\u11\Schematic.swf" />
     <Content Include="Unit\u12\Schematic.swf" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -237,6 +238,10 @@
     <ProjectReference Include="..\Common\ShockwaveFlashControl\ShockwaveFlashControl.csproj">
       <Project>{7513575E-334F-4AF3-9C96-863BD801277F}</Project>
       <Name>ShockwaveFlashControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Units\u11\u11.csproj">
+      <Project>{F82FFEE6-35B6-4F8D-A132-656286D2D968}</Project>
+      <Name>u11</Name>
     </ProjectReference>
     <ProjectReference Include="..\Units\u12\u12.csproj">
       <Project>{3DC658C0-811D-4D9A-B515-2BDC870B8A45}</Project>
