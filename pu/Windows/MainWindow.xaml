@@ -8,6 +8,7 @@
   Height="600" Width="1024"
   WindowStartupLocation="CenterScreen"
   WindowState="Maximized"
+  Icon="pack://application:,,,/Resources/icon.app.ico"
   ContentSource="/Views/OperationStateView.xaml"
   Loaded="ModernWindow_Loaded"
   Closing="ModernWindow_Closing">    

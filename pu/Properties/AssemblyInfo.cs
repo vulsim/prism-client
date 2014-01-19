@@ -7,12 +7,12 @@ using System.Windows;
 // Управление общими сведениями о сборке осуществляется с помощью 
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
-[assembly: AssemblyTitle("Prism SCADA Client")]
+[assembly: AssemblyTitle("Prism G1 Client")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Y.Kupala State University of Grodno")]
-[assembly: AssemblyProduct("Prism SCADA G1")]
-[assembly: AssemblyCopyright("Copyright © 2013 Y.Kupala State University of Grodno")]
+[assembly: AssemblyProduct("Prism G1")]
+[assembly: AssemblyCopyright("© Y.Kupala State University of Grodno, 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,6 +51,6 @@ using System.Windows;
 // Можно задать все значения или принять номер построения и номер редакции по умолчанию, 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.6.0.0")]
-[assembly: AssemblyFileVersion("0.6.0.0")]
+[assembly: AssemblyVersion("0.9.0.0")]
+[assembly: AssemblyFileVersion("0.9.0.0")]
 [assembly: GuidAttribute("1525a6e3-9c57-4893-8728-80e2417a7893")]

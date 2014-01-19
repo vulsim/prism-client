@@ -26,8 +26,8 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>3</ApplicationRevision>
-    <ApplicationVersion>0.8.0.%2a</ApplicationVersion>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>0.9.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -53,7 +53,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\Main.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\icon.app.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -210,6 +210,9 @@
     <Resource Include="Resources\icon.journal.information.png" />
     <Resource Include="Resources\icon.journal.warning.png" />
     <Resource Include="Resources\icon.eye.png" />
+    <Resource Include="Resources\logo.about.png" />
+    <Resource Include="icon.app.ico" />
+    <Resource Include="Resources\icon.app.ico" />
     <Content Include="Unit\u12\Schematic.swf" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -239,9 +242,6 @@
       <Project>{3DC658C0-811D-4D9A-B515-2BDC870B8A45}</Project>
       <Name>u12</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Main.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\icon.door.enter.png" />

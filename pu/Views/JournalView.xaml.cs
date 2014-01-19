@@ -156,6 +156,7 @@ namespace Prism.Views
             {
                 CurrentJournal.Clear();
                 CurrentJournal.AddRange(this.GetJournalFromDate(date));
+                CurrentJournal.Sort(JournalEntryCompare);
                 MainThread.EnqueueTask(delegate()
                 {
                     dataGrid.Items.Refresh();
@@ -163,6 +164,11 @@ namespace Prism.Views
                     progress.IsActive = false;
                 });
             }, null);
+        }
+
+        private static int JournalEntryCompare(JournalEntry a, JournalEntry b)
+        {
+            return b.Date.CompareTo(a.Date);
         }
     }
 }

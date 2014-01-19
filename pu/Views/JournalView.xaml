@@ -36,7 +36,18 @@
             
             <DataGrid Grid.Row="1" Name ="dataGrid" ItemsSource="{Binding Path=CurrentJournal, ElementName=view}" CanUserReorderColumns="False" CanUserResizeColumns="True" CanUserResizeRows="False" CanUserSortColumns="True" AutoGenerateColumns="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ColumnWidth="*" SelectionUnit="FullRow" SelectedCellsChanged="dataGrid_SelectedCellsChanged">
                 <DataGrid.Columns>
-                    <DataGridTextColumn x:Name="Date" Binding="{Binding Date}" Header="Дата" Width="150" MinWidth="150" MaxWidth="150" IsReadOnly="True" />                    
+                    <DataGridTemplateColumn x:Name="Date" SortMemberPath="Date" Header="Дата" Width="150" MinWidth="150" MaxWidth="150" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate >
+                            <DataTemplate>
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <Binding Path="Date" ConverterCulture="ru-RU" />
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
                     <DataGridTemplateColumn x:Name="Type" Header="Тип" Width="75" MinWidth="75" MaxWidth="75" IsReadOnly="True" >
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

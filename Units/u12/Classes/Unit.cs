@@ -93,80 +93,86 @@ namespace Prism.Units.Classes
 
         private void ProcessingUpdateEvent(object sender)
         {
-            Dictionary<string, Alarm> AlarmValues = new Dictionary<string, Alarm>(Processing.AlarmValues);
-            ParamState newState = ParamState.Unknown;
-            bool hasModifiedAlarms = false;
-            int lastAlarmCount = AlarmsInternal.Count;
-
-            AlarmsInternal.RemoveAll(delegate(Alarm a)
+            try
             {
-                return !Processing.AlarmValues.ContainsKey("alarm," + a.Code);
-            });
+                Dictionary<string, Alarm> AlarmValues = new Dictionary<string, Alarm>(Processing.AlarmValues);
+                ParamState newState = ParamState.Unknown;
+                bool hasModifiedAlarms = false;
+                int lastAlarmCount = AlarmsInternal.Count;
 
-            hasModifiedAlarms = lastAlarmCount > AlarmsInternal.Count;
-
-            foreach (KeyValuePair<string, Alarm> alarmKeyValue in AlarmValues)
-            {
-                Alarm lastAlarm = AlarmsInternal.Find(delegate(Alarm a)
+                AlarmsInternal.RemoveAll(delegate(Alarm a)
                 {
-                    return a.Code.Equals(alarmKeyValue.Value.Code);
+                    return !Processing.AlarmValues.ContainsKey("alarm," + a.Code);
                 });
 
-                if (lastAlarm != null)
+                hasModifiedAlarms = lastAlarmCount > AlarmsInternal.Count;
+
+                foreach (KeyValuePair<string, Alarm> alarmKeyValue in AlarmValues)
                 {
-                    if (lastAlarm.State != alarmKeyValue.Value.State || !lastAlarm.Description.Equals(alarmKeyValue.Value.Description))
+                    Alarm lastAlarm = AlarmsInternal.Find(delegate(Alarm a)
                     {
-                        lastAlarm.State = alarmKeyValue.Value.State;
-                        lastAlarm.Description = alarmKeyValue.Value.Description;
+                        return a.Code.Equals(alarmKeyValue.Value.Code);
+                    });
+
+                    if (lastAlarm != null)
+                    {
+                        if (lastAlarm.State != alarmKeyValue.Value.State || !lastAlarm.Description.Equals(alarmKeyValue.Value.Description))
+                        {
+                            lastAlarm.State = alarmKeyValue.Value.State;
+                            lastAlarm.Description = alarmKeyValue.Value.Description;
+                            hasModifiedAlarms = true;
+                        }
+                    }
+                    else
+                    {
                         hasModifiedAlarms = true;
+                        AlarmsInternal.Add(alarmKeyValue.Value);
+                    }
+
+                    if (alarmKeyValue.Value.State > newState)
+                    {
+                        newState = alarmKeyValue.Value.State;
+                    }
+                }
+
+                if (this.IsOnline)
+                {
+                    if (Processing.Params["common_state"].State > newState)
+                    {
+                        newState = Processing.Params["common_state"].State;
                     }
                 }
                 else
                 {
-                    hasModifiedAlarms = true;
-                    AlarmsInternal.Add(alarmKeyValue.Value);
+                    newState = ParamState.B;
                 }
 
-                if (alarmKeyValue.Value.State > newState)
+                if (hasModifiedAlarms)
                 {
-                    newState = alarmKeyValue.Value.State;
-                }
-            }
-                     
-            if (this.IsOnline)
-            {
-                if (Processing.Params["common_state"].State > newState)
-                {
-                    newState = Processing.Params["common_state"].State;
-                }
-            }
-            else
-            {
-                newState = ParamState.B;
-            }
-
-            if (hasModifiedAlarms)
-            {
-                if (UnitAlarmsChangedEvent != null)
-                {
-                    MainThread.EnqueueTask(delegate()
+                    if (UnitAlarmsChangedEvent != null)
                     {
-                        UnitAlarmsChangedEvent(this, AlarmsInternal);
-                    });
+                        MainThread.EnqueueTask(delegate()
+                        {
+                            UnitAlarmsChangedEvent(this, AlarmsInternal);
+                        });
+                    }
                 }
-            }
 
-            if (newState != LastState)
-            {
-                LastState = newState;
-                if (UnitStateChangedEvent != null)
+                if (newState != LastState)
                 {
-                    MainThread.EnqueueTask(delegate()
+                    LastState = newState;
+                    if (UnitStateChangedEvent != null)
                     {
-                        UnitStateChangedEvent(this, LastState);
-                    });
+                        MainThread.EnqueueTask(delegate()
+                        {
+                            UnitStateChangedEvent(this, LastState);
+                        });
+                    }
                 }
             }
+            catch (Exception)
+            {
+            }            
         }
 
         private void ProcessingChangeStateEvent(object sender)

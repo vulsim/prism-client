@@ -74,7 +74,11 @@
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Grid.Column="0" Name="stationLabel" Text="{Binding Unit.FullName}" TextTrimming="CharacterEllipsis" Foreground="#717171" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="1" Name="dateLabel" Text="{Binding Date}" Foreground="#717171" VerticalAlignment="Center" />
+                                                <TextBlock Grid.Column="1" Name="dateLabel" Foreground="#717171" VerticalAlignment="Center">
+                                                    <TextBlock.Text>
+                                                        <Binding Path="Date" ConverterCulture="ru-RU" />
+                                                    </TextBlock.Text>
+                                                </TextBlock>
                                             </Grid>
                                         </Grid>
                                     </Grid>

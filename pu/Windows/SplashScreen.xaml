@@ -7,6 +7,6 @@
         <Image Name="backgroundImage" Stretch="Fill" Source="/prism;component/Resources/splash_background.png" />
         <ProgressBar VerticalAlignment="Bottom" Minimum="0" Maximum="1" Height="16" IsIndeterminate="True" VerticalContentAlignment="Bottom" FlowDirection="LeftToRight" Margin="0,0,0,12" Foreground="White" />
         <Label Name="ProgressLabel" Height="21" HorizontalAlignment="Left" Margin="12,0,0,34" VerticalAlignment="Bottom" Width="594" Foreground="White" Content="" VerticalContentAlignment="Center" />
-        <Label Content="v.0.6 Special Edition" Name="versionLabel" Height="17" Margin="12,12,12,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" />
+        <Label Name="versionLabel" Height="17" Margin="12,12,12,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" />
     </Grid>
 </Window>

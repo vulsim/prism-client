@@ -6,6 +6,13 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-            
+        <Grid Margin="{StaticResource RootMargin}">
+            <ProgressBar Name="generalBusyProgress" VerticalAlignment="Top" Minimum="0" Maximum="1" Height="16" IsIndeterminate="True" Margin="0,0,0,16" Visibility="Hidden"/>
+        </Grid>
+        <Grid Margin="0,20,20,0" Height="150" Background="#004C9C" VerticalAlignment="Top">
+            <Image Width="264" Height="105" Stretch="Uniform" Source="/prism;component/Resources/logo.about.png" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label Name="versionLabel" Height="17" Margin="12,12,12,28" VerticalAlignment="Bottom" HorizontalContentAlignment="Left" />
+            <Label Name="copyrightLabel" Height="17" Margin="12,12,12,10" VerticalAlignment="Bottom" HorizontalContentAlignment="Left" />            
+        </Grid>            
     </Grid>
 </UserControl>
