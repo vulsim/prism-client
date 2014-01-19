@@ -41,8 +41,6 @@ namespace Prism.Units.Classes
         {
             Unit = unit;
 
-            Unit.Journal.Informarion(Unit, 199, "Инициализация модуля");
-
             AlarmValues = new Dictionary<string, Alarm>();
             ChannelValues = new Dictionary<string, string>();
             Params = new Dictionary<string, Param>();
@@ -684,11 +682,35 @@ namespace Prism.Units.Classes
 
             Params["leadin1_instant_current"] = new Param("leadin1_instant_current", ChannelValues, "io,leadin1_instant_current");
             Params["leadin1_total_active_energy"] = new Param("leadin1_total_active_energy", ChannelValues, "io,leadin1_total_active_energy");
+            Params["leadin1_total_eplus_energy"] = new Param("leadin1_total_eplus_energy", ChannelValues, "io,leadin1_total_eplus_energy");
+            Params["leadin1_total_eminus_energy"] = new Param("leadin1_total_eminus_energy", ChannelValues, "io,leadin1_total_eminus_energy");
+            Params["leadin1_total_rplus_energy"] = new Param("leadin1_total_rplus_energy", ChannelValues, "io,leadin1_total_rplus_energy");
+            Params["leadin1_total_rminus_energy"] = new Param("leadin1_total_rminus_energy", ChannelValues, "io,leadin1_total_rminus_energy");
+            Params["leadin1_month_eplus_energy"] = new Param("leadin1_month_eplus_energy", ChannelValues, "io,leadin1_month_eplus_energy");
+            Params["leadin1_month_eminus_energy"] = new Param("leadin1_month_eminus_energy", ChannelValues, "io,leadin1_month_eminus_energy");
+            Params["leadin1_month_rplus_energy"] = new Param("leadin1_month_rplus_energy", ChannelValues, "io,leadin1_month_rplus_energy");
+            Params["leadin1_month_rminus_energy"] = new Param("leadin1_month_rminus_energy", ChannelValues, "io,leadin1_month_rminus_energy");
             Params["leadin2_instant_current"] = new Param("leadin2_instant_current", ChannelValues, "io,leadin2_instant_current");
             Params["leadin2_total_active_energy"] = new Param("leadin2_total_active_energy", ChannelValues, "io,leadin2_total_active_energy");
+            Params["leadin2_total_eplus_energy"] = new Param("leadin2_total_eplus_energy", ChannelValues, "io,leadin2_total_eplus_energy");
+            Params["leadin2_total_eminus_energy"] = new Param("leadin2_total_eminus_energy", ChannelValues, "io,leadin2_total_eminus_energy");
+            Params["leadin2_total_rplus_energy"] = new Param("leadin2_total_rplus_energy", ChannelValues, "io,leadin2_total_rplus_energy");
+            Params["leadin2_total_rminus_energy"] = new Param("leadin2_total_rminus_energy", ChannelValues, "io,leadin2_total_rminus_energy");
+            Params["leadin2_month_eplus_energy"] = new Param("leadin2_month_eplus_energy", ChannelValues, "io,leadin2_month_eplus_energy");
+            Params["leadin2_month_eminus_energy"] = new Param("leadin2_month_eminus_energy", ChannelValues, "io,leadin2_month_eminus_energy");
+            Params["leadin2_month_rplus_energy"] = new Param("leadin2_month_rplus_energy", ChannelValues, "io,leadin2_month_rplus_energy");
+            Params["leadin2_month_rminus_energy"] = new Param("leadin2_month_rminus_energy", ChannelValues, "io,leadin2_month_rminus_energy");
             Params["ol_instant_current"] = new Param("ol_instant_current", ChannelValues, "io,ol_instant_current");
             Params["ol_total_active_energy"] = new Param("ol_total_active_energy", ChannelValues, "io,ol_total_active_energy");
-
+            Params["ol_total_eplus_energy"] = new Param("ol_total_eplus_energy", ChannelValues, "io,ol_total_eplus_energy");
+            Params["ol_total_eminus_energy"] = new Param("ol_total_eminus_energy", ChannelValues, "io,ol_total_eminus_energy");
+            Params["ol_total_rplus_energy"] = new Param("ol_total_rplus_energy", ChannelValues, "io,ol_total_rplus_energy");
+            Params["ol_total_rminus_energy"] = new Param("ol_total_rminus_energy", ChannelValues, "io,ol_total_rminus_energy");
+            Params["ol_month_eplus_energy"] = new Param("ol_month_eplus_energy", ChannelValues, "io,ol_month_eplus_energy");
+            Params["ol_month_eminus_energy"] = new Param("ol_month_eminus_energy", ChannelValues, "io,ol_month_eminus_energy");
+            Params["ol_month_rplus_energy"] = new Param("ol_month_rplus_energy", ChannelValues, "io,ol_month_rplus_energy");
+            Params["ol_month_rminus_energy"] = new Param("ol_month_rminus_energy", ChannelValues, "io,ol_month_rminus_energy");
+            
             producerSettings = new ProducerSettings();
             producerSettings.ReqAddr = settings.Connection.ReqAddr;
             producerSettings.SubAddr = settings.Connection.SubAddr;
@@ -788,10 +810,35 @@ namespace Prism.Units.Classes
             producerSettings.Channels.Add(new ProducerChannel("io", "di-ol-912"));
             producerSettings.Channels.Add(new ProducerChannel("io", "leadin1_instant_current"));
             producerSettings.Channels.Add(new ProducerChannel("io", "leadin1_total_active_energy"));
+
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin1_total_eplus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin1_total_eminus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin1_total_rplus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin1_total_rminus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin1_month_eplus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin1_month_eminus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin1_month_rplus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin1_month_rminus_energy"));            
             producerSettings.Channels.Add(new ProducerChannel("io", "leadin2_instant_current"));
             producerSettings.Channels.Add(new ProducerChannel("io", "leadin2_total_active_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin2_total_eplus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin2_total_eminus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin2_total_rplus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin2_total_rminus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin2_month_eplus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin2_month_eminus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin2_month_rplus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "leadin2_month_rminus_energy"));
             producerSettings.Channels.Add(new ProducerChannel("io", "ol_instant_current"));
-            producerSettings.Channels.Add(new ProducerChannel("io", "ol_total_active_energy"));            
+            producerSettings.Channels.Add(new ProducerChannel("io", "ol_total_active_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "ol_total_eplus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "ol_total_eminus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "ol_total_rplus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "ol_total_rminus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "ol_month_eplus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "ol_month_eminus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "ol_month_rplus_energy"));
+            producerSettings.Channels.Add(new ProducerChannel("io", "ol_month_rminus_energy"));
 
             producer = new Producer(producerSettings);
             producer.ChannelValueEvent += ProducerChannelValueEvent;

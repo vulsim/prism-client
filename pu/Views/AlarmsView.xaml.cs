@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using FirstFloor.ModernUI.Windows.Controls;
 using Prism.Classes;
 using Prism.General;
+using Prism.General.Automation;
 using Prism.ViewModels;
 
 namespace Prism.Views
@@ -25,7 +26,7 @@ namespace Prism.Views
     /// Логика взаимодействия для AlarmsView.xaml
     /// </summary>
     public partial class AlarmsView : UserControl
-    {
+    {        
         public List<NotificationAlarm> NotificationAlarms { get; set; }
 
         public AlarmsView()
@@ -48,7 +49,8 @@ namespace Prism.Views
         {
             NotificationAlarms.Clear();
             NotificationAlarms.AddRange(AlarmNotificationCenter.Instance.alarms);
-            dataGrid.Items.Refresh();
+            NotificationAlarms.Sort(NotificationAlarmsCompare);
+            alarmsListBox.Items.Refresh();
             AlarmNotificationCenter.Instance.GeneralAlarmsStateChangedEvent += GeneralAlarmsStateChangedEvent;
         }
 
@@ -70,24 +72,54 @@ namespace Prism.Views
         {
             NotificationAlarms.Clear();
             NotificationAlarms.AddRange(AlarmNotificationCenter.Instance.alarms);
-            dataGrid.Items.Refresh();
+            NotificationAlarms.Sort(NotificationAlarmsCompare);
+            alarmsListBox.Items.Refresh();
         }
 
-        private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void alarmsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (dataGrid.SelectedItem != null)
+            if (alarmsListBox.SelectedItem != null)
             {
-                NotificationAlarm selectedItem = (NotificationAlarm)dataGrid.SelectedItem;
+                NotificationAlarm selectedItem = (NotificationAlarm)alarmsListBox.SelectedItem;
 
                 if (!selectedItem.Ack)
                 {
-                    if (ModernDialog.ShowMessage("Вы уверены, что хотите квитировать сообщение?", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    if (MessageBox.Show(String.Format("{0} [{1}, {2}]: {3}\n\nВы уверены, что хотите квитировать это сообщение?", selectedItem.Unit.FullName, selectedItem.Code, ParamStateConverter.ToString(selectedItem.State), selectedItem.Description), "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)                                        
                     {
                         selectedItem.Ack = true;
-                        dataGrid.Items.Refresh();
-                    }                    
+                        NotificationAlarms.Clear();
+                        NotificationAlarms.AddRange(AlarmNotificationCenter.Instance.alarms);
+                        NotificationAlarms.Sort(NotificationAlarmsCompare);
+                        alarmsListBox.Items.Refresh();
+                    }
                 }
             }
+
         }
+
+        private static int NotificationAlarmsCompare(NotificationAlarm a, NotificationAlarm b)
+        {
+            if (a.State > b.State)
+            {
+                return -1;
+            }
+            else if (a.State < b.State)
+            {
+                return 1;
+            }
+            else
+            {
+                if (a.Ack && !b.Ack)
+                {
+                    return 1;
+                }
+                else if (!a.Ack && b.Ack)
+                {
+                    return -1;
+                }
+                
+                return 0;
+            }
+        }        
     }
 }

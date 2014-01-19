@@ -314,14 +314,30 @@ namespace Prism.Units.Controls
                 leadinAlarmTnRu6Tile.State = Unit.Processing.Params[String.Format("leadin{0}_alarm_tn_ru6kv_fault", Index)].State;
                 leadinAlarmTnCircuitTile.State = Unit.Processing.Params[String.Format("leadin{0}_alarm_tn_circuit_fault", Index)].State;
                 leadinAlarmSwitchFaultTile.State = Unit.Processing.Params[String.Format("leadin{0}_alarm_in_switch_fault", Index)].State;
-                leadinAlarmCircuitTile.State = Unit.Processing.Params[String.Format("leadin{0}_alarm_circuit_fault", Index)].State;                
+                leadinAlarmCircuitTile.State = Unit.Processing.Params[String.Format("leadin{0}_alarm_circuit_fault", Index)].State;
+                energyTotalEplus.Text = Unit.Processing.Params[String.Format("leadin{0}_total_eplus_energy", Index)].Value;
+                energyTotalEminus.Text = Unit.Processing.Params[String.Format("leadin{0}_total_eminus_energy", Index)].Value;
+                energyMonthEplus.Text = Unit.Processing.Params[String.Format("leadin{0}_month_eplus_energy", Index)].Value;
+                energyMonthEminus.Text = Unit.Processing.Params[String.Format("leadin{0}_month_eminus_energy", Index)].Value;
+                energyTotalRplus.Text = Unit.Processing.Params[String.Format("leadin{0}_total_rplus_energy", Index)].Value;
+                energyTotalRminus.Text = Unit.Processing.Params[String.Format("leadin{0}_total_rminus_energy", Index)].Value;
+                energyMonthRplus.Text = Unit.Processing.Params[String.Format("leadin{0}_month_rplus_energy", Index)].Value;
+                energyMonthRminus.Text = Unit.Processing.Params[String.Format("leadin{0}_month_rminus_energy", Index)].Value;
             }
             else
             {
                 leadinStateSwitchTile.State = Unit.Processing.Params[String.Format("ol_state_in_switch", Index)].State;
                 leadinStateTcTile.State = Unit.Processing.Params[String.Format("ol_state_tc_switch", Index)].State;
                 leadinAlarmSwitchFaultTile.State = Unit.Processing.Params[String.Format("ol_alarm_switch_fault", Index)].State;
-                leadinAlarmCircuitTile.State = Unit.Processing.Params[String.Format("ol_alarm_circuit_fault", Index)].State;                
+                leadinAlarmCircuitTile.State = Unit.Processing.Params[String.Format("ol_alarm_circuit_fault", Index)].State;
+                energyTotalEplus.Text = Unit.Processing.Params["ol_total_eplus_energy"].Value;
+                energyTotalEminus.Text = Unit.Processing.Params["ol_total_eminus_energy"].Value;
+                energyMonthEplus.Text = Unit.Processing.Params["ol_month_eplus_energy"].Value;
+                energyMonthEminus.Text = Unit.Processing.Params["ol_month_eminus_energy"].Value;
+                energyTotalRplus.Text = Unit.Processing.Params["ol_total_rplus_energy"].Value;
+                energyTotalRminus.Text = Unit.Processing.Params["ol_total_rminus_energy"].Value;
+                energyMonthRplus.Text = Unit.Processing.Params["ol_month_rplus_energy"].Value;
+                energyMonthRminus.Text = Unit.Processing.Params["ol_month_rminus_energy"].Value;
             }
 
             if (lockUpdate)

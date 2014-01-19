@@ -16,51 +16,108 @@
 
         <Grid>
             <Grid.Resources>
-                <!-- <Style TargetType="{x:Type DataGridColumnHeader}">
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Height" Value="35" />
-                <Setter Property="FontWeight" Value="Bold" />                
-            </Style> -->
-
-                <Style x:Key="GroupHeaderStyle" TargetType="{x:Type GroupItem}">
+                <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="#4A4A4A" />
+                <Style x:Key="{x:Type ListBoxItem}" TargetType="ListBoxItem">                                        
+                    <Setter Property="SnapsToDevicePixels" Value="True"/>
+                    <Setter Property="OverridesDefaultStyle" Value="True"/>
                     <Setter Property="Template">
                         <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type GroupItem}">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Unit}" />
-                                    <ItemsPresenter />
-                                </StackPanel>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border Name="Border" Padding="2" Margin="2" SnapsToDevicePixels="true" Background="#333333">
+                                    <ContentPresenter />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="true">
+                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource SelectedBackgroundBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
                 </Style>
+                <Style TargetType="{x:Type ListBox}">
+                    <Setter Property="ItemsPanel">
+                        <Setter.Value>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="ItemTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <Grid Width="400" Height="74">
+                                    <Grid Name="tileGrid" Background="Transparent">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="74" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>                                            
+                                        <Grid Grid.Column="0" Name="tileStateGrid">                                            
+                                            <TextBlock Name="prefixLabel" FontFamily="Segoe UI" FontWeight="Thin" FontSize="52"  Text="{Binding Prefix}" HorizontalAlignment="Center" VerticalAlignment="Center" />                                            
+                                        </Grid>                                        
+                                        <Grid Grid.Column="1" Margin="10,4,10,4">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="22"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Name="descriptionLabel" FontFamily="Segoe UI" FontWeight="Normal" FontSize="17" TextWrapping="Wrap" LineStackingStrategy="BlockLineHeight" LineHeight="20" Text="{Binding Description}" Foreground="#CEC2BB"  />
+                                                <Image Grid.Column="1" Name="ackImage" Width="24" Height="24" Source="pack://application:,,,/Resources/icon.eye.png" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                            </Grid>                                            
+                                            <Grid Grid.Row="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Name="stationLabel" Text="{Binding Unit.FullName}" TextTrimming="CharacterEllipsis" Foreground="#717171" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Name="dateLabel" Text="{Binding Date}" Foreground="#717171" VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Ack}" Value="True">
+                                        <Setter Property="Opacity" Value="0.35" />
+                                        <Setter TargetName="ackImage" Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.C}">
+                                        <Setter TargetName="tileStateGrid" Property="Background" Value="#D20000"/>
+                                        <Setter TargetName="prefixLabel" Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.B}">
+                                        <Setter TargetName="tileStateGrid" Property="Background" Value="#F0D800"/>
+                                        <Setter TargetName="prefixLabel" Property="Foreground" Value="#7b7b7b"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.A}">
+                                        <Setter TargetName="tileStateGrid" Property="Background" Value="#69D200"/>
+                                        <Setter TargetName="prefixLabel" Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.Idle}">
+                                        <Setter TargetName="tileStateGrid" Property="Background" Value="#A4A4A4"/>
+                                        <Setter TargetName="prefixLabel" Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.Unknown}">
+                                        <Setter TargetName="tileStateGrid" Property="Background" Value="#A4A4A4"/>
+                                        <Setter TargetName="prefixLabel" Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
             </Grid.Resources>
-            <DataGrid Name ="dataGrid" ItemsSource="{Binding Path=NotificationAlarms, ElementName=view}" CanUserReorderColumns="False" CanUserResizeColumns="True" CanUserResizeRows="False" CanUserSortColumns="True" AutoGenerateColumns="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ColumnWidth="*" MouseDoubleClick="dataGrid_MouseDoubleClick" SelectionUnit="FullRow">
-                <DataGrid.Columns>
-                    <DataGridTextColumn x:Name="State" Binding="{Binding State}" Header="" Width="100" MinWidth="100" MaxWidth="100" IsReadOnly="True">
-                        <!--<DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image x:Name="IMG" Source="married_image" />
-                            <DataTemplate.Triggers>
-                                <DataTrigger Binding="{Binding Path=isMarried}" Value="False">
-                                    <Setter Property="Source" Value="not_married_image" TargetName="IMG"/>
-                                </DataTrigger>
-                            </DataTemplate.Triggers>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>-->
-                    </DataGridTextColumn>
-                    <DataGridTextColumn x:Name="Unit" Binding="{Binding Unit.FullName}" Header="Подстанция" Width="200" MinWidth="150" MaxWidth="250" IsReadOnly="True"/>
-                    <DataGridTextColumn x:Name="Code" Binding="{Binding Code}" Header="Код"  Width="150" MinWidth="150" MaxWidth="150" IsReadOnly="True"/>
-                    <DataGridTextColumn x:Name="Description" Binding="{Binding Description}" Header="Описание" IsReadOnly="True">
-                        <!--<DataGridTextColumn.CellStyle>
-                        <Style>
-                            <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.CellStyle>-->
-                    </DataGridTextColumn>
-                    <DataGridCheckBoxColumn x:Name="Ack" Binding="{Binding Ack}" Header="Сост.квит." IsReadOnly="True" Width="120" MinWidth="120" MaxWidth="120" />
-                </DataGrid.Columns>
-            </DataGrid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35" MinHeight="15" MaxHeight="35" />
+                <RowDefinition Height="*" MinHeight="140" />
+                <RowDefinition Height="35" MinHeight="15" MaxHeight="35" />
+            </Grid.RowDefinitions>
+
+            <ListBox Grid.Row="1" Name="alarmsListBox" Background="Transparent" BorderBrush="Transparent" ItemsSource="{Binding Path=NotificationAlarms, ElementName=view}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" MouseDoubleClick="alarmsListBox_MouseDoubleClick"/>
         </Grid>
     </Grid>
 </UserControl>

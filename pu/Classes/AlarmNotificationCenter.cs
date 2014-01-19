@@ -13,7 +13,9 @@ namespace Prism.Classes
     public class NotificationAlarm
     {
         public Unit Unit { get; set; }
+        public DateTime Date { get; set; }
         public ParamState State { get; set; }
+        public string Prefix { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }
         public bool Ack { get; set; }
@@ -21,19 +23,37 @@ namespace Prism.Classes
         public NotificationAlarm(Unit unit, ParamState state, string code, string description, bool ack)
         {
             this.Unit = unit;
+            this.Date = DateTime.Now;
             this.State = state;
+            this.Prefix = "UN";
             this.Code = code;
             this.Description = description;
             this.Ack = ack;
+
+            string[] codeComp = code.Split(new Char[] { '-' });
+
+            if (codeComp.Length > 1)
+            {
+                this.Prefix = codeComp[0].Substring(0, 2).ToUpper();
+            }
         }
 
         public NotificationAlarm(Unit unit, IAlarm alarm, bool ack)
         {
             this.Unit = unit;
+            this.Date = DateTime.Now;
             this.State = alarm.State;
+            this.Prefix = "UN";
             this.Code = alarm.Code;
             this.Description = alarm.Description;
             this.Ack = ack;
+
+            string[] codeComp = alarm.Code.Split(new Char[] { '-' });
+
+            if (codeComp.Length > 1)
+            {
+                this.Prefix = codeComp[0].Substring(0, 2).ToUpper();
+            }
         }
     }
 
@@ -50,6 +70,20 @@ namespace Prism.Classes
         private bool IsNotificationInProgress = false;
         private bool HasModifiedAlarms = false;
 
+        public class DebugAlarm : IAlarm
+        {
+            public string Code { get; set; }
+            public string Description { get; set; }
+            public ParamState State { get; set; }
+
+            public DebugAlarm(string code, string description, ParamState state)
+            {
+                Code = code;
+                Description = description;
+                State = state;
+            }
+        }
+
         public AlarmNotificationCenter()
         {
             this.alarms = new List<NotificationAlarm>();
@@ -65,7 +99,7 @@ namespace Prism.Classes
         }
 
         public void Update(Unit unit)
-        {
+        {            
             List<IAlarm> Alarms = new List<IAlarm>(unit.Alarms);
             List<NotificationAlarm> needRemove = new List<NotificationAlarm>();
             bool hasModifiedAlarms = false;

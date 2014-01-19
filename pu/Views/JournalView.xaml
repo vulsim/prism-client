@@ -15,18 +15,43 @@
         </Grid>
 
         <Grid Margin="0,20,0,0">            
-            <DataGrid Name ="dataGrid" ItemsSource="{Binding Path=CurrentJournal, ElementName=view}" CanUserReorderColumns="False" CanUserResizeColumns="True" CanUserResizeRows="False" CanUserSortColumns="True" AutoGenerateColumns="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ColumnWidth="*" SelectionUnit="FullRow" SelectedCellsChanged="dataGrid_SelectedCellsChanged">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="200" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="1" Margin="10,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Отобразить за:"/>
+                <ComboBox Grid.Column="2" Name="comboBox" Height="24" VerticalAlignment="Center" SelectionChanged="comboBox_SelectionChanged" >
+                    <ComboBoxItem Content="Сутки"/>
+                    <ComboBoxItem Content="Последние 7 дней."/>
+                    <ComboBoxItem Content="Последние 30 дней."/>
+                </ComboBox>                
+            </Grid>
+            
+            <DataGrid Grid.Row="1" Name ="dataGrid" ItemsSource="{Binding Path=CurrentJournal, ElementName=view}" CanUserReorderColumns="False" CanUserResizeColumns="True" CanUserResizeRows="False" CanUserSortColumns="True" AutoGenerateColumns="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ColumnWidth="*" SelectionUnit="FullRow" SelectedCellsChanged="dataGrid_SelectedCellsChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn x:Name="Date" Binding="{Binding Date}" Header="Дата" Width="150" MinWidth="150" MaxWidth="150" IsReadOnly="True" />                    
-                    <DataGridTemplateColumn x:Name="Type" Header="Тип" Width="100" MinWidth="100" MaxWidth="100" IsReadOnly="True" >
+                    <DataGridTemplateColumn x:Name="Type" Header="Тип" Width="75" MinWidth="75" MaxWidth="75" IsReadOnly="True" >
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Image>
+                                <Image Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Top">
                                     <Image.Style>
                                         <Style TargetType="{x:Type Image}">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Type}" Value="0">
-                                                    <Setter Property="Source" Value="pack://application:,,,/Resources/icon.warning.circle.png"/>
+                                                    <Setter Property="Source" Value="pack://application:,,,/Resources/icon.journal.information.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Type}" Value="1">
+                                                    <Setter Property="Source" Value="pack://application:,,,/Resources/icon.journal.warning.png"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Type}" Value="2">
+                                                    <Setter Property="Source" Value="pack://application:,,,/Resources/icon.journal.error.png"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -35,7 +60,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>                    
-                    <DataGridTextColumn x:Name="Unit" Binding="{Binding UnitName}" Header="Подст."  Width="150" MinWidth="150" MaxWidth="200" IsReadOnly="True"/>
+                    <DataGridTextColumn x:Name="Unit" Binding="{Binding UnitName}" Header="Подст."  Width="75" MinWidth="75" MaxWidth="150" IsReadOnly="True"/>
                     <DataGridTextColumn x:Name="Message" Binding="{Binding Message}" Header="Описание" IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>

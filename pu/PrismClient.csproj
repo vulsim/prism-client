@@ -120,6 +120,9 @@
     <Compile Include="Classes\Unit.cs" />
     <Compile Include="Providers\StationsViewContentLoader.cs" />
     <Compile Include="ViewModels\OperationStateTileViewModel.cs" />
+    <Compile Include="Views\AboutView.xaml.cs">
+      <DependentUpon>AboutView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AlarmsView.xaml.cs">
       <DependentUpon>AlarmsView.xaml</DependentUpon>
     </Compile>
@@ -141,6 +144,10 @@
     <Compile Include="Windows\SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\AboutView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\AlarmsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -199,6 +206,10 @@
     <Resource Include="Resources\splash_background.png" />
     <Resource Include="Resources\alarm.notify.wav" />
     <Resource Include="Resources\alarm.buzzer.wav" />
+    <Resource Include="Resources\icon.journal.error.png" />
+    <Resource Include="Resources\icon.journal.information.png" />
+    <Resource Include="Resources\icon.journal.warning.png" />
+    <Resource Include="Resources\icon.eye.png" />
     <Content Include="Unit\u12\Schematic.swf" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

@@ -17,6 +17,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="100"/>
             </Grid.RowDefinitions>
 
@@ -29,10 +31,68 @@
             </Grid>
 
             <Grid Grid.Row="2">
+                <TextBlock Margin="20,0,20,0" FontSize="22" FontWeight="Thin" VerticalAlignment="Center" Text="ЭЛЕКТРОЭНЕРГИЯ"/>
+            </Grid>
+
+            <Grid Grid.Row="3" Margin="20,10,20,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="4">
+                    <Label Width="150" Content="Накопленная, E+ (кВт/ч):" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" />
+                    <TextBox Name="energyTotalEplus" Text="0" Width="100" IsReadOnly="True" TextAlignment="Right" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="4">
+                    <Label Width="150" Content="Накопленная, E- (кВт/ч):" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" />
+                    <TextBox Name="energyTotalEminus" Text="0" Width="100" IsReadOnly="True" TextAlignment="Right" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="4">
+                    <Label Width="150" Content="Месячная, E+ (кВт/ч):" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" />
+                    <TextBox Name="energyMonthEplus" Text="0" Width="100" IsReadOnly="True" TextAlignment="Right" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" Margin="4">
+                    <Label Width="150" Content="Месячная, E- (кВт/ч):" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" />
+                    <TextBox Name="energyMonthEminus" Text="0" Width="100" IsReadOnly="True" TextAlignment="Right" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="4">
+                    <Label Width="150" Content="Накопленная, R+ (кВт/ч):" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" />
+                    <TextBox Name="energyTotalRplus" Text="0" Width="100" IsReadOnly="True" TextAlignment="Right" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="4">
+                    <Label Width="150" Content="Накопленная, R- (кВт/ч):" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" />
+                    <TextBox Name="energyTotalRminus" Text="0" Width="100" IsReadOnly="True" TextAlignment="Right" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="4">
+                    <Label Width="150" Content="Месячная, R+ (кВт/ч):" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" />
+                    <TextBox Name="energyMonthRplus" Text="0" Width="100" IsReadOnly="True" TextAlignment="Right" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="4">
+                    <Label Width="150" Content="Месячная, R- (кВт/ч):" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" />
+                    <TextBox Name="energyMonthRminus" Text="0" Width="100" IsReadOnly="True" TextAlignment="Right" />
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="4">
                 <TextBlock Margin="20,0,20,0" FontSize="22" FontWeight="Thin" VerticalAlignment="Center" Text="КОНТРОЛЬ"/>
             </Grid>
 
-            <Grid Grid.Row="3">
+            <Grid Grid.Row="5">
                 <Grid Margin="20,10,20,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200" />
@@ -57,11 +117,11 @@
                 </Grid>
             </Grid>
 
-            <Grid Grid.Row="4">
+            <Grid Grid.Row="6">
                 <TextBlock Margin="20,0,20,0" FontSize="22" FontWeight="Thin" VerticalAlignment="Center" Text="УПРАВЛЕНИЕ"/>
             </Grid>
 
-            <Grid Grid.Row="5">
+            <Grid Grid.Row="7">
                 <Grid Margin="20,10,20,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="125"/>
@@ -75,7 +135,7 @@
                 </Grid>
             </Grid>
 
-            <Grid Grid.Row="6" Name="errorMessagBlock" Visibility="Hidden">
+            <Grid Grid.Row="8" Name="errorMessagBlock" Visibility="Hidden">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="*" MaxWidth="500"/>
