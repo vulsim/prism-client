@@ -18,6 +18,11 @@ namespace Prism.General
         bool IsBusy { get; }
         ParamState State { get; }
 
+        string FullName { get; }
+        string ShortName { get; }
+        string SymbolicName { get; }
+        string Address { get; }
+
         IEnumerable<IAlarm> Alarms { get; }
         IEnumerable<IPresentationControl> PresentationControls { get; }
 

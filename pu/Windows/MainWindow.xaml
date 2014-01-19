@@ -3,11 +3,15 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:mui="http://firstfloorsoftware.com/ModernUI"
   xmlns:res="clr-namespace:Prism.Properties"
+  xmlns:class="clr-namespace:Prism.Classes"
   Title="Prism" IsTitleVisible="False" 
   Height="525" Width="720"
   ContentSource="/Views/OperationStateView.xaml"
   Loaded="ModernWindow_Loaded"
-  Closing="ModernWindow_Closing">
+  Closing="ModernWindow_Closing">    
+    <mui:ModernWindow.ContentLoader>
+        <class:OperationViewContentLoader />
+    </mui:ModernWindow.ContentLoader>
     <mui:ModernWindow.TitleLinks>
         <mui:Link DisplayName="{x:Static res:Resources.APP_MAINWINDOW_TITLE_ABOUT}" Source="/Views/AboutView.xaml" />        
     </mui:ModernWindow.TitleLinks>
@@ -22,15 +26,15 @@
                 <mui:Link Source="/Views/AlarmsView.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        <mui:LinkGroup DisplayName="{x:Static res:Resources.APP_MAINWINDOW_TITLE_OPERATION}">
+        <!-- <mui:LinkGroup DisplayName="{x:Static res:Resources.APP_MAINWINDOW_TITLE_OPERATION}">
             <mui:LinkGroup.Links>
                 <mui:Link Source="/Views/OperationRootView.xaml" />
             </mui:LinkGroup.Links>
-        </mui:LinkGroup>
-        <!-- <mui:LinkGroup DisplayName="{x:Static res:Resources.APP_MAINWINDOW_TITLE_JOURNAL}">
-            <mui:LinkGroup.Links>
-                <mui:Link Source="/Views/JournalRootView.xaml" />
-            </mui:LinkGroup.Links>
         </mui:LinkGroup>-->
+        <mui:LinkGroup DisplayName="{x:Static res:Resources.APP_MAINWINDOW_TITLE_JOURNAL}">
+            <mui:LinkGroup.Links>
+                <mui:Link Source="/Views/JournalView.xaml" />
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
     </mui:ModernWindow.MenuLinkGroups>
 </mui:ModernWindow>

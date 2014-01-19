@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Timers;
 using Prism.General;
 using Prism.Controls;
 using Prism.Units.Classes;
@@ -29,6 +30,7 @@ namespace Prism.Units.Controls
         private Param onCtrlState;
         private Param offCtrlState;
         private Boolean lockUpdate = false;
+        private System.Timers.Timer alertTimer;
 
         public LeadinControl(Unit unit, uint index, String title)
         {
@@ -37,6 +39,9 @@ namespace Prism.Units.Controls
             this.Unit = unit;
             this.Index = index;
             this.titleText.Text = title;
+
+            alertTimer = new System.Timers.Timer(1000);
+            alertTimer.Elapsed += AlertTimerEvent;
 
             if (Index < 3)
             {
@@ -156,6 +161,12 @@ namespace Prism.Units.Controls
             }
         }
 
+        ~LeadinControl()
+        {
+            alertTimer.Stop();
+            alertTimer.Elapsed -= AlertTimerEvent;
+        }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (!(Index < 3))
@@ -175,22 +186,39 @@ namespace Prism.Units.Controls
             };
         }
 
+        private void AlertTimerEvent(object sender, ElapsedEventArgs e)
+        {
+            MainThread.EnqueueTask(delegate()
+            {
+                alertMessageBlock.Visibility = (alertMessageBlock.Visibility == System.Windows.Visibility.Hidden) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+            });
+        }
+
         private void onButton_Click(object sender, RoutedEventArgs e)
         {
             onButton.IsEnabled = false;
             offButton.IsEnabled = false;          
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             if (Index < 3)
             {
                 lockUpdate = true;
+                Unit.Journal.Informarion(Unit, (int)(1000 + Index * 10), (Index == 1) ? "Телеуправление - Рабочий ввод, включение..." : "Телеуправление - Резервный ввод, включение...");
                 Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("leadin{0}-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
                 {
                     MainThread.EnqueueTask(delegate()
                     {
                         if (error != null || value == null || !value.Value.Equals("A"))
                         {
+                            Unit.Journal.Error(Unit, (int)(1000 + Index * 10), (Index == 1) ? "Телеуправление - Рабочий ввод, включение не произведено либо завершилось с ошибкой." : "Телеуправление - Резервный ввод, включение не произведено либо завершилось с ошибкой.");
                             errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                        }
+                        else
+                        {
+                            Unit.Journal.Informarion(Unit, (int)(1000 + Index * 10), (Index == 1) ? "Телеуправление - Рабочий ввод, включение произведено." : "Телеуправление - Резервный ввод, включение произведено.");
                         }
                         lockUpdate = false;
                         UpdateState();
@@ -200,13 +228,19 @@ namespace Prism.Units.Controls
             else
             {
                 lockUpdate = true;
+                Unit.Journal.Informarion(Unit, (int)(1000 + Index * 10), "Телеуправление - Отходящая линия, включение...");
                 Unit.Processing.Operate(new ProducerChannelValue("auto", "ol-ctrl", "A"), delegate(string error, ProducerChannelValue value)
                 {
                     MainThread.EnqueueTask(delegate()
                     {
                         if (error != null || value == null || !value.Value.Equals("A"))
                         {
+                            Unit.Journal.Error(Unit, (int)(1000 + Index * 10), "Телеуправление - Отходящая линия, включение не произведено либо завершилось с ошибкой.");
                             errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                        }
+                        else
+                        {
+                            Unit.Journal.Informarion(Unit, (int)(1000 + Index * 10), "Телеуправление - Отходящая линия, включение произведено.");
                         }
                         lockUpdate = false;
                         UpdateState();
@@ -221,16 +255,25 @@ namespace Prism.Units.Controls
             offButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             if (Index < 3)
             {
                 lockUpdate = true;
+                Unit.Journal.Informarion(Unit, (int)(1001 + Index * 10), (Index == 1) ? "Телеуправление - Рабочий ввод, отключение..." : "Телеуправление - Резервный ввод, отключение...");
                 Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("leadin{0}-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
                 {
                     MainThread.EnqueueTask(delegate()
                     {
                         if (error != null || value == null || !value.Value.Equals("B"))
                         {
+                            Unit.Journal.Error(Unit, (int)(1001 + Index * 10), (Index == 1) ? "Телеуправление - Рабочий ввод, отключение не произведено либо завершилось с ошибкой." : "Телеуправление - Резервный ввод, отключение не произведено либо завершилось с ошибкой.");
                             errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                        }
+                        else
+                        {
+                            Unit.Journal.Informarion(Unit, (int)(1001 + Index * 10), (Index == 1) ? "Телеуправление - Рабочий ввод, отключение произведено." : "Телеуправление - Резервный ввод, отключение произведено.");
                         }
                         lockUpdate = false;
                         UpdateState();
@@ -240,6 +283,7 @@ namespace Prism.Units.Controls
             else
             {
                 lockUpdate = true;
+                Unit.Journal.Informarion(Unit, (int)(1001 + Index * 10), "Телеуправление - Отходящая линия, отключение...");
                 Unit.Processing.Operate(new ProducerChannelValue("auto", "ol-ctrl", "B"), delegate(string error, ProducerChannelValue value)
                 {
                     MainThread.EnqueueTask(delegate()
@@ -247,6 +291,11 @@ namespace Prism.Units.Controls
                         if (error != null || value == null || !value.Value.Equals("B"))
                         {
                             errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                        }
+                        else
+                        {
+                            Unit.Journal.Error(Unit, (int)(1001 + Index * 10), "Телеуправление - Отходящая линия, отключение не произведено либо завершилось с ошибкой.");
+                            Unit.Journal.Informarion(Unit, (int)(1001 + Index * 10), "Телеуправление - Отходящая линия, отключение произведено.");
                         }
                         lockUpdate = false;
                         UpdateState();
@@ -282,6 +331,20 @@ namespace Prism.Units.Controls
 
             onButton.IsEnabled = (onCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
             offButton.IsEnabled = (offCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
+
+            progress.IsActive = false;
+
+            if (Unit.IsOnline)
+            {
+                alertTimer.Stop();
+                overlay.Visibility = System.Windows.Visibility.Hidden;
+                alertMessageBlock.Visibility = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                alertTimer.Start();
+                overlay.Visibility = System.Windows.Visibility.Visible;
+            }
         }        
     }
 }

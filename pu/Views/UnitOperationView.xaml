@@ -8,48 +8,63 @@
              xmlns:class="clr-namespace:Prism.Classes"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500"
+             mui:ModernFrame.KeepAlive="false"
              Loaded="UserControl_Loaded">   
     <Grid>        
-        <Grid.Resources>
-            <class:PresentationControlCategoryConverter x:Key="PresentationCategoryConverter" />
-        </Grid.Resources>
-        <Grid Height="20" VerticalAlignment="Top">
-            
+        <Grid Margin="{StaticResource RootMargin}">
+            <ProgressBar Name="generalBusyProgress" VerticalAlignment="Top" Minimum="0" Maximum="1" Height="16" IsIndeterminate="True" Margin="0,0,0,16" Visibility="Hidden"/>
         </Grid>
         <Grid Margin="0,20,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300" MinWidth="200" MaxWidth="300"/>
-                <ColumnDefinition Width="5"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <class:PresentationControlCategoryConverter x:Key="PresentationCategoryConverter" />
+            </Grid.Resources>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="28" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-            <Grid Grid.Column="0" >
-                <ListBox Name="operationControlList" Margin="10,10,10,10" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" SelectionChanged="operationControlList_SelectionChanged">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Height="46">
-                                <TextBlock Name="titleLabel" Height="20" Margin="5,0,5,0" FontFamily="Segoe UI" FontWeight="Normal" FontSize="16" FontStretch="ExtraExpanded" Text="{Binding Title}"  VerticalAlignment="Top" Foreground="White" TextTrimming="CharacterEllipsis" TextAlignment="Left" />
-                                <TextBlock Name="descriptionLabel" Height="30" Margin="5,22,5,0" FontFamily="Segoe UI" FontWeight="DemiBold" FontSize="12" FontStretch="ExtraExpanded" Text="{Binding Description}" VerticalAlignment="Top" TextAlignment="Left" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                    <ListBox.GroupStyle>
-                        <GroupStyle>
-                            <GroupStyle.HeaderTemplate>
-                                <DataTemplate>
-                                    <Grid Height="52">
-                                        <Label Content="{Binding Path=Name, ConverterParameter=lowercase, Converter={StaticResource ResourceKey=PresentationCategoryConverter}}" Foreground="White" FontFamily="Segoe UI" FontSize="28" FontWeight="Light" Margin="10,0,10,0" Height="50" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </GroupStyle.HeaderTemplate>
-                        </GroupStyle>
-                    </ListBox.GroupStyle>
-                </ListBox>
+            <Grid Grid.Row="0" Background="#017BCD">
+                <TextBlock Name="unitTitle" FontFamily="Segoe UI" FontSize="16" Foreground="White" FontWeight="SemiBold" Margin="20,0,20,0" VerticalAlignment="Center" />                
             </Grid>
-            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
-            <Grid Name="containerGrid" Grid.Column="2">
+                        
+            <Grid Grid.Row="1" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300" MinWidth="200" MaxWidth="300"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
+                <Grid Grid.Column="0" >
+                    <ListBox Name="operationControlList" Margin="0,10,10,10" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False" SelectionChanged="operationControlList_SelectionChanged">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Height="46">
+                                    <TextBlock Name="titleLabel" Height="20" Margin="5,0,5,0" FontFamily="Segoe UI" FontWeight="Normal" FontSize="16" FontStretch="ExtraExpanded" Text="{Binding Title}"  VerticalAlignment="Top" Foreground="White" TextTrimming="CharacterEllipsis" TextAlignment="Left" />
+                                    <TextBlock Name="descriptionLabel" Height="30" Margin="5,22,5,0" FontFamily="Segoe UI" FontWeight="DemiBold" FontSize="12" FontStretch="ExtraExpanded" Text="{Binding Description}" VerticalAlignment="Top" TextAlignment="Left" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <Grid Height="52">
+                                            <Label Content="{Binding Path=Name, ConverterParameter=lowercase, Converter={StaticResource ResourceKey=PresentationCategoryConverter}}" Foreground="White" FontFamily="Segoe UI" FontSize="28" FontWeight="Light" Margin="10,0,10,0" Height="50" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </ListBox.GroupStyle>
+                    </ListBox>
+                </Grid>
+                <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+                <Grid Name="containerGrid" Grid.Column="2">
+
+                </Grid>
             </Grid>
+
+
         </Grid>
     </Grid>
     

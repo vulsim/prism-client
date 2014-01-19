@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
+using System.Timers;
 using Prism.General;
 using Prism.Controls;
 using Prism.Units.Classes;
@@ -32,6 +33,7 @@ namespace Prism.Units.Controls
         private Param kaOnCtrlState;
         private Param kaOffCtrlState;
         private Boolean lockUpdate = false;
+        private System.Timers.Timer alertTimer;
 
         public RectControl(Unit unit, uint index, String title)
         {
@@ -40,6 +42,9 @@ namespace Prism.Units.Controls
             this.Unit = unit;
             this.Index = index;
             this.titleText.Text = title;
+
+            alertTimer = new System.Timers.Timer(1000);
+            alertTimer.Elapsed += AlertTimerEvent;
 
             paOnCtrlState = new Param("pa_on_ctrl_state", new List<ParamRelation> 
             { 
@@ -144,6 +149,12 @@ namespace Prism.Units.Controls
             });
         }
 
+        ~RectControl()
+        {
+            alertTimer.Stop();
+            alertTimer.Elapsed -= AlertTimerEvent;
+        }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateState();
@@ -156,6 +167,14 @@ namespace Prism.Units.Controls
             };
         }
 
+        private void AlertTimerEvent(object sender, ElapsedEventArgs e)
+        {
+            MainThread.EnqueueTask(delegate()
+            {
+                alertMessageBlock.Visibility = (alertMessageBlock.Visibility == System.Windows.Visibility.Hidden) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+            });
+        }
+
         private void paOnButton_Click(object sender, RoutedEventArgs e)
         {
             paOnButton.IsEnabled = false;
@@ -164,14 +183,23 @@ namespace Prism.Units.Controls
             kaOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+            
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(2000 + 10 * Index), String.Format("Телеуправление - ВА №{0}, включение...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("rect{0}-pa-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("A"))
                     {
+                        Unit.Journal.Error(Unit, (int)(2000 + 10 * Index), String.Format("Телеуправление - ВА №{0}, включение не произведено либо завершилось с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(2000 + 10 * Index), String.Format("Телеуправление - ВА №{0}, включение произведено.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -188,14 +216,23 @@ namespace Prism.Units.Controls
             kaOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(2001 + 10 * Index), String.Format("Телеуправление - ВА №{0}, отключение...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("rect{0}-pa-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("B"))
                     {
+                        Unit.Journal.Error(Unit, (int)(2001 + 10 * Index), String.Format("Телеуправление - ВА №{0}, отключение не произведено либо завершилось с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(2001 + 10 * Index), String.Format("Телеуправление - ВА №{0}, отключение произведено.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -212,14 +249,23 @@ namespace Prism.Units.Controls
             kaOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(2002 + 10 * Index), String.Format("Телеуправление - ВА №{0}, включение УРК...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("rect{0}-ka-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("A"))
                     {
+                        Unit.Journal.Error(Unit, (int)(2002 + 10 * Index), String.Format("Телеуправление - ВА №{0}, включение УРК не произведено либо завершилось с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(2002 + 10 * Index), String.Format("Телеуправление - ВА №{0}, включение УРК произведено.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -236,14 +282,23 @@ namespace Prism.Units.Controls
             kaOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(2003 + 10 * Index), String.Format("Телеуправление - ВА №{0}, отключение УРК...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("rect{0}-ka-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("B"))
                     {
+                        Unit.Journal.Error(Unit, (int)(2003 + 10 * Index), String.Format("Телеуправление - ВА №{0}, отключение УРК не произведено либо завершилось с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(2003 + 10 * Index), String.Format("Телеуправление - ВА №{0}, отключение УРК произведено.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -273,7 +328,21 @@ namespace Prism.Units.Controls
             paOnButton.IsEnabled = (paOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
             paOffButton.IsEnabled = (paOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
             kaOnButton.IsEnabled = (kaOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            kaOffButton.IsEnabled = (kaOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
+            kaOffButton.IsEnabled = (kaOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
+
+            progress.IsActive = false;
+
+            if (Unit.IsOnline)
+            {
+                alertTimer.Stop();
+                overlay.Visibility = System.Windows.Visibility.Hidden;                
+                alertMessageBlock.Visibility = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                alertTimer.Start();
+                overlay.Visibility = System.Windows.Visibility.Visible;
+            }
         }
     }
 }

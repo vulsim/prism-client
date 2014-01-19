@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Timers;
 using Prism.General;
 using Prism.Controls;
 using Prism.Units.Classes;
@@ -27,6 +28,7 @@ namespace Prism.Units.Controls
         private Param qfOnCtrlState;
         private Param qfOffCtrlState;
         private Boolean lockUpdate = false;
+        private System.Timers.Timer alertTimer;
 
         public Lsw9Control(Unit unit, String title)
         {
@@ -34,6 +36,9 @@ namespace Prism.Units.Controls
 
             this.Unit = unit;
             this.titleText.Text = title;
+
+            alertTimer = new System.Timers.Timer(1000);
+            alertTimer.Elapsed += AlertTimerEvent;
 
             qfOnCtrlState = new Param("qf_on_ctrl_state", new List<ParamRelation> 
             { 
@@ -87,6 +92,12 @@ namespace Prism.Units.Controls
             });
         }
 
+         ~Lsw9Control()
+        {
+            alertTimer.Stop();
+            alertTimer.Elapsed -= AlertTimerEvent;
+        }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateState();
@@ -97,6 +108,14 @@ namespace Prism.Units.Controls
                     UpdateState();
                 });
             };
+        }
+
+        private void AlertTimerEvent(object sender, ElapsedEventArgs e)
+        {
+            MainThread.EnqueueTask(delegate()
+            {
+                alertMessageBlock.Visibility = (alertMessageBlock.Visibility == System.Windows.Visibility.Hidden) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+            });
         }
 
         private void UpdateState()
@@ -111,48 +130,78 @@ namespace Prism.Units.Controls
                 return;
             }
 
-            qfOnButton.IsEnabled = (qfOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
+            onButton.IsEnabled = (qfOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
             offButton.IsEnabled = (qfOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-        }
 
-        private void qfOnButton_Click(object sender, RoutedEventArgs e)
-        {
-            qfOnButton.IsEnabled = false;
-            offButton.IsEnabled = false;
-            errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
+            progress.IsActive = false;
 
-            lockUpdate = true;
-            Unit.Processing.Operate(new ProducerChannelValue("auto", "lsw9-qf-ctrl", "A"), delegate(string error, ProducerChannelValue value)
+            if (Unit.IsOnline)
             {
-                MainThread.EnqueueTask(delegate()
-                {
-                    if (error != null || value == null || !value.Value.Equals("A"))
-                    {
-                        errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
-                    }
-                    lockExtendedControl.IsChecked = false;
-                    lockUpdate = false;
-                    UpdateState();
-                });
-            });
+                alertTimer.Stop();
+                overlay.Visibility = System.Windows.Visibility.Hidden;
+                alertMessageBlock.Visibility = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                alertTimer.Start();
+                overlay.Visibility = System.Windows.Visibility.Visible;
+            }
         }
 
         private void OffButton_Click(object sender, RoutedEventArgs e)
         {
-            qfOnButton.IsEnabled = false;
+            onButton.IsEnabled = false;
             offButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, 3091, "Телеуправление - АЗ, отключение...");
             Unit.Processing.Operate(new ProducerChannelValue("auto", "lsw9-qf-ctrl", "B"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("B"))
                     {
+                        Unit.Journal.Error(Unit, 3091, "Телеуправление - АЗ, отключение не произведено либо завершилось с ошибкой.");
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
                     }
-                    lockExtendedControl.IsChecked = false;
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, 3091, "Телеуправление - АЗ, отключение произведено.");
+                    }
+                    lockUpdate = false;
+                    UpdateState();
+                });
+            });
+        }
+
+        private void onButton_Click(object sender, RoutedEventArgs e)
+        {
+            onButton.IsEnabled = false;
+            offButton.IsEnabled = false;
+            errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
+
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
+            lockUpdate = true;
+            Unit.Journal.Informarion(Unit, 3090, "Телеуправление - АЗ, включение...");
+            Unit.Processing.Operate(new ProducerChannelValue("auto", "lsw9-qf-ctrl", "A"), delegate(string error, ProducerChannelValue value)
+            {
+                MainThread.EnqueueTask(delegate()
+                {
+                    if (error != null || value == null || !value.Value.Equals("A"))
+                    {
+                        Unit.Journal.Error(Unit, 3090, "Телеуправление - АЗ, включение не произведено либо завершилось с ошибкой.");
+                        errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, 3090, "Телеуправление - АЗ, включение произведено.");
+                    }
                     lockUpdate = false;
                     UpdateState();
                 });

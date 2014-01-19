@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Threading;
 using System.Collections.ObjectModel;
 using FirstFloor.ModernUI.Presentation;
+using FirstFloor.ModernUI.Windows.Controls;
 using Prism.Classes;
 using Prism.General;
 using Prism.ViewModels;
@@ -66,10 +67,7 @@ namespace Prism.Views
             if (operationListBox.SelectedItem != null)
             {
                 OperationStateTileViewModel selectedItem = (OperationStateTileViewModel)operationListBox.SelectedItem;
-
-                //MessageBox.Show(MainWindow.Instance.ContentSource.OriginalString.ToString());
-                 
-                MainWindow.Instance.ContentSource = new Uri("/Views/OperationRootView.xaml", UriKind.Relative);
+                MainWindow.Instance.ContentSource = selectedItem.Unit.Uri;
             }            
         }     
     }

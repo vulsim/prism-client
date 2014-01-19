@@ -126,6 +126,9 @@
     <Compile Include="Views\ExploreRootView.xaml.cs">
       <DependentUpon>ExploreRootView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\JournalView.xaml.cs">
+      <DependentUpon>JournalView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\OperationRootView.xaml.cs">
       <DependentUpon>OperationRootView.xaml</DependentUpon>
     </Compile>
@@ -143,6 +146,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ExploreRootView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\JournalView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

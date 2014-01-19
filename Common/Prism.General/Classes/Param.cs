@@ -14,6 +14,27 @@ namespace Prism.General.Automation
         C = 4
     }
 
+    public class ParamStateConverter
+    {
+        public static string ToString(ParamState state)
+        {
+            switch (state)
+            {
+                case ParamState.A:
+                    return "A";
+                case ParamState.B:
+                    return "B";
+                case ParamState.C:
+                    return "C";
+                case ParamState.Idle:
+                    return "Idle";
+                case ParamState.Unknown:
+                default:
+                    return "Unknown";
+            }
+        }
+    }
+
     public class ParamCombination
     {
         public Param Param { get; set; }

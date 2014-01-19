@@ -22,7 +22,10 @@ namespace Prism.Visual.Controls
     public partial class FuseButton : UserControl
     {
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(FuseButton), new PropertyMetadata(""));
+        public static readonly DependencyProperty IsUnlockedProperty = DependencyProperty.Register("IsUnlocked", typeof(bool), typeof(FuseButton), new PropertyMetadata(false));
         public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FuseButton));
+
+        private System.Timers.Timer unlockTimer;
 
         public string Text
         {
@@ -30,15 +33,16 @@ namespace Prism.Visual.Controls
             set { this.SetValue(TextProperty, value); }
         }
 
+        public bool IsUnlocked
+        {
+            get { return (bool)this.GetValue(IsUnlockedProperty); }
+        }
+
         public event RoutedEventHandler Click
         {
             add { AddHandler(ClickEvent, value); }
             remove { RemoveHandler(ClickEvent, value); }
         }
-
-        private System.Timers.Timer unlockTimer;
-        private bool IsUnlocked = false;
-        private int UnlockedTriggeredCount = 0;
 
         public FuseButton()
         {
@@ -57,51 +61,24 @@ namespace Prism.Visual.Controls
         private void UnlockTimerEvent(object sender, ElapsedEventArgs e)
         {
             unlockTimer.Stop();
-
-            IsUnlocked = false;
             MainThread.EnqueueTask(delegate()
             {
-                overlay.Visibility = System.Windows.Visibility.Hidden;
+                this.SetValue(IsUnlockedProperty, false);
             });
-
-            /*if (IsUnlocked && UnlockedTriggeredCount < 10)
-            {
-                UnlockedTriggeredCount++;
-                MainThread.EnqueueTask(delegate()
-                {
-                    overlay.Visibility = (UnlockedTriggeredCount % 2 > 0) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
-                });
-            }
-            else
-            {
-                IsUnlocked = false;
-                UnlockedTriggeredCount = 0;                
-                unlockTimer.Stop();
-
-                MainThread.EnqueueTask(delegate()
-                {
-                    overlay.Visibility = System.Windows.Visibility.Hidden;
-                });
-            }*/
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
             if (IsUnlocked)
             {
-                //if (UnlockedTriggeredCount > 1)
-                {
-                    IsUnlocked = false;
-                    overlay.Visibility = System.Windows.Visibility.Hidden;
-                    RoutedEventArgs args = new RoutedEventArgs(ClickEvent, this);
-                    RaiseEvent(args);
-                }
+                this.SetValue(IsUnlockedProperty, false);
+
+                RoutedEventArgs args = new RoutedEventArgs(ClickEvent, this);
+                RaiseEvent(args);
             }
             else
             {
-                IsUnlocked = true;
-                overlay.Visibility = System.Windows.Visibility.Visible;
-                //UnlockedTriggeredCount = 0;
+                this.SetValue(IsUnlockedProperty, true);
                 unlockTimer.Start();
             }
         }

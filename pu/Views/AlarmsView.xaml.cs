@@ -59,14 +59,11 @@ namespace Prism.Views
 
         private void CoreBusyStateChangedEvent(object sender, bool isBusy)
         {
-            ThreadPool.QueueUserWorkItem(delegate(object target)
+            MainThread.EnqueueTask(delegate()
             {
-                MainThread.EnqueueTask(delegate()
-                {
-                    generalBusyProgress.Visibility = isBusy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
-                    generalBusyProgress.IsIndeterminate = (generalBusyProgress.Visibility == System.Windows.Visibility.Visible);
-                });
-            }, null);
+                generalBusyProgress.Visibility = isBusy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+                generalBusyProgress.IsIndeterminate = (generalBusyProgress.Visibility == System.Windows.Visibility.Visible);
+            });
         }
 
         void GeneralAlarmsStateChangedEvent(object sender)

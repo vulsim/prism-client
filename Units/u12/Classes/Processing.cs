@@ -15,6 +15,7 @@ namespace Prism.Units.Classes
 
     public class Processing
     {
+        private Unit Unit;
         private Producer producer;
         ProducerSettings producerSettings;
         private System.Timers.Timer autoUpdateTimer;
@@ -23,6 +24,8 @@ namespace Prism.Units.Classes
         private uint OperateRetainCount;
         private int QueryChannelCounter;
         private int MaxQueryChannelCounter;
+
+        private bool lastSyncIsOnline = false;
 
         public Dictionary<string, Alarm> AlarmValues;
         public Dictionary<string, string> ChannelValues;
@@ -34,8 +37,12 @@ namespace Prism.Units.Classes
         public bool IsAvaliable { get { return IsQueryAvaliable; } }
         public bool IsBusy { get { return IsAutoUpdateInProgress || (OperateRetainCount > 0); } }
 
-        public Processing(UnitSettings settings)
+        public Processing(UnitSettings settings, Unit unit)
         {
+            Unit = unit;
+
+            Unit.Journal.Informarion(Unit, 199, "Инициализация модуля");
+
             AlarmValues = new Dictionary<string, Alarm>();
             ChannelValues = new Dictionary<string, string>();
             Params = new Dictionary<string, Param>();
@@ -818,7 +825,7 @@ namespace Prism.Units.Classes
                     ProcessingChangeStateEvent(this);
                 }
             }, null);
-
+            
             producer.WriteChannelValue(value, delegate(string error, ProducerChannelValue result)
             {
                 OperateRetainCount--;
@@ -934,6 +941,12 @@ namespace Prism.Units.Classes
 
             if (this.QueryChannelCounter < this.MaxQueryChannelCounter)
             {
+                if (!lastSyncIsOnline)
+                {
+                    Unit.Journal.Informarion(Unit, 200, "Соединение установлено");
+                }
+                lastSyncIsOnline = true;
+
                 if (this.QueryChannelCounter == 0)
                 {
                     if (autoUpdateTimer.Interval != 90000)
@@ -963,6 +976,12 @@ namespace Prism.Units.Classes
             }
             else
             {
+                if (lastSyncIsOnline)
+                {
+                    Unit.Journal.Informarion(Unit, 200, "Соединение потеряно");
+                }
+                lastSyncIsOnline = false;
+
                 producer.ChannelValueEvent -= ProducerChannelValueEvent;
                 producer.ChannelResetEvent -= ProducerChannelResetEvent;
 
@@ -990,7 +1009,24 @@ namespace Prism.Units.Classes
             {
                 if (!value.Channel.Contains("-manual"))
                 {
-                    AlarmValues["alarm," + value.Channel] = this.AlarmFromChannelValue(value);
+                    string key = "alarm," + value.Channel;
+                    Alarm alarm = this.AlarmFromChannelValue(value);
+                    
+                    if (AlarmValues.ContainsKey(key))
+                    {
+                        Alarm savedAlarm = AlarmValues[key];
+
+                        if (alarm.State != savedAlarm.State || !alarm.Description.Equals(savedAlarm.Description))
+                        {
+                            Unit.Journal.Log(Unit, alarm);
+                        }
+                    }
+                    else
+                    {
+                        Unit.Journal.Log(Unit, alarm);
+                    }
+
+                    AlarmValues[key] = alarm;
 
                     ThreadPool.QueueUserWorkItem(delegate(object target)
                     {
@@ -1023,7 +1059,11 @@ namespace Prism.Units.Classes
                 {
                     try
                     {
+                        Alarm alarm = AlarmValues["alarm," + channel.Channel];
                         AlarmValues.Remove("alarm," + channel.Channel);
+
+                        alarm.State = ParamState.Idle;
+                        Unit.Journal.Log(Unit, alarm);
                     }
                     catch (SystemException e)
                     {

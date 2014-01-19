@@ -6,12 +6,109 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
-    <Grid>       
-        <Button Name="button" Click="button_Click">
-            <Grid>
-                <TextBlock Name="textBlock" Text="{Binding Text}"/>
-            </Grid>            
-        </Button>
-        <Grid Background="#44CF000E" Name="overlay" Visibility="Hidden" IsHitTestVisible="False" />
+    <Grid>        
+        <Button Name="button" Click="button_Click" Content="{Binding Text}">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="MinHeight" Value="25" />
+                    <Setter Property="FontFamily" Value="Segoe UI" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderBrush" Value="White" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Padding" Value="5,6" />
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Grid>
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal" />
+                                            <VisualState x:Name="MouseOver">
+                                                <Storyboard>
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="MouseOverBorder">
+                                                        <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                    <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.BorderThickness)" Storyboard.TargetName="MouseOverBorder">
+                                                        <EasingThicknessKeyFrame KeyTime="0" Value="2"/>
+                                                    </ThicknessAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <Storyboard>
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="PressedBorder">
+                                                        <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                    <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.BorderThickness)" Storyboard.TargetName="MouseOverBorder">
+                                                        <EasingThicknessKeyFrame KeyTime="0" Value="0"/>
+                                                    </ThicknessAnimationUsingKeyFrames>
+                                                    <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.BorderThickness)" Storyboard.TargetName="PressedBorder">
+                                                        <EasingThicknessKeyFrame KeyTime="0" Value="2"/>
+                                                    </ThicknessAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="Disabled">
+                                                <Storyboard>
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="DisabledVisualElement">
+                                                        <SplineDoubleKeyFrame KeyTime="0" Value="0.7" />
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="contentPresenter">
+                                                        <EasingDoubleKeyFrame KeyTime="0" Value="0.3" />
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                        <VisualStateGroup x:Name="FocusStates">
+                                            <VisualState x:Name="Focused"/>
+                                            <VisualState x:Name="Unfocused" />
+                                        </VisualStateGroup>
+                                        <VisualStateGroup x:Name="ValidationStates">
+                                            <VisualState x:Name="Valid"/>
+                                            <VisualState x:Name="InvalidFocused"/>
+                                            <VisualState x:Name="InvalidUnfocused"/>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+
+                                    <Border BorderBrush="White" BorderThickness="2" Background="Transparent" />
+                                    <Rectangle x:Name="DisabledVisualElement" Fill="Transparent" IsHitTestVisible="false" Opacity="0" />
+                                    <Border x:Name="MouseOverBorder" Background="#3F606060" Opacity="0" />
+                                    <Border x:Name="PressedBorder" Background="#FFFFFFFF" Opacity="0" BorderBrush="#FFFFFFFF" />
+
+                                    <ContentPresenter 
+                                        x:Name="contentPresenter"                                                       
+                                        ContentTemplate="{TemplateBinding ContentTemplate}" 
+                                        Content="{TemplateBinding Content}" 
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                        Margin="{TemplateBinding Padding}" 
+                                        RecognizesAccessKey="True"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                        OpacityMask="{x:Null}" />
+                                </Grid>
+
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsPressed" Value="true">
+                                        <Setter Property="Foreground" Value="#FF252525" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="false">
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>  
+        
+        <Grid.Style>
+            <Style TargetType="{x:Type Grid}">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsUnlocked}" Value="True">
+                        <Setter Property="Background" Value="#017BCD" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
     </Grid>
 </UserControl>

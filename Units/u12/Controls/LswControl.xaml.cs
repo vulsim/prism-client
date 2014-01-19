@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Timers;
 using Prism.General;
 using Prism.Controls;
 using Prism.Units.Classes;
@@ -34,6 +35,7 @@ namespace Prism.Units.Controls
         private Param qfOffCtrlState;
         private Param spareOffCtrlState;
         private Boolean lockUpdate = false;
+        private System.Timers.Timer alertTimer;
 
         public LswControl(Unit unit, uint index, String title)
         {
@@ -42,6 +44,9 @@ namespace Prism.Units.Controls
             this.Unit = unit;
             this.Index = index;
             this.titleText.Text = title;
+
+            alertTimer = new System.Timers.Timer(1000);
+            alertTimer.Elapsed += AlertTimerEvent;
 
             spareCtrlState = new Param("spare_ctrl_state", new List<ParamRelation> 
             { 
@@ -265,6 +270,12 @@ namespace Prism.Units.Controls
             });
         }
 
+         ~LswControl()
+        {
+            alertTimer.Stop();
+            alertTimer.Elapsed -= AlertTimerEvent;
+        }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateState();
@@ -275,6 +286,14 @@ namespace Prism.Units.Controls
                     UpdateState();
                 });
             };
+        }
+
+        private void AlertTimerEvent(object sender, ElapsedEventArgs e)
+        {
+            MainThread.EnqueueTask(delegate()
+            {
+                alertMessageBlock.Visibility = (alertMessageBlock.Visibility == System.Windows.Visibility.Hidden) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+            });
         }
 
         private void qsOnButton_Click(object sender, RoutedEventArgs e)
@@ -290,14 +309,23 @@ namespace Prism.Units.Controls
             spareOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(3002 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение разъединителя QS...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qs-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("A"))
                     {
+                        Unit.Journal.Error(Unit, (int)(3002 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение разъединителя QS не произведено либо завершилось с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(3002 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение разъединителя QS произведено.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -319,14 +347,23 @@ namespace Prism.Units.Controls
             spareOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(3004 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение разъединителя QF...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qf-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("A"))
                     {
+                        Unit.Journal.Error(Unit, (int)(3004 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение разъединителя QF не произведено либо завершилось с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(3004 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение разъединителя QF произведено.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -348,14 +385,23 @@ namespace Prism.Units.Controls
             spareOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(3006 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение разъединителя ЗШ...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-spare-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("A"))
                     {
+                        Unit.Journal.Error(Unit, (int)(3006 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение разъединителя ЗШ не произведено либо завершилось с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(3006 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение разъединителя ЗШ произведено.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -377,14 +423,23 @@ namespace Prism.Units.Controls
             spareOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(3003 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение разъединителя QS...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qs-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("B"))
                     {
+                        Unit.Journal.Error(Unit, (int)(3003 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение разъединителя QS не произведено либо завершилось с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(3003 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение разъединителя QS произведено.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -406,14 +461,23 @@ namespace Prism.Units.Controls
             spareOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(3005 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение разъединителя QF...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qf-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("B"))
                     {
+                        Unit.Journal.Error(Unit, (int)(3005 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение разъединителя QF не произведено либо завершилось с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(3005 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение разъединителя QF произведено.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -435,14 +499,23 @@ namespace Prism.Units.Controls
             spareOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(3007 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение разъединителя ЗШ...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-spare-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("B"))
                     {
+                        Unit.Journal.Error(Unit, (int)(3007 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение разъединителя ЗШ не произведено либо завершилось с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(3007 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение разъединителя ЗШ произведено.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -464,14 +537,23 @@ namespace Prism.Units.Controls
             spareOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(3000 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qf-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("A"))
                     {
+                        Unit.Journal.Error(Unit, (int)(3000 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение не произведено либо завершилось с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(3000 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение произведено.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -493,14 +575,23 @@ namespace Prism.Units.Controls
             spareOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(3001 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qf-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("B"))
                     {
+                        Unit.Journal.Error(Unit, (int)(3001 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение не произведено либо завершилось с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(3001 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение произведено.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -522,14 +613,23 @@ namespace Prism.Units.Controls
             spareOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(3008 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, перевод на ГШ...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-ast-ctrl", Index), "M"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     if (error != null || value == null || !value.Value.Equals("M"))
                     {
+                        Unit.Journal.Error(Unit, (int)(3008 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, перевод на ГШ не произведен либо завершился с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(3008 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, перевод на ГШ произведен.", Index));
                     }
                     lockExtendedControl.IsChecked = false;
                     lockUpdate = false;
@@ -551,14 +651,23 @@ namespace Prism.Units.Controls
             spareOffButton.IsEnabled = false;
             errorMessagBlock.Visibility = System.Windows.Visibility.Hidden;
 
+            overlay.Visibility = System.Windows.Visibility.Visible;
+            progress.IsActive = true;
+
             lockUpdate = true;
+            Unit.Journal.Informarion(Unit, (int)(3009 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, перевод на ЗШ...", Index));
             Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-ast-ctrl", Index), "S"), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {                   
                     if (error != null || value == null || !value.Value.Equals("S"))
                     {
+                        Unit.Journal.Error(Unit, (int)(3009 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, перевод на ЗШ не произведен либо завершился с ошибкой.", Index));
                         errorMessagBlock.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Unit.Journal.Informarion(Unit, (int)(3009 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, перевод на ЗШ произведен.", Index));
                     }
 
                     lockExtendedControl.IsChecked = false;
@@ -592,7 +701,21 @@ namespace Prism.Units.Controls
             spareOnButton.IsEnabled = (spareOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
             qsOffButton.IsEnabled = (qsOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
             qfOffButton.IsEnabled = (qfOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            spareOffButton.IsEnabled = (spareOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);            
+            spareOffButton.IsEnabled = (spareOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
+
+            progress.IsActive = false;
+
+            if (Unit.IsOnline)
+            {
+                alertTimer.Stop();
+                overlay.Visibility = System.Windows.Visibility.Hidden;
+                alertMessageBlock.Visibility = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                alertTimer.Start();
+                overlay.Visibility = System.Windows.Visibility.Visible;
+            }
         }
     }
 }

@@ -19,6 +19,11 @@ namespace Prism.Units.Classes
         public bool IsBusy { get { return Processing.IsBusy; } }
         public ParamState State { get { return LastState; } }
 
+        public string FullName { get { return Settings.FullName; } }
+        public string ShortName { get { return Settings.ShortName; } }
+        public string SymbolicName { get { return Settings.SymbolicName; } }
+        public string Address { get { return Settings.Address; } }
+
         public IEnumerable<IAlarm> Alarms { get { return AlarmsInternal; } }
         public IEnumerable<IPresentationControl> PresentationControls { get { return PresentationControlsInternal; } }
 
@@ -46,7 +51,7 @@ namespace Prism.Units.Classes
 
             ThreadPool.QueueUserWorkItem(delegate(object target)
             {
-                Processing = new Processing(Settings);
+                Processing = new Processing(Settings, this);
                 Processing.ProcessingUpdateEvent += ProcessingUpdateEvent;
                 Processing.ProcessingChangeStateEvent += ProcessingChangeStateEvent;
 

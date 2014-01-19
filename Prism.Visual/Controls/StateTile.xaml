@@ -39,6 +39,8 @@
         <TextBlock Text="{Binding Text}" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock.Style>
                 <Style TargetType="TextBlock">
+                    <Setter Property="FontFamily" Value="Segoe UI" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding State}" Value="{x:Static auto:ParamState.C}">
                             <Setter Property="Foreground" Value="White"/>

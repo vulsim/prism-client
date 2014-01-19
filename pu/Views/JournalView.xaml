@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="Prism.Views.JournalView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mahapps="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             Name="view"
+             Loaded="view_Loaded"
+             Unloaded="view_Unloaded">
+    <Grid>
+        <Grid Margin="{StaticResource RootMargin}">
+            <ProgressBar Name="generalBusyProgress" VerticalAlignment="Top" Minimum="0" Maximum="1" Height="16" IsIndeterminate="True" Margin="0,0,0,16" Visibility="Hidden"/>
+        </Grid>
+
+        <Grid Margin="0,20,0,0">            
+            <DataGrid Name ="dataGrid" ItemsSource="{Binding Path=CurrentJournal, ElementName=view}" CanUserReorderColumns="False" CanUserResizeColumns="True" CanUserResizeRows="False" CanUserSortColumns="True" AutoGenerateColumns="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ColumnWidth="*" SelectionUnit="FullRow" SelectedCellsChanged="dataGrid_SelectedCellsChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn x:Name="Date" Binding="{Binding Date}" Header="Дата" Width="150" MinWidth="150" MaxWidth="150" IsReadOnly="True" />                    
+                    <DataGridTemplateColumn x:Name="Type" Header="Тип" Width="100" MinWidth="100" MaxWidth="100" IsReadOnly="True" >
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image>
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Type}" Value="0">
+                                                    <Setter Property="Source" Value="pack://application:,,,/Resources/icon.warning.circle.png"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>                    
+                    <DataGridTextColumn x:Name="Unit" Binding="{Binding UnitName}" Header="Подст."  Width="150" MinWidth="150" MaxWidth="200" IsReadOnly="True"/>
+                    <DataGridTextColumn x:Name="Message" Binding="{Binding Message}" Header="Описание" IsReadOnly="True" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <Grid Name="overlay" Background="#DC252526">
+            <mahapps:ProgressRing Name="progress" IsActive="False" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Grid>
+
+    </Grid>
+</UserControl>
