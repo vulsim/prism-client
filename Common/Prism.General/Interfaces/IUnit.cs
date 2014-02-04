@@ -7,15 +7,14 @@ using Prism.General.Automation;
 
 namespace Prism.General
 {
-    public delegate void UnitBusyStateChangedEventHandler(object sender, bool isBusy);
-    public delegate void UnitStateChangedEventHandler(object sender, ParamState state);
-    public delegate void UnitAlarmsChangedEventHandler(object sender, IEnumerable<IAlarm> alarms);
     public delegate void UnitGeneralCompleteHandler();
+    public delegate void UnitParamUpdateEventHandler(object sender, Param param);
+    public delegate void UnitAlarmUpdateEventHandler(object sender, IAlarm alarm);
+    public delegate void UnitStateChangedEventHandler(object sender, ParamState state);
 
     public interface IUnit
     {
         bool IsOnline { get; }
-        bool IsBusy { get; }
         ParamState State { get; }
 
         string FullName { get; }
@@ -26,13 +25,11 @@ namespace Prism.General
         IEnumerable<IAlarm> Alarms { get; }
         IEnumerable<IPresentationControl> PresentationControls { get; }
 
-        event UnitBusyStateChangedEventHandler UnitBusyStateChangedEvent;
+        event UnitParamUpdateEventHandler UnitParamUpdateEvent;
+        event UnitAlarmUpdateEventHandler UnitAlarmUpdateEvent;
         event UnitStateChangedEventHandler UnitStateChangedEvent;
-        event UnitAlarmsChangedEventHandler UnitAlarmsChangedEvent;
 
-        void Initialize(UnitSettings settings, IJournal journal, UnitGeneralCompleteHandler complete);
+        void Initialize(System.Windows.Threading.Dispatcher dispatcher, UnitSettings settings, IPollManager manager, IJournal journal, UnitGeneralCompleteHandler complete);
         void Uninitialize();
-        void BecomeActive(IPresentationControl presentationControl);
-        void ResignActive();
     }
 }

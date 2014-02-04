@@ -34,10 +34,11 @@ namespace Prism.Views
 
             this.Unit = unit;
 
-            generalBusyProgress.Visibility = Core.Instance.IsCoreBusy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+            generalBusyProgress.Visibility = Core.Instance.IsBusy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
             generalBusyProgress.IsIndeterminate = (generalBusyProgress.Visibility == System.Windows.Visibility.Visible);
+            
             Core.Instance.CoreBusyStateChangedEvent += CoreBusyStateChangedEvent;
-            CoreBusyStateChangedEvent(this, Core.Instance.IsCoreBusy);
+            CoreBusyStateChangedEvent(this, Core.Instance.IsBusy);
 
             unitTitle.Text = Unit.FullName.ToUpper();
             collectionView = CollectionViewSource.GetDefaultView(Unit.PresentationControls);

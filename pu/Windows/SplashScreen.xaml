@@ -4,9 +4,9 @@
         xmlns:mui="http://firstfloorsoftware.com/ModernUI"
         Height="400" Width="640" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None" ShowInTaskbar="False" Background="#004c9c">
     <Grid>
-        <Image Name="backgroundImage" Stretch="Fill" Source="/prism;component/Resources/splash_background.png" />
-        <ProgressBar VerticalAlignment="Bottom" Minimum="0" Maximum="1" Height="16" IsIndeterminate="True" VerticalContentAlignment="Bottom" FlowDirection="LeftToRight" Margin="0,0,0,12" Foreground="White" />
-        <Label Name="ProgressLabel" Height="21" HorizontalAlignment="Left" Margin="12,0,0,34" VerticalAlignment="Bottom" Width="594" Foreground="White" Content="" VerticalContentAlignment="Center" />
+        <Image Stretch="Fill" Source="/prism;component/Resources/splash_background.png" />
+        <!--<ProgressBar Name="progress" VerticalAlignment="Bottom" Minimum="0" Maximum="1" Height="2" Value="0" IsIndeterminate="False" VerticalContentAlignment="Bottom" FlowDirection="LeftToRight" Margin="0,0,0,20" Foreground="White" Background="#004C9C" />-->
+        <Label Name="progressLabel" Height="21" HorizontalAlignment="Left" Margin="12,0,12,12" VerticalAlignment="Bottom" Width="594" Foreground="White" Content="" VerticalContentAlignment="Center" />
         <Label Name="versionLabel" Height="17" Margin="12,12,12,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" />
     </Grid>
 </Window>

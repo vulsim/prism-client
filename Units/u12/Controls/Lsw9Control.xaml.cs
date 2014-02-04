@@ -25,6 +25,8 @@ namespace Prism.Units.Controls
     public partial class Lsw9Control : UserControl
     {
         private Unit Unit;
+
+        private List<string> ParamRelations;
         private Param qfOnCtrlState;
         private Param qfOffCtrlState;
         private Boolean lockUpdate = false;
@@ -32,6 +34,7 @@ namespace Prism.Units.Controls
 
         public Lsw9Control(Unit unit, String title)
         {
+            ParamRelations = new List<string>();
             InitializeComponent();
 
             this.Unit = unit;
@@ -39,6 +42,10 @@ namespace Prism.Units.Controls
 
             alertTimer = new System.Timers.Timer(1000);
             alertTimer.Elapsed += AlertTimerEvent;
+
+            ParamRelations.Add("lsw9_state_tc_switch");
+            ParamRelations.Add("lsw9_state_qs_switch");
+            ParamRelations.Add("lsw9_state_qf_switch");
 
             qfOnCtrlState = new Param("qf_on_ctrl_state", new List<ParamRelation> 
             { 
@@ -55,12 +62,7 @@ namespace Prism.Units.Controls
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Unit.Processing.Params["lsw9_state_tc_switch"], ParamState.B)
-                }, ParamState.Idle),
-
-                new ParamRelation(new List<ParamCombination> 
-                { 
-                    new ParamCombination(Unit.Processing.Params["lsw9_alarm_circuit_fault"], ParamState.C)
-                }, ParamState.Idle),
+                }, ParamState.Idle),               
 
                 new ParamRelation(new List<ParamCombination> 
                 { 
@@ -78,12 +80,7 @@ namespace Prism.Units.Controls
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Unit.Processing.Params["lsw9_state_tc_switch"], ParamState.B)
-                }, ParamState.Idle),
-
-                new ParamRelation(new List<ParamCombination> 
-                { 
-                    new ParamCombination(Unit.Processing.Params["lsw9_alarm_circuit_fault"], ParamState.C)
-                }, ParamState.Idle),
+                }, ParamState.Idle),               
 
                 new ParamRelation(new List<ParamCombination> 
                 { 
@@ -100,14 +97,26 @@ namespace Prism.Units.Controls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            UpdateState();
-            Unit.Processing.ProcessingChangeStateEvent += delegate(object s)
+            Unit.Processing.ProcessingParamUpdateEvent += delegate(object sender1, Param param)
+            {
+                if (ParamRelations.Contains(param.Name))
+                {
+                    MainThread.EnqueueTask(delegate()
+                    {
+                        UpdateState();
+                    });
+                }
+            };
+
+            Unit.Processing.ProcessingOnlineStateChangedEvent += delegate(object sender2, bool isOnline)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     UpdateState();
                 });
             };
+
+            UpdateState();
         }
 
         private void AlertTimerEvent(object sender, ElapsedEventArgs e)
@@ -130,8 +139,8 @@ namespace Prism.Units.Controls
                 return;
             }
 
-            onButton.IsEnabled = (qfOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            offButton.IsEnabled = (qfOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
+            onButton.IsEnabled = (qfOnCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
+            offButton.IsEnabled = (qfOffCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
 
             progress.IsActive = false;
 
@@ -159,7 +168,7 @@ namespace Prism.Units.Controls
 
             lockUpdate = true;
             Unit.Journal.Informarion(Unit, 3091, "Телеуправление - АЗ, отключение...");
-            Unit.Processing.Operate(new ProducerChannelValue("auto", "lsw9-qf-ctrl", "B"), delegate(string error, ProducerChannelValue value)
+            Unit.Processing.Operate(new ProducerChannelValue("auto", "lsw9-qf-ctrl", "B"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
@@ -189,7 +198,7 @@ namespace Prism.Units.Controls
 
             lockUpdate = true;
             Unit.Journal.Informarion(Unit, 3090, "Телеуправление - АЗ, включение...");
-            Unit.Processing.Operate(new ProducerChannelValue("auto", "lsw9-qf-ctrl", "A"), delegate(string error, ProducerChannelValue value)
+            Unit.Processing.Operate(new ProducerChannelValue("auto", "lsw9-qf-ctrl", "A"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {

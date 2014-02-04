@@ -6,15 +6,6 @@ using Newtonsoft.Json;
 
 namespace Prism.General
 {
-    public class UnitConnectionSettings
-    {
-        [JsonProperty("req")]
-        public string ReqAddr;
-
-        [JsonProperty("sub")]
-        public string SubAddr;
-    }
-
     public class UnitSettings
     {
         [JsonProperty("unit")]
@@ -32,7 +23,13 @@ namespace Prism.General
         [JsonProperty("address")]
         public string Address;
 
-        [JsonProperty("connection")]
-        public UnitConnectionSettings Connection;
+        [JsonProperty("poll_endpoints")]
+        public List<string> PollEndpoints;
+
+        [JsonProperty("operate_endpoint")]
+        public string OperateEndpoint;
+
+        [JsonProperty("subscribe_endpoint")]
+        public string SubscribeEndpoint;
     }
 }

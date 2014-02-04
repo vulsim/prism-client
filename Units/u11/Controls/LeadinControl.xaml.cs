@@ -27,13 +27,15 @@ namespace Prism.Units.Controls
         private Unit Unit;
         private uint Index;
 
+        private List<string> ParamRelations;
         private Param onCtrlState;
-        private Param offCtrlState;
+        private Param offCtrlState;        
         private Boolean lockUpdate = false;
         private System.Timers.Timer alertTimer;
 
         public LeadinControl(Unit unit, uint index, String title)
         {
+            ParamRelations = new List<string>();
             InitializeComponent();
 
             this.Unit = unit;
@@ -45,6 +47,11 @@ namespace Prism.Units.Controls
 
             if (Index < 3)
             {
+                ParamRelations.Add(String.Format("leadin{0}_state_in_switch", Index));
+                ParamRelations.Add(String.Format("leadin{0}_state_tc_switch", Index));
+                ParamRelations.Add(String.Format("leadin{0}_alarm_in_switch_fault", Index));
+                ParamRelations.Add(String.Format("leadin{0}_alarm_circuit_fault", Index));
+                
                 onCtrlState = new Param("leadin_on_ctrl_state", new List<ParamRelation> 
                 { 
                     new ParamRelation(new List<ParamCombination> 
@@ -103,6 +110,11 @@ namespace Prism.Units.Controls
             }
             else
             {
+                ParamRelations.Add("ol_state_in_switch");
+                ParamRelations.Add("ol_state_tc_switch");
+                ParamRelations.Add("ol_alarm_switch_fault");
+                ParamRelations.Add("ol_alarm_circuit_fault");
+
                 onCtrlState = new Param("ol_on_ctrl_state", new List<ParamRelation> 
                 { 
                     new ParamRelation(new List<ParamCombination> 
@@ -175,15 +187,27 @@ namespace Prism.Units.Controls
                 leadinAlarmTnRu6Tile.Visibility = System.Windows.Visibility.Hidden;
                 leadinAlarmTnCircuitTile.Visibility = System.Windows.Visibility.Hidden;
             }
+            
+            Unit.Processing.ProcessingParamUpdateEvent += delegate(object sender1, Param param)
+            {
+                if (ParamRelations.Contains(param.Name))
+                {
+                    MainThread.EnqueueTask(delegate()
+                    {
+                        UpdateState();
+                    });
+                }
+            };
 
-            UpdateState();
-            Unit.Processing.ProcessingChangeStateEvent += delegate(object s)
+            Unit.Processing.ProcessingOnlineStateChangedEvent += delegate(object sender2, bool isOnline)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     UpdateState();
                 });
             };
+
+            UpdateState();
         }
 
         private void AlertTimerEvent(object sender, ElapsedEventArgs e)
@@ -207,7 +231,7 @@ namespace Prism.Units.Controls
             {
                 lockUpdate = true;
                 Unit.Journal.Informarion(Unit, (int)(1000 + Index * 10), (Index == 1) ? "Телеуправление - Рабочий ввод, включение..." : "Телеуправление - Резервный ввод, включение...");
-                Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("leadin{0}-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
+                Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("leadin{0}-ctrl", Index), "A"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
                 {
                     MainThread.EnqueueTask(delegate()
                     {
@@ -229,7 +253,7 @@ namespace Prism.Units.Controls
             {
                 lockUpdate = true;
                 Unit.Journal.Informarion(Unit, (int)(1000 + Index * 10), "Телеуправление - Отходящая линия, включение...");
-                Unit.Processing.Operate(new ProducerChannelValue("auto", "ol-ctrl", "A"), delegate(string error, ProducerChannelValue value)
+                Unit.Processing.Operate(new ProducerChannelValue("auto", "ol-ctrl", "A"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
                 {
                     MainThread.EnqueueTask(delegate()
                     {
@@ -262,7 +286,7 @@ namespace Prism.Units.Controls
             {
                 lockUpdate = true;
                 Unit.Journal.Informarion(Unit, (int)(1001 + Index * 10), (Index == 1) ? "Телеуправление - Рабочий ввод, отключение..." : "Телеуправление - Резервный ввод, отключение...");
-                Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("leadin{0}-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
+                Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("leadin{0}-ctrl", Index), "B"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
                 {
                     MainThread.EnqueueTask(delegate()
                     {
@@ -284,7 +308,7 @@ namespace Prism.Units.Controls
             {
                 lockUpdate = true;
                 Unit.Journal.Informarion(Unit, (int)(1001 + Index * 10), "Телеуправление - Отходящая линия, отключение...");
-                Unit.Processing.Operate(new ProducerChannelValue("auto", "ol-ctrl", "B"), delegate(string error, ProducerChannelValue value)
+                Unit.Processing.Operate(new ProducerChannelValue("auto", "ol-ctrl", "B"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
                 {
                     MainThread.EnqueueTask(delegate()
                     {
@@ -345,8 +369,8 @@ namespace Prism.Units.Controls
                 return;
             }
 
-            onButton.IsEnabled = (onCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            offButton.IsEnabled = (offCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
+            onButton.IsEnabled = (onCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
+            offButton.IsEnabled = (offCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
 
             progress.IsActive = false;
 

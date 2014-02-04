@@ -74,8 +74,8 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <control:FuseImageButton Name="paOnButton" Width="120" Height="120" Grid.Column="0" VerticalAlignment="Top" Margin="5,43,0,0" IsEnabled="False" ImageSource="/u12;component/Resources/icon.rect.on.png" Text="Включить" Click="paOnButton_Click" />
-                    <control:FuseImageButton Name="paOffButton" Width="120" Height="120" Grid.Column="2" VerticalAlignment="Top" Margin="0,43,5,0" IsEnabled="False" ImageSource="/u12;component/Resources/icon.rect.off.png" Text="Отключить" Click="paOffButton_Click" />
+                    <control:FuseImageButton Name="paOnButton" Width="120" Height="120" Grid.Column="0" VerticalAlignment="Top" Margin="5,43,0,0" IsEnabled="False" ImageSource="/u11;component/Resources/icon.rect.on.png" Text="Включить" Click="paOnButton_Click" />
+                    <control:FuseImageButton Name="paOffButton" Width="120" Height="120" Grid.Column="2" VerticalAlignment="Top" Margin="0,43,5,0" IsEnabled="False" ImageSource="/u11;component/Resources/icon.rect.off.png" Text="Отключить" Click="paOffButton_Click" />
 
                     <Grid Grid.Column="4">
                         <Grid>
@@ -133,14 +133,14 @@
                     <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="*" MaxWidth="500"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Source="/u12;component/Resources/icon.warning.png" Width="64" Height="64" VerticalAlignment="Top" />
+                <Image Grid.Column="0" Source="/u11;component/Resources/icon.warning.png" Width="64" Height="64" VerticalAlignment="Top" />
                 <TextBlock Grid.Column="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Внимание, команда управления завершилась с ошибкой или была выполнена, но результат не привел к изменению состояния объекта управления. Попробуйте повторить поппытку управления еще раз."/>
             </Grid>
         </Grid>      
         <Grid Name="overlay" Background="#DC252526">
             <mahapps:ProgressRing Name="progress" IsActive="False" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             <StackPanel Name="alertMessageBlock" Visibility="Hidden" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <Image Source="/u12;component/Resources/icon.alert.png" Width="48" Height="48" />
+                <Image Source="/u11;component/Resources/icon.alert.png" Width="48" Height="48" />
                 <TextBlock Text="Отсутствует подключение" FontFamily="Segoe UI" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>

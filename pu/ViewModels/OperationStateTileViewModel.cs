@@ -37,9 +37,9 @@ namespace Prism.ViewModels
             Unit.UnitStateChangedEvent -= UnitStateChangedEvent;
         }
 
-        private void UnitStateChangedEvent(object sender, ParamState hazardValue)
+        private void UnitStateChangedEvent(object sender, ParamState state)
         {
-            State = Unit.State;
+            State = state;
             NotifyPropertyChanged("State");
         }
 

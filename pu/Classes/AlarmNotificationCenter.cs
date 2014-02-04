@@ -5,6 +5,8 @@ using System.Text;
 using System.Timers;
 using System.Media;
 using System.Windows;
+using System.Threading;
+using System.Speech.Synthesis;
 using Prism.General;
 using Prism.General.Automation;
 
@@ -63,12 +65,16 @@ namespace Prism.Classes
     {
         public static AlarmNotificationCenter Instance = null;
 
-        public List<NotificationAlarm> alarms;
+        public List<NotificationAlarm> Alarms;
         public event GeneralAlarmsStateChangedEventHandler GeneralAlarmsStateChangedEvent;
 
-        private System.Timers.Timer notificationTimer;
+        private System.Timers.Timer LongNotificationTimer;
+        private System.Timers.Timer ShortNotificationTimer;
+        private bool CanPlayShortNotification = false;
+        private bool CanPlayLongNotification = true;
+
         private bool IsNotificationInProgress = false;
-        private bool HasModifiedAlarms = false;
+        
 
         public class DebugAlarm : IAlarm
         {
@@ -86,122 +92,153 @@ namespace Prism.Classes
 
         public AlarmNotificationCenter()
         {
-            this.alarms = new List<NotificationAlarm>();
+            Alarms = new List<NotificationAlarm>();
 
-            notificationTimer = new System.Timers.Timer(30000);
-            notificationTimer.Elapsed += NotificationTimerEvent;
-            notificationTimer.Start();
+            ShortNotificationTimer = new System.Timers.Timer(3000);
+            ShortNotificationTimer.Elapsed += ShortNotificationTimerEvent;
+            ShortNotificationTimer.Start();
+
+            LongNotificationTimer = new System.Timers.Timer(30000);
+            LongNotificationTimer.Elapsed += LongNotificationTimerEvent;
+            LongNotificationTimer.Start();
+           
+            //Alarms.Add(new NotificationAlarm(Core.Instance.Units[0], new DebugAlarm("di-100", "ТП №11. Пожар на подстанции.", ParamState.C), false));            
         }
 
         ~AlarmNotificationCenter()
         {
-            notificationTimer.Stop();
+            ShortNotificationTimer.Elapsed -= ShortNotificationTimerEvent;
+            LongNotificationTimer.Elapsed -= LongNotificationTimerEvent;
         }
 
-        public void Update(Unit unit)
-        {            
-            List<IAlarm> Alarms = new List<IAlarm>(unit.Alarms);
-            List<NotificationAlarm> needRemove = new List<NotificationAlarm>();
-            bool hasModifiedAlarms = false;
-
-            foreach (var alarm in alarms)
-            {
-                if (alarm.Unit == unit)
-                {
-                    needRemove.Add(alarm);
-                }
-            }
-            
-            foreach (var newAlarm in Alarms)
-            {
-                bool alarmExists = false;
-
-                foreach (var lastAlarm in alarms)
-                {
-                    if (lastAlarm.Unit == unit && newAlarm.Code.Equals(lastAlarm.Code))
-                    {
-                        needRemove.Remove(lastAlarm);
-                        alarmExists = true;
-
-                        if (newAlarm.State != lastAlarm.State || !newAlarm.Description.Equals(lastAlarm.Description))
-                        {
-                            if (newAlarm.State != lastAlarm.State)
-                            {
-                                lastAlarm.Ack = false;
-                            }
-                            lastAlarm.State = newAlarm.State;
-                            lastAlarm.Description = newAlarm.Description;
-                            hasModifiedAlarms = true;
-                        }                        
-                        break;
-                    }
-                }
-
-                if (!alarmExists)
-                {
-                    NotificationAlarm notificationAlarm = new NotificationAlarm(unit, newAlarm, false);
-                    alarms.Add(notificationAlarm);
-                    hasModifiedAlarms = true;
-                }
-            }
-
-            hasModifiedAlarms = hasModifiedAlarms || needRemove.Count > 0;
-            this.HasModifiedAlarms = hasModifiedAlarms;
-
-            foreach (var alarm in needRemove)
-            {
-                alarms.Remove(alarm);                
-            }
-
-            if (hasModifiedAlarms && GeneralAlarmsStateChangedEvent != null)
-            {
-                MainThread.EnqueueTask(delegate()
-                {
-                    GeneralAlarmsStateChangedEvent(this);
-                });         
-            }
-
-            MainThread.EnqueueTask(delegate()
-            {
-                NotificationTimerEvent(this, null);
-            });
-        }
-
-        private void NotificationTimerEvent(object sender, ElapsedEventArgs e)
+        public void UpdateAlarm(Unit unit, IAlarm alarm)
         {
-            if (IsNotificationInProgress)
+            foreach (var notificationAlarm in Alarms)
             {
-                return;
-            }
-
-            IsNotificationInProgress = true;
-            notificationTimer.Stop();
-
-            foreach (var alarm in alarms)
-            {
-                if (alarm.State == ParamState.C && !alarm.Ack)
+                if (notificationAlarm.Code.Equals(alarm.Code))
                 {
-                    Uri buzzerUri = new Uri(@"pack://application:,,,/prism;Component/Resources/alarm.buzzer.wav");
-                    SoundPlayer buzzerPlayer = new SoundPlayer(Application.GetResourceStream(buzzerUri).Stream);
-                    buzzerPlayer.Play();
+                    if (notificationAlarm.State != alarm.State)
+                    {
+                        if (alarm.State == ParamState.Idle)
+                        {
+                            Alarms.Remove(notificationAlarm);
 
-                    IsNotificationInProgress = false;
-                    notificationTimer.Start();
+                            if (GeneralAlarmsStateChangedEvent != null)
+                            {
+                                GeneralAlarmsStateChangedEvent(this);
+                            }
+
+                            CanPlayShortNotification = true;
+                            return;
+                        }
+
+                        notificationAlarm.State = alarm.State;
+                        notificationAlarm.Ack = false;
+
+                        if (GeneralAlarmsStateChangedEvent != null)
+                        {
+                            GeneralAlarmsStateChangedEvent(this);
+                        }
+
+                        CanPlayShortNotification = true;
+
+                        if (notificationAlarm.State == ParamState.C && CanPlayLongNotification)
+                        {
+                            LongNotificationTimer.Stop();
+                            LongNotificationTimer.Interval = 3000;
+                            LongNotificationTimer.Start();
+                        }
+                    }
+
                     return;
                 }
             }
-
-            if (this.HasModifiedAlarms)
+            
+            if (alarm.State > ParamState.Idle)
             {
-                this.HasModifiedAlarms = false;
+                NotificationAlarm notificationAlarm = new NotificationAlarm(unit, alarm, false);
+                Alarms.Add(notificationAlarm);
 
-                Uri notifyUri = new Uri(@"pack://application:,,,/prism;Component/Resources/alarm.notify.wav");
-                SoundPlayer notifyPlayer = new SoundPlayer(Application.GetResourceStream(notifyUri).Stream);
-                notifyPlayer.Play();
+                if (GeneralAlarmsStateChangedEvent != null)
+                {
+                    GeneralAlarmsStateChangedEvent(this);
+                }
+
+                CanPlayShortNotification = true;
+
+                if (notificationAlarm.State == ParamState.C && CanPlayLongNotification)
+                {
+                    LongNotificationTimer.Stop();
+                    LongNotificationTimer.Interval = 3000;
+                    LongNotificationTimer.Start();
+                }
+            }                        
+        }
+
+        private void ShortNotificationTimerEvent(object sender, ElapsedEventArgs e)
+        {
+            ShortNotificationTimer.Stop();
+
+            if (CanPlayShortNotification)
+            {
+                PlayNotify();
+                CanPlayShortNotification = false;
+            }
+            ShortNotificationTimer.Start();
+        }
+
+        private void LongNotificationTimerEvent(object sender, ElapsedEventArgs e)
+        {
+            LongNotificationTimer.Stop();
+            CanPlayLongNotification = false;
+
+            List<string> alarmMessages = new List<string>();
+
+            foreach (var notificationAlarm in Alarms)
+            {
+                if (notificationAlarm.State == ParamState.C && !notificationAlarm.Ack)
+                {
+                    alarmMessages.Add(String.Format("Внимание. {0}, {1}", notificationAlarm.Unit.FullName, notificationAlarm.Description));
+                }
             }
 
-            IsNotificationInProgress = false;
-            notificationTimer.Start();
+            if (alarmMessages.Count > 0)
+            {
+                PlayBuzzer();
+                Thread.Sleep(1000);
+
+                foreach (var message in alarmMessages)
+                {
+                    PlaySpeech(message);
+                    Thread.Sleep(1000);
+                }
+            }
+
+            CanPlayLongNotification = true;
+            LongNotificationTimer.Interval = 30000;
+            LongNotificationTimer.Start();
+        }
+
+        private void PlayNotify()
+        {
+            Uri notifyUri = new Uri(@"pack://application:,,,/prism;Component/Resources/alarm.notify.wav");
+            SoundPlayer soundPlayer = new SoundPlayer(Application.GetResourceStream(notifyUri).Stream);
+
+            soundPlayer.PlaySync();
+        }
+
+        private void PlayBuzzer()
+        {
+            Uri buzzerUri = new Uri(@"pack://application:,,,/prism;Component/Resources/alarm.buzzer.wav");
+            SoundPlayer soundPlayer = new SoundPlayer(Application.GetResourceStream(buzzerUri).Stream);
+            
+            soundPlayer.PlaySync();
+        }
+
+        private void PlaySpeech(string message)
+        {
+            SpeechSynthesizer speechSynthesizer = new SpeechSynthesizer();
+            speechSynthesizer.Speak(message);
         }
     }
 }

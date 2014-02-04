@@ -7,7 +7,7 @@ using System.Threading;
 namespace Prism.Classes
 {
     public delegate void ContentLoaderHandler(object target);
-    public delegate void ContentLoaderProgressHandler(uint stage, string description);
+    public delegate void ContentLoaderProgressHandler(double progress, string description);
 
     class ContentLoaderItem
     {
@@ -35,14 +35,14 @@ namespace Prism.Classes
             ContinueLoaderThreadEvent = new ManualResetEvent(false);
 
             ContentLoaderThread = new Thread(delegate() {
-                uint itemIndex = 0;
+                double itemIndex = 0;
 
                 while (ContentLoaderThread.ThreadState != ThreadState.Aborted)
                 {
                     if (LoaderQueue.Count > 0)
-                    {
+                    {                        
                         ContentLoaderItem item = LoaderQueue.Dequeue();
-                        progress(itemIndex++, item.Description);
+                        progress((++itemIndex) / (itemIndex + LoaderQueue.Count), item.Description);
                         item.Handler(item.Target);
                     }
                     else 

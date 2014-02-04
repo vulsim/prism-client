@@ -12,71 +12,25 @@ namespace Prism.General
 
     public class MainThread
     {
-        private static MainThread Instance = new MainThread();
-        private Thread InvokeThread;
-        private Queue<MainThreadQueueItemHandler> InvokeQueue;
-        private ManualResetEvent ContinueQueueEvent;
+        private static Dispatcher CurrentDispatcher;
+        public static Dispatcher Dispatcher { get { return CurrentDispatcher; } }
+
+        public static void Initialize(Dispatcher dispatcher)
+        {
+            if (CurrentDispatcher == null)
+            {
+                CurrentDispatcher = dispatcher;
+            }
+        }
 
         public static void EnqueueTask(MainThreadQueueItemHandler queueItemHandler)
         {
-            if (Instance == null)
+            if (CurrentDispatcher == null)
             {
                 return;
             }
 
-            Instance.Enqueue(queueItemHandler);
-        }
-
-        public MainThread()
-        {
-            InvokeQueue = new Queue<MainThreadQueueItemHandler>();
-            ContinueQueueEvent = new ManualResetEvent(false);
-
-            InvokeThread = new Thread(delegate()
-            {
-                while (InvokeThread.ThreadState != ThreadState.Aborted)
-                {
-                    if (InvokeQueue.Count > 0)
-                    {
-                        try
-                        {
-                            MainThreadQueueItemHandler handler = InvokeQueue.Dequeue();
-                            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, handler);
-                        }
-                        catch (SystemException e)
-                        {
-
-                        }
-                    }
-                    else
-                    {
-                        ContinueQueueEvent.WaitOne();
-                    }
-                    ContinueQueueEvent.Reset();
-                }
-            });
-            InvokeThread.SetApartmentState(ApartmentState.STA);
-            InvokeThread.Start();
-        }
-
-        ~MainThread()
-        {
-            InvokeThread.Abort();
-            ContinueQueueEvent.Set();
-            InvokeThread.Join();
-        }
-
-        public void Enqueue(MainThreadQueueItemHandler queueItemHandler)
-        {
-            try
-            {
-                InvokeQueue.Enqueue(queueItemHandler);
-                ContinueQueueEvent.Set();
-            }
-            catch (SystemException e)
-            {
-
-            }
-        }
+            CurrentDispatcher.BeginInvoke(new Action(queueItemHandler), DispatcherPriority.Normal, null);
+        }       
     }
 }

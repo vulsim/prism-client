@@ -34,10 +34,11 @@ namespace Prism.Views
             NotificationAlarms = new List<NotificationAlarm>();
             InitializeComponent();
 
-            generalBusyProgress.Visibility = Core.Instance.IsCoreBusy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+            generalBusyProgress.Visibility = Core.Instance.IsBusy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
             generalBusyProgress.IsIndeterminate = (generalBusyProgress.Visibility == System.Windows.Visibility.Visible);
+            
             Core.Instance.CoreBusyStateChangedEvent += CoreBusyStateChangedEvent;
-            CoreBusyStateChangedEvent(this, Core.Instance.IsCoreBusy);
+            CoreBusyStateChangedEvent(this, Core.Instance.IsBusy);
         }
 
         ~AlarmsView()
@@ -48,7 +49,7 @@ namespace Prism.Views
         private void view_Loaded(object sender, RoutedEventArgs e)
         {
             NotificationAlarms.Clear();
-            NotificationAlarms.AddRange(AlarmNotificationCenter.Instance.alarms);
+            NotificationAlarms.AddRange(AlarmNotificationCenter.Instance.Alarms);
             NotificationAlarms.Sort(NotificationAlarmsCompare);
             alarmsListBox.Items.Refresh();
             AlarmNotificationCenter.Instance.GeneralAlarmsStateChangedEvent += GeneralAlarmsStateChangedEvent;
@@ -71,9 +72,13 @@ namespace Prism.Views
         void GeneralAlarmsStateChangedEvent(object sender)
         {
             NotificationAlarms.Clear();
-            NotificationAlarms.AddRange(AlarmNotificationCenter.Instance.alarms);
+            NotificationAlarms.AddRange(AlarmNotificationCenter.Instance.Alarms);
             NotificationAlarms.Sort(NotificationAlarmsCompare);
-            alarmsListBox.Items.Refresh();
+
+            MainThread.EnqueueTask(delegate()
+            {
+                alarmsListBox.Items.Refresh();
+            });            
         }
 
         private void alarmsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -88,7 +93,7 @@ namespace Prism.Views
                     {
                         selectedItem.Ack = true;
                         NotificationAlarms.Clear();
-                        NotificationAlarms.AddRange(AlarmNotificationCenter.Instance.alarms);
+                        NotificationAlarms.AddRange(AlarmNotificationCenter.Instance.Alarms);
                         NotificationAlarms.Sort(NotificationAlarmsCompare);
                         alarmsListBox.Items.Refresh();
                     }

@@ -32,10 +32,11 @@ namespace Prism.Views
             copyrightLabel.Content = "© Кафедра ИСИТ, ГрГУ им. Я.Купалы, 2014. Все права защищены.";
             versionLabel.Content = String.Format("{0}, v.{1}", assemblyProductAttribute.Product.ToString(), Assembly.GetEntryAssembly().GetName().Version.ToString());
 
-            generalBusyProgress.Visibility = Core.Instance.IsCoreBusy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+            generalBusyProgress.Visibility = Core.Instance.IsBusy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
             generalBusyProgress.IsIndeterminate = (generalBusyProgress.Visibility == System.Windows.Visibility.Visible);
+            
             Core.Instance.CoreBusyStateChangedEvent += CoreBusyStateChangedEvent;
-            CoreBusyStateChangedEvent(this, Core.Instance.IsCoreBusy);
+            CoreBusyStateChangedEvent(this, Core.Instance.IsBusy);
         }
 
         ~AboutView()
@@ -53,6 +54,29 @@ namespace Prism.Views
                     generalBusyProgress.IsIndeterminate = (generalBusyProgress.Visibility == System.Windows.Visibility.Visible);
                 });
             }, null);
+        }
+
+        private void UpdateManagerProgressEventHandler(object sender, string stage)
+        {
+            MainThread.EnqueueTask(delegate()
+            {
+                updateLabel.Content = stage;
+            });
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateManager.Instance.UpdateManagerProgressEvent += UpdateManagerProgressEventHandler;
+        }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            UpdateManager.Instance.UpdateManagerProgressEvent -= UpdateManagerProgressEventHandler;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateManager.Instance.CheckForUpdate();
         }
     }
 }

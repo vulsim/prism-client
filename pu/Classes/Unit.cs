@@ -17,18 +17,17 @@ namespace Prism.Classes
         public string ShortName { get; set; }
         public string SymbolicName { get; set; }
         public string Address { get; set; }
-        public bool IsOnline { get { return Instance.IsOnline; } }
-        public bool IsBusy { get { return Instance.IsBusy; } }
+        public bool IsOnline { get { return Instance.IsOnline; } }        
         public ParamState State { get { return Instance.State; } }
 
         public IEnumerable<IAlarm> Alarms { get { return Instance.Alarms; } }
         public IEnumerable<IPresentationControl> PresentationControls { get { return Instance.PresentationControls; } }
 
-        public event UnitBusyStateChangedEventHandler UnitBusyStateChangedEvent;
+        public event UnitParamUpdateEventHandler UnitParamUpdateEvent;
+        public event UnitAlarmUpdateEventHandler UnitAlarmUpdateEvent;
         public event UnitStateChangedEventHandler UnitStateChangedEvent;
-        public event UnitAlarmsChangedEventHandler UnitAlarmsChangedEvent;
 
-        public Unit(UnitSettings settings, IJournal journal, UnitGeneralCompleteHandler completion)
+        public Unit(UnitSettings settings, IPollManager manager, IJournal journal, UnitGeneralCompleteHandler completion)
         {
             string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + settings.FilePath;
             Assembly assembly = Assembly.LoadFile(filePath);
@@ -47,13 +46,21 @@ namespace Prism.Classes
             this.SymbolicName = settings.SymbolicName;
             this.Address = settings.Address;
 
-            Instance.Initialize(settings, journal, completion);
+            Instance.Initialize(MainThread.Dispatcher, settings, manager, journal, completion);
 
-            Instance.UnitBusyStateChangedEvent += delegate(object sender, bool isBusy)
+            Instance.UnitParamUpdateEvent += delegate(object sender, Param param)
             {
-                if (UnitBusyStateChangedEvent != null)
+                if (UnitParamUpdateEvent != null)
                 {
-                    UnitBusyStateChangedEvent(this, isBusy);
+                    UnitParamUpdateEvent(this, param);
+                }
+            };
+
+            Instance.UnitAlarmUpdateEvent += delegate(object sender, IAlarm alarm)
+            {
+                if (UnitAlarmUpdateEvent != null)
+                {
+                    UnitAlarmUpdateEvent(this, alarm);
                 }
             };
 
@@ -62,14 +69,6 @@ namespace Prism.Classes
                 if (UnitStateChangedEvent != null)
                 {
                     UnitStateChangedEvent(this, state);
-                }
-            };
-
-            Instance.UnitAlarmsChangedEvent += delegate(object sender, IEnumerable<IAlarm> alarms)
-            {
-                if (UnitAlarmsChangedEvent != null)
-                {
-                    UnitAlarmsChangedEvent(this, alarms);
                 }
             };
         }

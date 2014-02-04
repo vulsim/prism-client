@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using Prism.General;
 using Prism.Properties;
 using Prism.General.Automation;
@@ -20,8 +22,9 @@ namespace Prism.Classes
 
         public List<Unit> Units;
         public Journal Journal;
+        public PollManager PollManager;
         public ParamState CoreGeneralState;
-        public bool IsCoreBusy;
+        public bool IsBusy;
 
         public event CoreBusyStateChangedEventHandler CoreBusyStateChangedEvent;
         public event CoreGeneralStateChangedEventHandler CoreGeneralStateChangedEvent;
@@ -29,36 +32,35 @@ namespace Prism.Classes
         private Prism.Windows.SplashScreen SplashScreen;
 
         public Core()
-        {            
-            ThreadPool.QueueUserWorkItem(delegate(object target) 
+        {
+            Startup(delegate()
             {
-                Startup(delegate()
-                {
- 
-                });
-            }, null);
+
+            });
         }
 
         public void Startup(SimpleCompleteHandler completion)
         {            
-            MainThread.EnqueueTask(delegate()
-            {
-                SplashScreen = new Prism.Windows.SplashScreen();
-                SplashScreen.Show();
-            }); 
-            
-            ContentLoader contentLoader = new ContentLoader(delegate(uint stage, string description)
+            SplashScreen = new Prism.Windows.SplashScreen();            
+            SplashScreen.Show();
+
+            ContentLoader contentLoader = new ContentLoader(delegate(double progressValue, string description)
             {
                 MainThread.EnqueueTask(delegate()
-                {
-                    SplashScreen.ProgressLabel.Content = description;                    
-                });            
+                {                    
+                    SplashScreen.progressLabel.Content = description;                    
+                });
             });
 
             contentLoader.Enqueue(Resources.CORE_STARTUP_MESSAGE_0, delegate(object target)
             {
                 Units = new List<Unit>();
                 Journal = new Journal();
+                PollManager = new PollManager();
+                PollManager.PollManagerChangeStateEvent += CoreUpdateBusyState;
+                PollManager.PollManagerUpdateUnitStateEvent += CoreUpdateUnitStateEvent;
+
+                UpdateManager.Instance = new UpdateManager();
                 AlarmNotificationCenter.Instance = new AlarmNotificationCenter();
             }, null);
 
@@ -77,40 +79,34 @@ namespace Prism.Classes
                             try
                             {
                                 ManualResetEvent ContinueEvent = new ManualResetEvent(false);
-                                Unit unit = new Unit(unitSettings, this.Journal, delegate()
+                                Unit unit = new Unit(unitSettings, this.PollManager, this.Journal, delegate()
                                 {
                                     ContinueEvent.Set();
                                 });
                                 ContinueEvent.WaitOne();
                                 Units.Add(unit);
 
-                                unit.UnitBusyStateChangedEvent += delegate(object sender, bool isBusy)
-                                {
-                                    CoreUpdateBusyState();
-                                };
+                                unit.Uri = new Uri("unit://" + Units.Count.ToString());
 
                                 unit.UnitStateChangedEvent += delegate(object sender, ParamState state)
                                 {
                                     CoreUpdateGeneralState();
                                 };
 
-                                unit.UnitAlarmsChangedEvent += delegate(object sender, IEnumerable<IAlarm> alarms)
+                                unit.UnitAlarmUpdateEvent += delegate(object sender, IAlarm alarm)
                                 {
-                                    AlarmNotificationCenter.Instance.Update((Unit)sender);
+                                    AlarmNotificationCenter.Instance.UpdateAlarm((Unit)sender, alarm);
                                 };
-
-                                unit.Uri = new Uri("unit://" + Units.Count.ToString());
                             }
                             catch (SystemException e)
                             {
+                                System.Diagnostics.Debug.WriteLine(e.ToString());
                             }
                         }, settings);  
                     }
 
                     contentLoader.Enqueue(Resources.CORE_STARTUP_MESSAGE_3, delegate(object target2)
                     {
-                        CoreUpdateGeneralState();
-
                         MainThread.EnqueueTask(delegate()
                         {
                             MainWindow.Instance = new MainWindow();
@@ -118,22 +114,35 @@ namespace Prism.Classes
                             SplashScreen.Close();
                             SplashScreen = null;
 
-                            CoreUpdateBusyState();
-                        });                                                
+                            CoreUpdateGeneralState();
+                            PollManager.Start();
+                        });
+                        completion();  
                     }, null);
                 }
                 catch (SystemException e)
                 {
+                    System.Diagnostics.Debug.WriteLine(e.ToString());
                 }                
             }, null);           
         }
 
         public void Shutdown()
         {
-            ThreadPool.QueueUserWorkItem(delegate(object target) 
+            PollManager.PollManagerChangeStateEvent -= CoreUpdateBusyState;
+            PollManager.PollManagerUpdateUnitStateEvent -= CoreUpdateUnitStateEvent;
+
+            MainThread.EnqueueTask(delegate() 
             {
-                System.Environment.Exit(0);
-            }, null);            
+                try
+                {
+                    System.Environment.Exit(0);
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine(e.ToString());
+                }                
+            });            
         }
 
         private void CoreUpdateGeneralState()
@@ -154,33 +163,30 @@ namespace Prism.Classes
 
                 if (CoreGeneralStateChangedEvent != null)
                 {
-                    CoreGeneralStateChangedEvent(this, CoreGeneralState);
+                    MainThread.EnqueueTask(delegate()
+                    {
+                        CoreGeneralStateChangedEvent(this, CoreGeneralState);
+                    });                    
                 }
             }
         }
 
-        private void CoreUpdateBusyState()
+        private void CoreUpdateBusyState(bool isBusy)
         {
-            bool isBusy = false;
-
-            foreach (Unit unit in Units)
+            if (IsBusy != isBusy)
             {
-                if (unit.IsBusy)
-                {
-                    isBusy = true;
-                    break;
-                }
-            }
-
-            if (IsCoreBusy != isBusy)
-            {
-                IsCoreBusy = isBusy;
+                IsBusy = isBusy;
 
                 if (CoreBusyStateChangedEvent != null)
                 {
-                    CoreBusyStateChangedEvent(this, IsCoreBusy);
+                    CoreBusyStateChangedEvent(this, IsBusy);
                 }
             }
+        }
+
+        private void CoreUpdateUnitStateEvent(IUnit unit)
+        {
+            CoreUpdateGeneralState();
         }
     }
 }

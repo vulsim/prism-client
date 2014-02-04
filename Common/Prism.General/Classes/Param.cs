@@ -45,6 +45,11 @@ namespace Prism.General.Automation
             this.Param = param;
             this.State = state;
         }
+
+        public bool RelatedTo(string key)
+        {            
+            return Param.RealatedTo(key);
+        }
     }
 
     public class ParamRelation
@@ -74,6 +79,19 @@ namespace Prism.General.Automation
         {
             this.Combinations = combinations;
             this.State = state;
+        }
+
+        public bool RelatedTo(string key)
+        {
+            foreach (var combination in Combinations)
+            {
+                if (combination.RelatedTo(key))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 
@@ -129,7 +147,7 @@ namespace Prism.General.Automation
                 {
                     if (AssignType == ParamAssignType.Map)
                     {
-                        paramState = Map.GetState(Store[Key]);
+                        paramState = (Store.ContainsKey(Key)) ? Map.GetState(Store[Key]) : ParamState.Unknown;
                     }
                     else if (AssignType == ParamAssignType.Relation)
                     {
@@ -182,6 +200,14 @@ namespace Prism.General.Automation
             }
         }
 
+        public string StoreKey
+        {
+            get
+            {
+                return Key;
+            }
+        }
+
         private string NameInternal;
 
         private ParamAssignType AssignType;
@@ -212,6 +238,29 @@ namespace Prism.General.Automation
             this.Store = store;
             this.Key = key;
             this.Map = map;
+        }
+
+        public bool RealatedTo(string key)
+        {
+            switch (this.AssignType)
+            {
+                case ParamAssignType.Value:
+                case ParamAssignType.Map:
+                    return key.Equals(Key);
+                
+                case ParamAssignType.Relation:
+
+                    foreach (var relation in Relations)
+                    {
+                        if (relation.RelatedTo(key))
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+            }
+
+            return false;
         }
     }
 }

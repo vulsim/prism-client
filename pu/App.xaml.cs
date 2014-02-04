@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using Prism.Classes;
+using Prism.General;
 
 namespace Prism
 {
@@ -16,6 +17,7 @@ namespace Prism
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            MainThread.Initialize(Dispatcher);
             Core.Instance = new Core();  
         }
     }

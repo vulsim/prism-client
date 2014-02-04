@@ -27,53 +27,62 @@ namespace Prism.Units.Controls
     /// </summary>
     public partial class SchematicControl : UserControl
     {
+        private class SchematicItem
+        {
+            public string View { get; set; }
+            public string Number { get; set; }
+
+            public SchematicItem(string view, string number)
+            {
+                View = view;
+                Number = number;
+            }
+        }
+
         private Unit Unit;
-        private ShockwaveFlashControl schematicControl;
-        private bool IsLoaded = false;
+        private ShockwaveFlashControl SchematicFlashControl;
+        private Queue<SchematicItem> UpdateQueue;
 
         public SchematicControl(Unit unit, String title)
         {
+            UpdateQueue = new Queue<SchematicItem>();
+            
             InitializeComponent();
 
             this.Unit = unit;
             this.titleText.Text = title;
 
-            schematicControl = new ShockwaveFlashControl(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Unit\\u11\\Schematic.swf");
-            schematicControl.Loaded += delegate(object sender, RoutedEventArgs e)
+            SchematicFlashControl = new ShockwaveFlashControl(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Unit\\u11\\Schematic.swf");
+            SchematicFlashControl.Loaded += delegate(object sender, RoutedEventArgs e)
             {
                 Schematic_Initialize();
                 Schematic_SetObjectParam("view", "avaliable", "number", "1");
-                unit.Processing.ProcessingUpdateEvent += Update;
+                Schematic_SetObjectParam("view", "avaliable", "number", Unit.Processing.IsOnline ? "0" : "1");
                 
-                Update(null);
-                Schematic_SetObjectParam("view", "avaliable", "number", Unit.Processing.IsAvaliable ? "0" : "1");
+                Unit.Processing.ProcessingOnlineStateChangedEvent += OnlineStateChanged;
+                Unit.Processing.ProcessingParamUpdateEvent += ParamValueChanged;
 
-                Unit.Processing.ProcessingChangeStateEvent += delegate(object s)
-                {
-                    MainThread.EnqueueTask(delegate()
-                    {
-                        Schematic_SetObjectParam("view", "avaliable", "number", Unit.Processing.IsAvaliable ? "0" : "1");
-                    });
-                };
-
-                IsLoaded = true;
+                UpdateAll();
+                //IsLoaded = true;
             };
-            mainGrid.Children.Add(schematicControl);
+            mainGrid.Children.Add(SchematicFlashControl);
         }
 
         ~SchematicControl()
         {
-            Unit.Processing.ProcessingUpdateEvent -= Update;
+            Unit.Processing.ProcessingOnlineStateChangedEvent -= OnlineStateChanged;
+            Unit.Processing.ProcessingParamUpdateEvent -= ParamValueChanged;
         }
 
         private void Schematic_Initialize()
         {
             try
             {
-                schematicControl.CallFunction("<invoke name=\"Initialize\"></invoke>");
+                SchematicFlashControl.CallFunction("<invoke name=\"Initialize\"></invoke>");
             }
             catch (SystemException e)
             {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
             }
         }
 
@@ -81,45 +90,81 @@ namespace Prism.Units.Controls
         {
             try
             {
-                schematicControl.CallFunction("<invoke name=\"SetObjectParam\"><arguments><string>" + obj + "</string><string>" + param + "</string><" + type + ">" + value + "</" + type + "></arguments></invoke>");
+                SchematicFlashControl.CallFunction("<invoke name=\"SetObjectParam\"><arguments><string>" + obj + "</string><string>" + param + "</string><" + type + ">" + value + "</" + type + "></arguments></invoke>");
             }
             catch (SystemException e)
             {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
             }
-        }
-
-        public void Update(object sender)
-        {
-            MainThread.EnqueueTask(delegate()
-            {
-                foreach (KeyValuePair<string, Param> keyValue in Unit.Processing.Params)
-                {
-                    Param param = keyValue.Value;
-
-                    if (param.Type == Param.ParamAssignType.Value)
-                    {
-                        string value = param.Value;
-                        
-                        if (value != null)
-                        {
-                            Schematic_SetObjectParam("view", keyValue.Key, "number", value);
-                        }
-                    }
-                    else
-                    {
-                        uint value = (uint)param.State;
-                        Schematic_SetObjectParam("view", keyValue.Key, "number", value.ToString());
-                    }
-                }                
-            });
         }
 
         private void UserControl_LayoutUpdated(object sender, EventArgs e)
         {
-            if (IsLoaded)
+            
+        }
+
+        public void OnlineStateChanged(object sender, bool isOnline)
+        {
+            MainThread.EnqueueTask(delegate()
             {
-                Schematic_SetObjectParam("view", "avaliable", "number", Unit.Processing.IsAvaliable ? "0" : "1");
-            }            
+                Schematic_SetObjectParam("view", "avaliable", "number", isOnline ? "0" : "1");
+            });
+        }
+
+        public void ParamValueChanged(object sender, Param param)
+        {
+            UpdateParam(param);
+            ProcessUpdateQueue();
+        }
+
+        public void UpdateAll()
+        {
+            ThreadPool.QueueUserWorkItem(delegate(object target)
+            {
+                foreach (KeyValuePair<string, Param> keyValue in Unit.Processing.Params)
+                {
+                    UpdateParam(keyValue.Value);
+                }
+                ProcessUpdateQueue();
+            });
+        }
+
+        public void UpdateParam(Param param)
+        {
+            if (param.Type == Param.ParamAssignType.Value)
+            {
+                if (param.Value != null)
+                {
+                    UpdateQueue.Enqueue(new SchematicItem(param.Name, param.Value));
+                }
+            }
+            else
+            {
+                UpdateQueue.Enqueue(new SchematicItem(param.Name, ((uint)param.State).ToString()));
+            }
+        }
+
+        public void ProcessUpdateQueue()
+        {
+            if (UpdateQueue.Count > 0)
+            {
+                MainThread.EnqueueTask(delegate()
+                {
+                    if (UpdateQueue.Count > 0)
+                    {
+                        try
+                        {
+                            SchematicItem item = UpdateQueue.Dequeue();
+                            Schematic_SetObjectParam("view", item.View, "number", item.Number);
+                        }
+                        catch (Exception e)
+                        {
+                        }
+
+                        ProcessUpdateQueue();
+                    }
+                });
+            }
         }
     }
 }

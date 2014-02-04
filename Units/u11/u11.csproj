@@ -30,6 +30,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>PrismAutomation_ProductionKey.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MahApps.Metro">
       <HintPath>..\..\External\MahApps.Metro\MahApps.Metro.dll</HintPath>
@@ -129,6 +135,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\icon.alert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PrismAutomation_ProductionKey.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -27,6 +27,7 @@ namespace Prism.Units.Controls
         private Unit Unit;
         private uint Index;
 
+        private List<string> ParamRelations;
         private Param spareCtrlState;
         private Param qsOnCtrlState;
         private Param qfOnCtrlState;
@@ -39,6 +40,7 @@ namespace Prism.Units.Controls
 
         public LswControl(Unit unit, uint index, String title)
         {
+            ParamRelations = new List<string>();
             InitializeComponent();
 
             this.Unit = unit;
@@ -48,17 +50,17 @@ namespace Prism.Units.Controls
             alertTimer = new System.Timers.Timer(1000);
             alertTimer.Elapsed += AlertTimerEvent;
 
+            ParamRelations.Add(String.Format("lsw{0}_state_tc_switch", Index));
+            ParamRelations.Add(String.Format("lsw{0}_state_spare_switch", Index));
+            ParamRelations.Add(String.Format("lsw{0}_state_qs_switch", Index));
+            ParamRelations.Add(String.Format("lsw{0}_state_qf_switch", Index));
+
             spareCtrlState = new Param("spare_ctrl_state", new List<ParamRelation> 
             { 
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_state_tc_switch", Index)], ParamState.B)
-                }, ParamState.Idle),
-
-                new ParamRelation(new List<ParamCombination> 
-                { 
-                    new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_alarm_circuit_fault", Index)], ParamState.C)
-                }, ParamState.Idle),
+                }, ParamState.Idle),               
 
                 new ParamRelation(new List<ParamCombination> 
                 { 
@@ -69,7 +71,7 @@ namespace Prism.Units.Controls
                 { 
                     new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_state_spare_switch", Index)], ParamState.B)
                 }, ParamState.B)
-            });
+            });           
 
             qsOnCtrlState = new Param("qs_on_ctrl_state", new List<ParamRelation> 
             { 
@@ -91,18 +93,13 @@ namespace Prism.Units.Controls
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_state_spare_switch", Index)], ParamState.A)
-                }, ParamState.Idle),
-
-                new ParamRelation(new List<ParamCombination> 
-                { 
-                    new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_alarm_circuit_fault", Index)], ParamState.C)
-                }, ParamState.Idle),
+                }, ParamState.Idle),             
 
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     
                 }, ParamState.A)
-            });
+            });           
 
             qsOffCtrlState = new Param("qs_off_ctrl_state", new List<ParamRelation> 
             { 
@@ -124,12 +121,7 @@ namespace Prism.Units.Controls
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_state_spare_switch", Index)], ParamState.A)
-                }, ParamState.Idle),
-
-                new ParamRelation(new List<ParamCombination> 
-                { 
-                    new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_alarm_circuit_fault", Index)], ParamState.C)
-                }, ParamState.Idle),
+                }, ParamState.Idle),              
 
                 new ParamRelation(new List<ParamCombination> 
                 { 
@@ -157,12 +149,7 @@ namespace Prism.Units.Controls
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_state_spare_switch", Index)], ParamState.A)
-                }, ParamState.Idle),
-
-                new ParamRelation(new List<ParamCombination> 
-                { 
-                    new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_alarm_circuit_fault", Index)], ParamState.C)
-                }, ParamState.Idle),
+                }, ParamState.Idle),              
 
                 new ParamRelation(new List<ParamCombination> 
                 { 
@@ -191,12 +178,7 @@ namespace Prism.Units.Controls
                 { 
                     new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_state_spare_switch", Index)], ParamState.A)
                 }, ParamState.Idle),
-
-                new ParamRelation(new List<ParamCombination> 
-                { 
-                    new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_alarm_circuit_fault", Index)], ParamState.C)
-                }, ParamState.Idle),
-
+                
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     
@@ -224,12 +206,7 @@ namespace Prism.Units.Controls
                 { 
                     new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_state_spare_switch", Index)], ParamState.A)
                 }, ParamState.Idle),
-
-                new ParamRelation(new List<ParamCombination> 
-                { 
-                    new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_alarm_circuit_fault", Index)], ParamState.C)
-                }, ParamState.Idle),
-
+               
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     
@@ -257,12 +234,7 @@ namespace Prism.Units.Controls
                 { 
                     new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_state_spare_switch", Index)], ParamState.B)
                 }, ParamState.Idle),
-
-                new ParamRelation(new List<ParamCombination> 
-                { 
-                    new ParamCombination(Unit.Processing.Params[String.Format("lsw{0}_alarm_circuit_fault", Index)], ParamState.C)
-                }, ParamState.Idle),
-
+               
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     
@@ -278,14 +250,26 @@ namespace Prism.Units.Controls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            UpdateState();
-            Unit.Processing.ProcessingChangeStateEvent += delegate(object s)
+            Unit.Processing.ProcessingParamUpdateEvent += delegate(object sender1, Param param)
+            {
+                if (ParamRelations.Contains(param.Name))
+                {
+                    MainThread.EnqueueTask(delegate()
+                    {
+                        UpdateState();
+                    });
+                }
+            };
+
+            Unit.Processing.ProcessingOnlineStateChangedEvent += delegate(object sender2, bool isOnline)
             {
                 MainThread.EnqueueTask(delegate()
                 {
                     UpdateState();
                 });
             };
+
+            UpdateState();
         }
 
         private void AlertTimerEvent(object sender, ElapsedEventArgs e)
@@ -314,7 +298,7 @@ namespace Prism.Units.Controls
 
             lockUpdate = true;
             Unit.Journal.Informarion(Unit, (int)(3002 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение разъединителя QS...", Index));
-            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qs-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
+            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qs-ctrl", Index), "A"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
@@ -352,7 +336,7 @@ namespace Prism.Units.Controls
 
             lockUpdate = true;
             Unit.Journal.Informarion(Unit, (int)(3004 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение разъединителя QF...", Index));
-            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qf-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
+            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qf-ctrl", Index), "A"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
@@ -390,7 +374,7 @@ namespace Prism.Units.Controls
 
             lockUpdate = true;
             Unit.Journal.Informarion(Unit, (int)(3006 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение разъединителя ЗШ...", Index));
-            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-spare-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
+            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-spare-ctrl", Index), "A"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
@@ -428,7 +412,7 @@ namespace Prism.Units.Controls
 
             lockUpdate = true;
             Unit.Journal.Informarion(Unit, (int)(3003 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение разъединителя QS...", Index));
-            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qs-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
+            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qs-ctrl", Index), "B"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
@@ -466,7 +450,7 @@ namespace Prism.Units.Controls
 
             lockUpdate = true;
             Unit.Journal.Informarion(Unit, (int)(3005 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение разъединителя QF...", Index));
-            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qf-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
+            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qf-ctrl", Index), "B"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
@@ -504,7 +488,7 @@ namespace Prism.Units.Controls
 
             lockUpdate = true;
             Unit.Journal.Informarion(Unit, (int)(3007 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение разъединителя ЗШ...", Index));
-            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-spare-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
+            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-spare-ctrl", Index), "B"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
@@ -542,7 +526,7 @@ namespace Prism.Units.Controls
 
             lockUpdate = true;
             Unit.Journal.Informarion(Unit, (int)(3000 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, включение...", Index));
-            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qf-ctrl", Index), "A"), delegate(string error, ProducerChannelValue value)
+            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qf-ctrl", Index), "A"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
@@ -580,7 +564,7 @@ namespace Prism.Units.Controls
 
             lockUpdate = true;
             Unit.Journal.Informarion(Unit, (int)(3001 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, отключение...", Index));
-            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qf-ctrl", Index), "B"), delegate(string error, ProducerChannelValue value)
+            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-qf-ctrl", Index), "B"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
@@ -618,7 +602,7 @@ namespace Prism.Units.Controls
 
             lockUpdate = true;
             Unit.Journal.Informarion(Unit, (int)(3008 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, перевод на ГШ...", Index));
-            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-ast-ctrl", Index), "M"), delegate(string error, ProducerChannelValue value)
+            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-ast-ctrl", Index), "M"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {
@@ -656,7 +640,7 @@ namespace Prism.Units.Controls
 
             lockUpdate = true;
             Unit.Journal.Informarion(Unit, (int)(3009 + 10 * Index), String.Format("Телеуправление - ЛА №{0}, перевод на ЗШ...", Index));
-            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-ast-ctrl", Index), "S"), delegate(string error, ProducerChannelValue value)
+            Unit.Processing.Operate(new ProducerChannelValue("auto", String.Format("lsw{0}-ast-ctrl", Index), "S"), new TimeSpan(0, 0, 15), delegate(string error, ProducerChannelValue value)
             {
                 MainThread.EnqueueTask(delegate()
                 {                   
@@ -692,16 +676,16 @@ namespace Prism.Units.Controls
                 return;
             }
 
-            onButton.IsEnabled = (qfOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            offButton.IsEnabled = (qfOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            mainButton.IsEnabled = (spareCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            spareButton.IsEnabled = (spareCtrlState.State == ParamState.B && Unit.Processing.IsAvaliable);
-            qsOnButton.IsEnabled = (qsOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            qfOnButton.IsEnabled = (qfOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            spareOnButton.IsEnabled = (spareOnCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            qsOffButton.IsEnabled = (qsOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            qfOffButton.IsEnabled = (qfOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
-            spareOffButton.IsEnabled = (spareOffCtrlState.State == ParamState.A && Unit.Processing.IsAvaliable);
+            onButton.IsEnabled = (qfOnCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
+            offButton.IsEnabled = (qfOffCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
+            mainButton.IsEnabled = (spareCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
+            spareButton.IsEnabled = (spareCtrlState.State == ParamState.B && Unit.Processing.IsOnline);
+            qsOnButton.IsEnabled = (qsOnCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
+            qfOnButton.IsEnabled = (qfOnCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
+            spareOnButton.IsEnabled = (spareOnCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
+            qsOffButton.IsEnabled = (qsOffCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
+            qfOffButton.IsEnabled = (qfOffCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
+            spareOffButton.IsEnabled = (spareOffCtrlState.State == ParamState.A && Unit.Processing.IsOnline);
 
             progress.IsActive = false;
 

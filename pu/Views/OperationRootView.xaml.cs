@@ -27,10 +27,11 @@ namespace Prism.Views
         {
             InitializeComponent();
 
-            generalBusyProgress.Visibility = Core.Instance.IsCoreBusy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+            generalBusyProgress.Visibility = Core.Instance.IsBusy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
             generalBusyProgress.IsIndeterminate = (generalBusyProgress.Visibility == System.Windows.Visibility.Visible);
+            
             Core.Instance.CoreBusyStateChangedEvent += CoreBusyStateChangedEvent;
-            CoreBusyStateChangedEvent(this, Core.Instance.IsCoreBusy);
+            CoreBusyStateChangedEvent(this, Core.Instance.IsBusy);
 
             operationTab.SelectedSource = Core.Instance.Units.First<Unit>().Uri;
             
