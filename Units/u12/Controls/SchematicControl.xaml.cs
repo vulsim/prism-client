@@ -150,16 +150,19 @@ namespace Prism.Units.Controls
             {
                 MainThread.EnqueueTask(delegate()
                 {
-                    //try
-                    //{
-                        SchematicItem item = UpdateQueue.Dequeue();
-                        Schematic_SetObjectParam("view", item.View, "number", item.Number);                        
-                    //}
-                    //catch (Exception e)
-                    //{
-                    //}
+                    if (UpdateQueue.Count > 0)
+                    {
+                        try
+                        {
+                            SchematicItem item = UpdateQueue.Dequeue();
+                            Schematic_SetObjectParam("view", item.View, "number", item.Number);
+                        }
+                        catch (Exception e)
+                        {
+                        }
 
-                    ProcessUpdateQueue();
+                        ProcessUpdateQueue();
+                    }                    
                 });
             }
         }

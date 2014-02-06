@@ -510,10 +510,10 @@ namespace Prism.Units.Classes
             Params["leadin2_state_in_switch"] = new Param("leadin2_state_in_switch", Values, "io,di-rez-900", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.B, "0"), new ParamMapValue(ParamState.A, "1") }));
             Params["leadin2_state_tc_switch"] = new Param("leadin2_state_tc_switch", Values, "io,di-rez-906", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.A, "0"), new ParamMapValue(ParamState.B, "1") }));
             Params["leadin2_alarm_in_switch_fault"] = new Param("leadin2_alarm_in_switch_fault", Values, "io,di-rez-902", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
-            Params["leadin2_alarm_circuit_fault"] = new Param("leadin1_alarm_circuit_fault", Values, "io,di-rez-904", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
-            Params["leadin2_alarm_tn_circuit_fault"] = new Param("leadin1_alarm_tn_circuit_fault", Values, "io,di-tn2-918", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
-            Params["leadin2_alarm_tn_ru6kv_fault"] = new Param("leadin1_alarm_tn_ru6kv_fault", Values, "io,di-tn2-741", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
-            Params["leadin2_alarm_tsn_lost_power"] = new Param("leadin1_alarm_tsn_lost_power", Values, "io,di-tsn2-ts71", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["leadin2_alarm_circuit_fault"] = new Param("leadin2_alarm_circuit_fault", Values, "io,di-rez-904", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["leadin2_alarm_tn_circuit_fault"] = new Param("leadin2_alarm_tn_circuit_fault", Values, "io,di-tn2-918", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["leadin2_alarm_tn_ru6kv_fault"] = new Param("leadin2_alarm_tn_ru6kv_fault", Values, "io,di-tn2-741", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
+            Params["leadin2_alarm_tsn_lost_power"] = new Param("leadin2_alarm_tsn_lost_power", Values, "io,di-tsn2-ts71", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["leadin2_state"] = new Param("leadin2_state", new List<ParamRelation> 
             { 

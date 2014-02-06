@@ -69,11 +69,11 @@ namespace Prism.Classes
         public event GeneralAlarmsStateChangedEventHandler GeneralAlarmsStateChangedEvent;
 
         private System.Timers.Timer LongNotificationTimer;
-        private System.Timers.Timer ShortNotificationTimer;
+        private System.Timers.Timer ShortNotificationTimer;        
         private bool CanPlayShortNotification = false;
         private bool CanPlayLongNotification = true;
 
-        private bool IsNotificationInProgress = false;
+        //private bool IsNotificationInProgress = false;
         
 
         public class DebugAlarm : IAlarm
@@ -101,8 +101,6 @@ namespace Prism.Classes
             LongNotificationTimer = new System.Timers.Timer(30000);
             LongNotificationTimer.Elapsed += LongNotificationTimerEvent;
             LongNotificationTimer.Start();
-           
-            //Alarms.Add(new NotificationAlarm(Core.Instance.Units[0], new DebugAlarm("di-100", "ТП №11. Пожар на подстанции.", ParamState.C), false));            
         }
 
         ~AlarmNotificationCenter()
@@ -207,11 +205,18 @@ namespace Prism.Classes
                 PlayBuzzer();
                 Thread.Sleep(1000);
 
-                foreach (var message in alarmMessages)
+                try
                 {
-                    PlaySpeech(message);
-                    Thread.Sleep(1000);
+                    SpeechSynthesizer Synthesizer = new SpeechSynthesizer();
+                    foreach (var message in alarmMessages)
+                    {
+                        Synthesizer.Speak(message);
+                        Thread.Sleep(1000);
+                    }
                 }
+                catch (Exception exception)
+                {
+                }                
             }
 
             CanPlayLongNotification = true;
@@ -233,12 +238,6 @@ namespace Prism.Classes
             SoundPlayer soundPlayer = new SoundPlayer(Application.GetResourceStream(buzzerUri).Stream);
             
             soundPlayer.PlaySync();
-        }
-
-        private void PlaySpeech(string message)
-        {
-            SpeechSynthesizer speechSynthesizer = new SpeechSynthesizer();
-            speechSynthesizer.Speak(message);
-        }
+        }        
     }
 }

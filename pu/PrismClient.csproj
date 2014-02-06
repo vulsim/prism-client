@@ -33,7 +33,7 @@
     <MinimumRequiredVersion>0.10.1.1</MinimumRequiredVersion>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>10</ApplicationRevision>
+    <ApplicationRevision>12</ApplicationRevision>
     <ApplicationVersion>0.10.1.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -241,8 +241,6 @@
     <EmbeddedResource Include="Properties\Resources.ru-RU.resx" />
     <None Include="app.config" />
     <None Include="PrismAutomation_ProductionKey.pfx" />
-    <None Include="PrismClient_1_TemporaryKey.pfx" />
-    <None Include="PrismClient_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

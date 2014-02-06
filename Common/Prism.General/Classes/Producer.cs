@@ -237,7 +237,15 @@ namespace Prism.General.Automation
                 {
                     if (Socket == null)
                     {
-                        Socket = this.CreateSocket(context, endpoint, groups);
+                        try
+                        {
+                            Socket = this.CreateSocket(context, endpoint, groups);
+                        }
+                        catch (Exception e)
+                        {
+                            Thread.Sleep(1000);
+                            continue;
+                        }                        
                     }
 
                     string data = null;
@@ -405,7 +413,15 @@ namespace Prism.General.Automation
                 {
                     if (Socket == null)
                     {
-                        Socket = this.CreateSocket(context, endpoint);
+                        try
+                        {
+                            Socket = this.CreateSocket(context, endpoint);
+                        }
+                        catch (Exception e)
+                        {
+                            Thread.Sleep(1000);
+                            continue;
+                        }
                     }
 
                     if (OnPause)
