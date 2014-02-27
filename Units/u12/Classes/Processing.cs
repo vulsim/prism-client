@@ -463,7 +463,9 @@ namespace Prism.Units.Classes
                 complete();
 
                 RequestProducer.Terminate();
-                RequestProducer = null;
+                PollProducer.Terminate();
+                RequestProducer = null;                
+                PollProducer = null;
                 PollDoneEvent = null;
                 PollThread = null;
             });
