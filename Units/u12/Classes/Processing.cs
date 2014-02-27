@@ -139,14 +139,14 @@ namespace Prism.Units.Classes
             PrismRequestProducer operateProducer = new PrismRequestProducer(new List<string> { Unit.Settings.OperateEndpoint });
             bool canCallCb = true;
 
-            Unit.Manager.Silent(time, delegate()
+            /*Unit.Manager.Silent(time, delegate()
             {
                 if (canCallCb)
                 {
                     cb("Waiting for a response over quota", new ProducerChannelValue(value.Group, value.Channel, null));
                     canCallCb = false;
                 }
-            });
+            });*/
 
             operateProducer.WriteChannelValue(value, delegate(string error, ProducerChannelValue value1)
             {
@@ -305,6 +305,194 @@ namespace Prism.Units.Classes
         private void Poll(PollManagerCompleteHandler complete)
         {
             RequestProducer = new PrismRequestProducer(Unit.Settings.PollEndpoints);
+            PollDoneEvent = new ManualResetEvent(false);
+            PollThread = new Thread(delegate()
+            {
+                List<ProducerChannel> pollingChannelList = new List<ProducerChannel>();
+                List<ProducerChannel> pollingAlarmList = new List<ProducerChannel>();
+
+                int TotalChannelCount = 0;
+                int SuccessChannelCount = 0;
+                int ProcessedChannelCount = 0;
+
+                PollDoneEvent.Reset();
+                RequestProducer.GetChannelList("alarm", delegate(string error0, List<ProducerChannel> channels)
+                {
+                    if (PollThreadAborted)
+                    {
+                        PollDoneEvent.Set();
+                        return;
+                    }
+
+                    if (error0 == null)
+                    {
+                        List<string> expiredAlarms = new List<string>(Alarms.Keys);
+
+                        foreach (var channel in channels)
+                        {
+                            if (!channel.Channel.Contains("-manual"))
+                            {
+                                expiredAlarms.Remove(String.Format("{0},{1}", channel.Group, channel.Channel));
+                                pollingAlarmList.Add(channel);
+                            }
+                        }
+
+                        foreach (var alarmKey in expiredAlarms)
+                        {
+                            ResetChannel(alarmKey);
+                        }
+
+                        PollDoneEvent.Set();
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine(error0.ToString());
+                    }
+                });
+
+                PollDoneEvent.WaitOne();
+
+                if (PollThreadAborted)
+                {
+                    return;
+                }
+
+                PollDoneEvent.Reset();
+                RequestProducer.GetChannelList("io", delegate(string error0, List<ProducerChannel> channels)
+                {
+                    if (PollThreadAborted)
+                    {
+                        PollDoneEvent.Set();
+                        return;
+                    }
+
+                    if (error0 == null)
+                    {
+                        List<string> expiredChannels = new List<string>(Alarms.Keys);
+
+                        foreach (var channel in channels)
+                        {
+                            expiredChannels.Remove(String.Format("{0},{1}", channel.Group, channel.Channel));
+                            pollingChannelList.Add(channel);
+                        }
+
+                        foreach (var channelKey in expiredChannels)
+                        {
+                            ResetChannel(channelKey);
+                        }
+
+                        PollDoneEvent.Set();
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine(error0.ToString());
+                    }
+                });
+
+                PollDoneEvent.WaitOne();
+
+                if (PollThreadAborted)
+                {
+                    return;
+                }
+
+                TotalChannelCount += pollingAlarmList.Count;
+                TotalChannelCount += pollingChannelList.Count;
+
+                PollDoneEvent.Reset();
+                foreach (var channel in pollingAlarmList)
+                {
+                    RequestProducer.ReadChannelValue(channel, delegate(string error1, ProducerChannelValue value)
+                    {
+                        ProcessedChannelCount++;
+                        //System.Diagnostics.Debug.WriteLine(ProcessedChannelCount.ToString());
+
+                        if (error1 == null)
+                        {
+                            SuccessChannelCount++;
+                            UpdateChannel(value);
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine(error1.ToString());
+                        }
+
+                        if (ProcessedChannelCount == TotalChannelCount)
+                        {
+                            PollDoneEvent.Set();
+                        }
+                    });
+                }
+
+                foreach (var channel in pollingChannelList)
+                {
+                    RequestProducer.ReadChannelValue(channel, delegate(string error2, ProducerChannelValue value)
+                    {
+                        string key = value.Group + "," + value.Channel;
+
+                        ProcessedChannelCount++;
+                        //System.Diagnostics.Debug.WriteLine(ProcessedChannelCount.ToString());
+
+                        if (error2 == null)
+                        {
+                            SuccessChannelCount++;
+                            UpdateChannel(value);
+                        }
+                        else
+                        {
+                            ResetChannel(new ProducerChannel(value.Group, value.Channel));
+                            System.Diagnostics.Debug.WriteLine(error2.ToString());
+                        }
+
+                        if (ProcessedChannelCount == TotalChannelCount)
+                        {
+                            PollDoneEvent.Set();
+                        }
+                    });
+                }
+
+                PollDoneEvent.WaitOne();
+
+                if (PollThreadAborted)
+                {
+                    return;
+                }
+
+                bool newOnlineState = ((double)SuccessChannelCount / (double)TotalChannelCount > 0.85f);
+
+                if (lastOnlineState != newOnlineState)
+                {
+                    lastOnlineState = newOnlineState;
+
+                    if (ProcessingOnlineStateChangedEvent != null)
+                    {
+                        ProcessingOnlineStateChangedEvent(this, lastOnlineState);
+                    }
+                }
+
+                if (SuccessChannelCount == TotalChannelCount)
+                {
+                    UpdateTimer.Interval = 300000;
+                }
+                else
+                {
+                    UpdateTimer.Interval = 60000;
+                }
+
+                UpdateTimer.Start();
+                complete();
+
+                RequestProducer.Terminate();
+                RequestProducer = null;
+                PollDoneEvent = null;
+                PollThread = null;
+            });
+            PollThread.Start();
+        }
+
+        /*private void Poll(PollManagerCompleteHandler complete)
+        {
+            RequestProducer = new PrismRequestProducer(Unit.Settings.PollEndpoints);
 
             int TotalChannelCount = 0;
             int SuccessChannelCount = 0;
@@ -336,6 +524,7 @@ namespace Prism.Units.Classes
                                 RequestProducer.ReadChannelValue(channel, delegate(string error1, ProducerChannelValue value)
                                 {
                                     ProcessedChannelCount++;
+                                    System.Diagnostics.Debug.WriteLine(ProcessedChannelCount.ToString());
 
                                     if (error1 == null)
                                     {
@@ -373,7 +562,9 @@ namespace Prism.Units.Classes
                     RequestProducer.ReadChannelValue(channel, delegate(string error2, ProducerChannelValue value)
                     {
                         string key = value.Group + "," + value.Channel;
+
                         ProcessedChannelCount++;
+                        System.Diagnostics.Debug.WriteLine(ProcessedChannelCount.ToString());
 
                         if (error2 == null)
                         {
@@ -400,7 +591,8 @@ namespace Prism.Units.Classes
                     return;
                 }
 
-                bool newOnlineState = (SuccessChannelCount != 0);
+                bool newOnlineState = ((double)SuccessChannelCount / (double)TotalChannelCount > 0.75f);
+
                 if (lastOnlineState != newOnlineState)
                 {
                     lastOnlineState = newOnlineState;
@@ -429,7 +621,7 @@ namespace Prism.Units.Classes
                 PollThread = null;
             });
             PollThread.Start();
-        }
+        }*/
 
         private Alarm GetAlarm(ProducerChannelValue value)
         {
@@ -480,7 +672,17 @@ namespace Prism.Units.Classes
             Params["leadin1_alarm_tsn_lost_power"] = new Param("leadin1_alarm_tsn_lost_power", Values, "io,di-tsn1-ts71", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["leadin1_state"] = new Param("leadin1_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["leadin1_state_in_switch"], ParamState.Unknown), 
+                    new ParamCombination(Params["leadin1_alarm_in_switch_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["leadin1_alarm_circuit_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["leadin1_alarm_tn_circuit_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["leadin1_alarm_tn_ru6kv_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["leadin1_alarm_tsn_lost_power"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["leadin1_state_in_switch"], ParamState.A), 
@@ -516,7 +718,17 @@ namespace Prism.Units.Classes
             Params["leadin2_alarm_tsn_lost_power"] = new Param("leadin2_alarm_tsn_lost_power", Values, "io,di-tsn2-ts71", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["leadin2_state"] = new Param("leadin2_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["leadin2_state_in_switch"], ParamState.Unknown), 
+                    new ParamCombination(Params["leadin2_alarm_in_switch_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["leadin2_alarm_circuit_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["leadin2_alarm_tn_circuit_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["leadin2_alarm_tn_ru6kv_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["leadin2_alarm_tsn_lost_power"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["leadin2_state_in_switch"], ParamState.A), 
@@ -549,7 +761,14 @@ namespace Prism.Units.Classes
             Params["ol_alarm_circuit_fault"] = new Param("ol_alarm_circuit_fault", Values, "io,di-ol-912", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["ol_state"] = new Param("ol_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["ol_state_in_switch"], ParamState.Unknown), 
+                    new ParamCombination(Params["ol_alarm_switch_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["ol_alarm_circuit_fault"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["ol_state_in_switch"], ParamState.A), 
@@ -582,7 +801,20 @@ namespace Prism.Units.Classes
             Params["rect1_alarm_rec_rpz600v_fault"] = new Param("rect1_alarm_rec_rpz600v_fault", Values, "io,di-v1-106", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["rect1_state"] = new Param("rect1_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["rect1_state_pa_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["rect1_state_qs_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["rect1_state_qf_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["rect1_alarm_circuit_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["rect1_alarm_pa_switch_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["rect1_alarm_rec_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["rect1_alarm_rec_gas_warn"], ParamState.Unknown),
+                    new ParamCombination(Params["rect1_alarm_rec_overload"], ParamState.Unknown),
+                    new ParamCombination(Params["rect1_alarm_rec_rpz600v_fault"], ParamState.Unknown)             
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["rect1_state_pa_switch"], ParamState.A),
@@ -624,7 +856,20 @@ namespace Prism.Units.Classes
             Params["rect2_alarm_rec_rpz600v_fault"] = new Param("rect2_alarm_rec_rpz600v_fault", Values, "io,di-v2-106", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["rect2_state"] = new Param("rect2_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["rect2_state_pa_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["rect2_state_qs_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["rect2_state_qf_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["rect2_alarm_circuit_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["rect2_alarm_pa_switch_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["rect2_alarm_rec_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["rect2_alarm_rec_gas_warn"], ParamState.Unknown),
+                    new ParamCombination(Params["rect2_alarm_rec_overload"], ParamState.Unknown),
+                    new ParamCombination(Params["rect2_alarm_rec_rpz600v_fault"], ParamState.Unknown)             
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["rect2_state_pa_switch"], ParamState.A),
@@ -666,7 +911,20 @@ namespace Prism.Units.Classes
             Params["rect3_alarm_rec_rpz600v_fault"] = new Param("rect3_alarm_rec_rpz600v_fault", Values, "io,di-v3-106", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["rect3_state"] = new Param("rect3_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["rect3_state_pa_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["rect3_state_qs_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["rect3_state_qf_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["rect3_alarm_circuit_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["rect3_alarm_pa_switch_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["rect3_alarm_rec_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["rect3_alarm_rec_gas_warn"], ParamState.Unknown),
+                    new ParamCombination(Params["rect3_alarm_rec_overload"], ParamState.Unknown),
+                    new ParamCombination(Params["rect3_alarm_rec_rpz600v_fault"], ParamState.Unknown)             
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["rect3_state_pa_switch"], ParamState.A),
@@ -705,7 +963,16 @@ namespace Prism.Units.Classes
             Params["lsw1_alarm_600v_lost_power"] = new Param("lsw1_alarm_600v_lost_power", Values, "io,di-ul1-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["lsw1_state"] = new Param("lsw1_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["lsw1_state_qs_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw1_state_qf_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw1_alarm_short_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw1_alarm_circuit_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw1_alarm_600v_lost_power"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["lsw1_state_qs_switch"], ParamState.A),
@@ -737,7 +1004,16 @@ namespace Prism.Units.Classes
             Params["lsw2_alarm_600v_lost_power"] = new Param("lsw2_alarm_600v_lost_power", Values, "io,di-ul2-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["lsw2_state"] = new Param("lsw2_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["lsw2_state_qs_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw2_state_qf_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw2_alarm_short_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw2_alarm_circuit_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw2_alarm_600v_lost_power"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["lsw2_state_qs_switch"], ParamState.A),
@@ -769,7 +1045,16 @@ namespace Prism.Units.Classes
             Params["lsw3_alarm_600v_lost_power"] = new Param("lsw3_alarm_600v_lost_power", Values, "io,di-ul3-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["lsw3_state"] = new Param("lsw3_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["lsw3_state_qs_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw3_state_qf_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw3_alarm_short_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw3_alarm_circuit_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw3_alarm_600v_lost_power"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["lsw3_state_qs_switch"], ParamState.A),
@@ -801,7 +1086,16 @@ namespace Prism.Units.Classes
             Params["lsw4_alarm_600v_lost_power"] = new Param("lsw4_alarm_600v_lost_power", Values, "io,di-ul4-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["lsw4_state"] = new Param("lsw4_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["lsw4_state_qs_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw4_state_qf_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw4_alarm_short_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw4_alarm_circuit_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw4_alarm_600v_lost_power"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["lsw4_state_qs_switch"], ParamState.A),
@@ -833,7 +1127,16 @@ namespace Prism.Units.Classes
             Params["lsw5_alarm_600v_lost_power"] = new Param("lsw5_alarm_600v_lost_power", Values, "io,di-ul5-714", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["lsw5_state"] = new Param("lsw5_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["lsw5_state_qs_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw5_state_qf_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw5_alarm_short_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw5_alarm_circuit_fault"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw5_alarm_600v_lost_power"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["lsw5_state_qs_switch"], ParamState.A),
@@ -862,7 +1165,14 @@ namespace Prism.Units.Classes
             Params["lsw9_alarm_circuit_fault"] = new Param("lsw9_alarm_circuit_fault", Values, "io,di-zap-n01", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.C, "1") }));
 
             Params["lsw9_state"] = new Param("lsw9_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["lsw9_state_qs_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw9_state_qf_switch"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw9_alarm_circuit_fault"], ParamState.Unknown),
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["lsw9_state_qs_switch"], ParamState.A),
@@ -894,7 +1204,13 @@ namespace Prism.Units.Classes
             Params["general_alarm_intrusion_alarm"] = new Param("general_alarm_intrusion_alarm", Values, "io,di-113", new ParamMap(new List<ParamMapValue> { new ParamMapValue(ParamState.Idle, "0"), new ParamMapValue(ParamState.B, "1") }));
 
             Params["common_group1_state"] = new Param("common_group1_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["leadin1_state"], ParamState.Unknown),
+                    new ParamCombination(Params["leadin2_state"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["leadin1_state"], ParamState.A),
@@ -914,7 +1230,14 @@ namespace Prism.Units.Classes
             });
 
             Params["common_group2_state"] = new Param("common_group2_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["rect1_state"], ParamState.Unknown),
+                    new ParamCombination(Params["rect2_state"], ParamState.Unknown),
+                    new ParamCombination(Params["rect3_state"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["rect1_state"], ParamState.A),
@@ -971,7 +1294,17 @@ namespace Prism.Units.Classes
             });
 
             Params["common_group3_state"] = new Param("common_group3_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["lsw1_state"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw2_state"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw3_state"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw4_state"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw5_state"], ParamState.Unknown),
+                    new ParamCombination(Params["lsw9_state"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["lsw1_state"], ParamState.A),
@@ -1039,7 +1372,15 @@ namespace Prism.Units.Classes
             });
 
             Params["common_group4_state"] = new Param("common_group4_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["general_state_sn_automation"], ParamState.Unknown),
+                    new ParamCombination(Params["general_alarm_sn_24v_lost_power"], ParamState.Unknown),
+                    new ParamCombination(Params["general_alarm_fire_alarm"], ParamState.Unknown),
+                    new ParamCombination(Params["general_alarm_intrusion_alarm"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["general_state_sn_automation"], ParamState.A),
@@ -1061,7 +1402,15 @@ namespace Prism.Units.Classes
             });
 
             Params["common_state"] = new Param("common_state", new List<ParamRelation> 
-            { 
+            {
+                new ParamRelation(new List<ParamCombination> 
+                { 
+                    new ParamCombination(Params["common_group1_state"], ParamState.Unknown),
+                    new ParamCombination(Params["common_group2_state"], ParamState.Unknown),
+                    new ParamCombination(Params["common_group3_state"], ParamState.Unknown),
+                    new ParamCombination(Params["common_group4_state"], ParamState.Unknown)
+                }, ParamState.Unknown),
+
                 new ParamRelation(new List<ParamCombination> 
                 { 
                     new ParamCombination(Params["common_group1_state"], ParamState.A),

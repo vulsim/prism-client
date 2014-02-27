@@ -46,29 +46,30 @@ namespace Prism.Units.Controls
         public SchematicControl(Unit unit, String title)
         {
             UpdateQueue = new Queue<SchematicItem>();
-            
+
             InitializeComponent();
 
             this.Unit = unit;
             this.titleText.Text = title;
 
             SchematicFlashControl = new ShockwaveFlashControl(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Unit\\u11\\Schematic.swf");
-            SchematicFlashControl.Loaded += delegate(object sender, RoutedEventArgs e)
-            {
-                Schematic_Initialize();
-                Schematic_SetObjectParam("view", "avaliable", "number", "1");
-                Schematic_SetObjectParam("view", "avaliable", "number", Unit.Processing.IsOnline ? "0" : "1");
-                
-                Unit.Processing.ProcessingOnlineStateChangedEvent += OnlineStateChanged;
-                Unit.Processing.ProcessingParamUpdateEvent += ParamValueChanged;
-
-                UpdateAll();
-                //IsLoaded = true;
-            };
+            SchematicFlashControl.Loaded += SchematicFlashControl_Loaded;
             mainGrid.Children.Add(SchematicFlashControl);
         }
 
-        ~SchematicControl()
+        private void SchematicFlashControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            Schematic_Initialize();
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {            
+            UpdateAll();
+            Unit.Processing.ProcessingOnlineStateChangedEvent += OnlineStateChanged;
+            Unit.Processing.ProcessingParamUpdateEvent += ParamValueChanged;
+        }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
             Unit.Processing.ProcessingOnlineStateChangedEvent -= OnlineStateChanged;
             Unit.Processing.ProcessingParamUpdateEvent -= ParamValueChanged;
@@ -98,23 +99,25 @@ namespace Prism.Units.Controls
             }
         }
 
-        private void UserControl_LayoutUpdated(object sender, EventArgs e)
-        {
-            
-        }
-
         public void OnlineStateChanged(object sender, bool isOnline)
         {
-            MainThread.EnqueueTask(delegate()
+            ThreadPool.QueueUserWorkItem(delegate(object target)
             {
-                Schematic_SetObjectParam("view", "avaliable", "number", isOnline ? "0" : "1");
-            });
+                lock (UpdateQueue)
+                {
+                    UpdateQueue.Enqueue(new SchematicItem("avaliable", isOnline ? "0" : "1"));
+                }
+                ProcessUpdateQueue();
+            }, null);
         }
 
         public void ParamValueChanged(object sender, Param param)
         {
-            UpdateParam(param);
-            ProcessUpdateQueue();
+            ThreadPool.QueueUserWorkItem(delegate(object target)
+            {
+                UpdateParam(param);
+                ProcessUpdateQueue();
+            }, null);
         }
 
         public void UpdateAll()
@@ -125,6 +128,12 @@ namespace Prism.Units.Controls
                 {
                     UpdateParam(keyValue.Value);
                 }
+
+                lock (UpdateQueue)
+                {
+                    UpdateQueue.Enqueue(new SchematicItem("avaliable", Unit.Processing.IsOnline ? "0" : "1"));
+                }
+
                 ProcessUpdateQueue();
             });
         }
@@ -135,12 +144,18 @@ namespace Prism.Units.Controls
             {
                 if (param.Value != null)
                 {
-                    UpdateQueue.Enqueue(new SchematicItem(param.Name, param.Value));
+                    lock (UpdateQueue)
+                    {
+                        UpdateQueue.Enqueue(new SchematicItem(param.Name, param.Value));
+                    }
                 }
             }
             else
             {
-                UpdateQueue.Enqueue(new SchematicItem(param.Name, ((uint)param.State).ToString()));
+                lock (UpdateQueue)
+                {
+                    UpdateQueue.Enqueue(new SchematicItem(param.Name, ((uint)param.State).ToString()));
+                }
             }
         }
 
@@ -148,20 +163,32 @@ namespace Prism.Units.Controls
         {
             if (UpdateQueue.Count > 0)
             {
+                SchematicItem item = null;
+
+                lock (UpdateQueue)
+                {
+                    try
+                    {
+                        item = UpdateQueue.Dequeue();
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+
                 MainThread.EnqueueTask(delegate()
                 {
+                    if (item != null)
+                    {
+                        Schematic_SetObjectParam("view", item.View, "number", item.Number);
+                    }
+
                     if (UpdateQueue.Count > 0)
                     {
-                        try
+                        ThreadPool.QueueUserWorkItem(delegate(object target)
                         {
-                            SchematicItem item = UpdateQueue.Dequeue();
-                            Schematic_SetObjectParam("view", item.View, "number", item.Number);
-                        }
-                        catch (Exception e)
-                        {
-                        }
-
-                        ProcessUpdateQueue();
+                            ProcessUpdateQueue();
+                        }, null);
                     }
                 });
             }

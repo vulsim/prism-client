@@ -73,9 +73,6 @@ namespace Prism.Classes
         private bool CanPlayShortNotification = false;
         private bool CanPlayLongNotification = true;
 
-        //private bool IsNotificationInProgress = false;
-        
-
         public class DebugAlarm : IAlarm
         {
             public string Code { get; set; }
@@ -111,15 +108,31 @@ namespace Prism.Classes
 
         public void UpdateAlarm(Unit unit, IAlarm alarm)
         {
-            foreach (var notificationAlarm in Alarms)
+            lock (Alarms)
             {
-                if (notificationAlarm.Code.Equals(alarm.Code))
+                List<NotificationAlarm> alarms = new List<NotificationAlarm>(Alarms);
+
+                foreach (var notificationAlarm in alarms)
                 {
-                    if (notificationAlarm.State != alarm.State)
+                    if (notificationAlarm.Unit.Uri.Equals(unit.Uri) && notificationAlarm.Code.Equals(alarm.Code))
                     {
-                        if (alarm.State == ParamState.Idle)
+                        if (notificationAlarm.State != alarm.State)
                         {
-                            Alarms.Remove(notificationAlarm);
+                            if (alarm.State == ParamState.Idle)
+                            {
+                                Alarms.Remove(notificationAlarm);
+
+                                if (GeneralAlarmsStateChangedEvent != null)
+                                {
+                                    GeneralAlarmsStateChangedEvent(this);
+                                }
+
+                                CanPlayShortNotification = true;
+                                return;
+                            }
+
+                            notificationAlarm.State = alarm.State;
+                            notificationAlarm.Ack = false;
 
                             if (GeneralAlarmsStateChangedEvent != null)
                             {
@@ -127,50 +140,39 @@ namespace Prism.Classes
                             }
 
                             CanPlayShortNotification = true;
-                            return;
+
+                            if (notificationAlarm.State == ParamState.C)
+                            {
+                                LongNotificationTimer.Stop();
+                                LongNotificationTimer.Interval = 3000;
+                                LongNotificationTimer.Start();
+                            }
                         }
 
-                        notificationAlarm.State = alarm.State;
-                        notificationAlarm.Ack = false;
+                        return;
+                    }
+                }
 
-                        if (GeneralAlarmsStateChangedEvent != null)
-                        {
-                            GeneralAlarmsStateChangedEvent(this);
-                        }
+                if (alarm.State > ParamState.Idle)
+                {
+                    NotificationAlarm notificationAlarm = new NotificationAlarm(unit, alarm, false);
+                    Alarms.Add(notificationAlarm);
 
-                        CanPlayShortNotification = true;
-
-                        if (notificationAlarm.State == ParamState.C && CanPlayLongNotification)
-                        {
-                            LongNotificationTimer.Stop();
-                            LongNotificationTimer.Interval = 3000;
-                            LongNotificationTimer.Start();
-                        }
+                    if (GeneralAlarmsStateChangedEvent != null)
+                    {
+                        GeneralAlarmsStateChangedEvent(this);
                     }
 
-                    return;
+                    CanPlayShortNotification = true;
+
+                    if (notificationAlarm.State == ParamState.C)
+                    {
+                        LongNotificationTimer.Stop();
+                        LongNotificationTimer.Interval = 3000;
+                        LongNotificationTimer.Start();
+                    }
                 }
             }
-            
-            if (alarm.State > ParamState.Idle)
-            {
-                NotificationAlarm notificationAlarm = new NotificationAlarm(unit, alarm, false);
-                Alarms.Add(notificationAlarm);
-
-                if (GeneralAlarmsStateChangedEvent != null)
-                {
-                    GeneralAlarmsStateChangedEvent(this);
-                }
-
-                CanPlayShortNotification = true;
-
-                if (notificationAlarm.State == ParamState.C && CanPlayLongNotification)
-                {
-                    LongNotificationTimer.Stop();
-                    LongNotificationTimer.Interval = 3000;
-                    LongNotificationTimer.Start();
-                }
-            }                        
         }
 
         private void ShortNotificationTimerEvent(object sender, ElapsedEventArgs e)
@@ -188,11 +190,24 @@ namespace Prism.Classes
         private void LongNotificationTimerEvent(object sender, ElapsedEventArgs e)
         {
             LongNotificationTimer.Stop();
-            CanPlayLongNotification = false;
 
+            if (!CanPlayLongNotification)
+            {
+                return;
+            }
+
+            CanPlayLongNotification = false;
+            LongNotificationTimer.Interval = 30000;
+
+            List<NotificationAlarm> alarms = new List<NotificationAlarm>();
             List<string> alarmMessages = new List<string>();
 
-            foreach (var notificationAlarm in Alarms)
+            lock (Alarms)
+            {
+                alarms.AddRange(Alarms);
+            }
+
+            foreach (var notificationAlarm in alarms)
             {
                 if (notificationAlarm.State == ParamState.C && !notificationAlarm.Ack)
                 {
@@ -219,8 +234,7 @@ namespace Prism.Classes
                 }                
             }
 
-            CanPlayLongNotification = true;
-            LongNotificationTimer.Interval = 30000;
+            CanPlayLongNotification = true;            
             LongNotificationTimer.Start();
         }
 

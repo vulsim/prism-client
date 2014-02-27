@@ -241,8 +241,18 @@ namespace Prism.General.Automation
                         {
                             Socket = this.CreateSocket(context, endpoint, groups);
                         }
-                        catch (Exception e)
+                        catch (Exception e1)
                         {
+                            try
+                            {
+                                Socket.Close();
+                            }
+                            catch (Exception e2)
+                            {
+                            }
+
+                            Socket = null;
+
                             Thread.Sleep(1000);
                             continue;
                         }                        
@@ -264,7 +274,6 @@ namespace Prism.General.Automation
                     catch (ZmqSocketException e)
                     {
                         System.Diagnostics.Debug.WriteLine(e.ToString());
-                        Socket.Dispose();
                         Socket = null;
                         continue;
                     }
@@ -322,6 +331,16 @@ namespace Prism.General.Automation
                         }
                     }
                 }
+
+                try
+                {
+                    Socket.Close();
+                }
+                catch (Exception e)
+                {
+                }
+
+                Socket = null;
             });
         }
 
@@ -338,13 +357,6 @@ namespace Prism.General.Automation
             if (Worker != null && Worker.ThreadState != ThreadState.Unstarted)
             {
                 StopRequest = true;
-
-                if (Socket != null)
-                {
-                    Socket.Dispose();
-                    Socket = null;
-                }
-
                 Worker.Join();
                 Worker = null;
             }
@@ -417,8 +429,18 @@ namespace Prism.General.Automation
                         {
                             Socket = this.CreateSocket(context, endpoint);
                         }
-                        catch (Exception e)
+                        catch (Exception e1)
                         {
+                            try
+                            {
+                                Socket.Close();
+                            }
+                            catch (Exception e2)
+                            {
+                            }
+
+                            Socket = null;
+
                             Thread.Sleep(1000);
                             continue;
                         }
@@ -458,7 +480,6 @@ namespace Prism.General.Automation
                             catch (ZmqSocketException e)
                             {
                                 System.Diagnostics.Debug.WriteLine(e.ToString());
-                                Socket.Dispose();
                                 Socket = null;
                             }
 
@@ -571,7 +592,16 @@ namespace Prism.General.Automation
                         }
                     }
                 }
+                
+                try
+                {
+                    Socket.Close();
+                }
+                catch (Exception e)
+                {
+                }
 
+                Socket = null;
             });
         }
 
@@ -588,13 +618,7 @@ namespace Prism.General.Automation
             if (Worker != null && Worker.ThreadState != ThreadState.Unstarted)
             {
                 StopRequest = true;
-
-                if (Socket != null)
-                {
-                    Socket.Dispose();
-                    Socket = null;
-                }
-
+                
                 ResumeEvent.Set();
                 PauseEvent.Set();
 
@@ -642,12 +666,21 @@ namespace Prism.General.Automation
             SubscribeWorker.Start();
         }
 
-        ~PrismSubscribeProducer()
+        public void Terminate()
         {
-            SubscribeWorker.ChannelValueEvent -= ChannelValueEventHandler;
-            SubscribeWorker.ChannelResetEvent -= ChannelResetEventHandler;
-            SubscribeWorker.Abort();
-            Context.Dispose();
+            if (SubscribeWorker != null)
+            {
+                PrismSubscribe subscribeWorker = SubscribeWorker;
+
+                SubscribeWorker = null;
+
+                subscribeWorker.ChannelValueEvent -= ChannelValueEventHandler;
+                subscribeWorker.ChannelResetEvent -= ChannelResetEventHandler;
+                subscribeWorker.Abort();
+
+                Context.Terminate();
+                Context = null;                
+            }            
         }
 
         private void ChannelValueEventHandler(object sender, ProducerChannelValue value)
@@ -687,25 +720,22 @@ namespace Prism.General.Automation
             }
         }
 
-        ~PrismRequestProducer()
-        {
-            Terminate();
-        }
-
         public void Terminate()
         {
             if (RequestWorkers != null)
             {
-                foreach (PrismRequest requestWorker in RequestWorkers)
+                List<PrismRequest> requestWorkers = RequestWorkers;
+                                
+                RequestWorkers = null;
+
+                foreach (PrismRequest requestWorker in requestWorkers)
                 {
                     requestWorker.Abort();
                 }
 
-                Context.Dispose();
+                requestWorkers.Clear();
+                Context.Terminate();
                 Context = null;
-
-                RequestWorkers.Clear();
-                RequestWorkers = null;
 
                 while (RequestQueue.Count > 0)
                 {

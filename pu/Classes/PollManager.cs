@@ -100,7 +100,7 @@ namespace Prism.Classes
                             if (CurrentPollItem != null)
                             {
                                 DonePollEvent = new ManualResetEvent(false);
-                                DonePollTimer = new System.Timers.Timer(60000);
+                                DonePollTimer = new System.Timers.Timer(90000);
 
                                 DonePollTimer.Elapsed += delegate(object s, ElapsedEventArgs ev)
                                 {

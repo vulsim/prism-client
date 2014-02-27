@@ -350,10 +350,10 @@ namespace Prism.Units.Controls
             }
             else
             {
-                leadinStateSwitchTile.State = Unit.Processing.Params[String.Format("ol_state_in_switch", Index)].State;
-                leadinStateTcTile.State = Unit.Processing.Params[String.Format("ol_state_tc_switch", Index)].State;
-                leadinAlarmSwitchFaultTile.State = Unit.Processing.Params[String.Format("ol_alarm_switch_fault", Index)].State;
-                leadinAlarmCircuitTile.State = Unit.Processing.Params[String.Format("ol_alarm_circuit_fault", Index)].State;
+                leadinStateSwitchTile.State = Unit.Processing.Params["ol_state_in_switch"].State;
+                leadinStateTcTile.State = Unit.Processing.Params["ol_state_tc_switch"].State;
+                leadinAlarmSwitchFaultTile.State = Unit.Processing.Params["ol_alarm_switch_fault"].State;
+                leadinAlarmCircuitTile.State = Unit.Processing.Params["ol_alarm_circuit_fault"].State;
                 energyTotalEplus.Text = Unit.Processing.Params["ol_total_eplus_energy"].Value;
                 energyTotalEminus.Text = Unit.Processing.Params["ol_total_eminus_energy"].Value;
                 energyMonthEplus.Text = Unit.Processing.Params["ol_month_eplus_energy"].Value;
