@@ -23,8 +23,11 @@ namespace Prism.General
         [JsonProperty("address")]
         public string Address;
 
-        [JsonProperty("poll_endpoints")]
-        public List<string> PollEndpoints;
+        [JsonProperty("common_endpoint")]
+        public string CommonEndpoint;
+
+        [JsonProperty("poll_endpoint")]
+        public string PollEndpoint;
 
         [JsonProperty("operate_endpoint")]
         public string OperateEndpoint;

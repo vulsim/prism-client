@@ -18,6 +18,7 @@ namespace Prism.Units.Classes
     {
         private Unit Unit;
         private PrismRequestProducer RequestProducer = null;
+        private PrismPollProducer PollProducer = null;
         private PrismSubscribeProducer SubscribeProducer = null;
         private System.Timers.Timer UpdateTimer;
         private Thread PollThread;
@@ -108,6 +109,11 @@ namespace Prism.Units.Classes
             {
                 RequestProducer.Pause();
             }
+
+            if (PollProducer != null)
+            {
+                PollProducer.Pause();
+            }
         }
 
         private void PollResume(object sender)
@@ -115,6 +121,11 @@ namespace Prism.Units.Classes
             if (RequestProducer != null)
             {
                 RequestProducer.Resume();
+            }
+
+            if (PollProducer != null)
+            {
+                PollProducer.Resume();
             }
         }
 
@@ -304,6 +315,163 @@ namespace Prism.Units.Classes
 
         private void Poll(PollManagerCompleteHandler complete)
         {
+            RequestProducer = new PrismRequestProducer(new List<string> { Unit.Settings.CommonEndpoint });
+            PollProducer = new PrismPollProducer(Unit.Settings.PollEndpoint);
+            PollDoneEvent = new ManualResetEvent(false);
+            PollThread = new Thread(delegate()
+            {
+                List<ProducerChannel> pollingChannelList = new List<ProducerChannel>();
+                List<ProducerChannel> pollingAlarmList = new List<ProducerChannel>();
+
+                int TotalChannelCount = 0;
+                int SuccessChannelCount = 0;
+
+                PollDoneEvent.Reset();
+                RequestProducer.GetChannelList("alarm", delegate(string error0, List<ProducerChannel> channels)
+                {
+                    if (PollThreadAborted)
+                    {
+                        PollDoneEvent.Set();
+                        return;
+                    }
+
+                    if (error0 == null)
+                    {
+                        List<string> expiredAlarms = new List<string>(Alarms.Keys);
+
+                        foreach (var channel in channels)
+                        {
+                            if (!channel.Channel.Contains("-manual"))
+                            {
+                                expiredAlarms.Remove(String.Format("{0},{1}", channel.Group, channel.Channel));
+                                pollingAlarmList.Add(channel);
+                            }
+                        }
+
+                        foreach (var alarmKey in expiredAlarms)
+                        {
+                            ResetChannel(alarmKey);
+                        }
+
+                        PollDoneEvent.Set();
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine(error0.ToString());
+                    }
+                });
+
+                PollDoneEvent.WaitOne();
+
+                if (PollThreadAborted)
+                {
+                    return;
+                }
+
+                PollDoneEvent.Reset();
+                RequestProducer.GetChannelList("io", delegate(string error0, List<ProducerChannel> channels)
+                {
+                    if (PollThreadAborted)
+                    {
+                        PollDoneEvent.Set();
+                        return;
+                    }
+
+                    if (error0 == null)
+                    {
+                        List<string> expiredChannels = new List<string>(Alarms.Keys);
+
+                        foreach (var channel in channels)
+                        {
+                            expiredChannels.Remove(String.Format("{0},{1}", channel.Group, channel.Channel));
+                            pollingChannelList.Add(channel);
+                        }
+
+                        foreach (var channelKey in expiredChannels)
+                        {
+                            ResetChannel(channelKey);
+                        }
+
+                        PollDoneEvent.Set();
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine(error0.ToString());
+                    }
+                });
+
+                PollDoneEvent.WaitOne();
+
+                if (PollThreadAborted)
+                {
+                    return;
+                }
+
+                TotalChannelCount += pollingAlarmList.Count;
+                TotalChannelCount += pollingChannelList.Count;
+
+                PollDoneEvent.Reset();
+                PollProducer.Enqueue(pollingAlarmList, delegate(string error1, List<ProducerChannelValue> alarmValueList)
+                {
+                    foreach (var value in alarmValueList)
+                    {
+                        UpdateChannel(value);
+                    }
+
+                    SuccessChannelCount += alarmValueList.Count;
+                    PollProducer.Enqueue(pollingChannelList, delegate(string error2, List<ProducerChannelValue> channelValueList)
+                    {
+                        foreach (var value in channelValueList)
+                        {
+                            UpdateChannel(value);
+                        }
+
+                        SuccessChannelCount += channelValueList.Count;
+                        PollDoneEvent.Set();
+                    });
+                });
+
+                PollDoneEvent.WaitOne();
+
+                if (PollThreadAborted)
+                {
+                    return;
+                }
+
+                bool newOnlineState = ((double)SuccessChannelCount / (double)TotalChannelCount > 0.85f);
+
+                if (lastOnlineState != newOnlineState)
+                {
+                    lastOnlineState = newOnlineState;
+
+                    if (ProcessingOnlineStateChangedEvent != null)
+                    {
+                        ProcessingOnlineStateChangedEvent(this, lastOnlineState);
+                    }
+                }
+
+                if (SuccessChannelCount == TotalChannelCount)
+                {
+                    UpdateTimer.Interval = 300000;
+                }
+                else
+                {
+                    UpdateTimer.Interval = 60000;
+                }
+
+                UpdateTimer.Start();
+                complete();
+
+                RequestProducer.Terminate();
+                RequestProducer = null;
+                PollDoneEvent = null;
+                PollThread = null;
+            });
+            PollThread.Start();
+        }
+
+        /*private void Poll(PollManagerCompleteHandler complete)
+        {
             RequestProducer = new PrismRequestProducer(Unit.Settings.PollEndpoints);
             PollDoneEvent = new ManualResetEvent(false);
             PollThread = new Thread(delegate()
@@ -488,7 +656,7 @@ namespace Prism.Units.Classes
                 PollThread = null;
             });
             PollThread.Start();
-        }
+        }*/
 
         private Alarm GetAlarm(ProducerChannelValue value)
         {

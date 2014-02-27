@@ -187,18 +187,6 @@ namespace Prism.General.Automation
         public string Value;
     }
 
-    public class ProducerSettings
-    {
-        public string ReqAddr;
-        public string SubAddr;
-        public List<ProducerChannel> Channels;
-
-        public ProducerSettings()
-        {
-            Channels = new List<ProducerChannel>();
-        }
-    }
-
     public class PrismSubscribe
     {
         public delegate void ChannelValueEventHandler(object sender, ProducerChannelValue value);
@@ -649,6 +637,207 @@ namespace Prism.General.Automation
         }
     }
 
+    public class PrismPoll
+    {
+        public class PrismPollItem
+        {           
+            public string Json;         
+            public object ReturnCb;
+
+            public PrismPollItem(string json, object returnCb)
+            {
+                this.Json = json;             
+                this.ReturnCb = returnCb;
+            }
+        }
+
+        public delegate void PollCallback(string error, List<ProducerChannelValue> groups);
+
+        public bool IsActive { get { return ActiveState; } }
+        private bool ActiveState = false;
+        private Thread Worker;
+        private ManualResetEvent ResumeEvent;
+        private ManualResetEvent PauseEvent;
+        private bool OnPause = false;
+        private bool StopRequest = false;
+        private ZmqSocket Socket = null;
+        private Queue<PrismPollItem> Queue = null;
+
+        private ZmqSocket CreateSocket(ZmqContext context, string endpoint)
+        {
+            ZmqSocket Socket = context.CreateSocket(SocketType.REQ);
+
+            Socket.Linger = new TimeSpan(0, 0, 5);
+            Socket.ReconnectInterval = new TimeSpan(0, 0, 1);
+            Socket.ReconnectIntervalMax = new TimeSpan(0, 0, 5);
+
+            Socket.Connect(endpoint);
+            return Socket;
+        }
+
+        public PrismPoll(ZmqContext context, string endpoint)
+        {
+            ResumeEvent = new ManualResetEvent(false);
+            PauseEvent = new ManualResetEvent(false);
+            Queue = new Queue<PrismPollItem>();
+            Worker = new Thread(delegate()
+            {
+                while (Worker.IsAlive && !StopRequest)
+                {
+                    if (Socket == null)
+                    {
+                        try
+                        {
+                            Socket = this.CreateSocket(context, endpoint);
+                        }
+                        catch (Exception e1)
+                        {
+                            try
+                            {
+                                Socket.Close();
+                            }
+                            catch (Exception e2)
+                            {
+                            }
+
+                            Socket = null;
+
+                            Thread.Sleep(1000);
+                            continue;
+                        }
+                    }
+
+                    if (OnPause)
+                    {
+                        PauseEvent.Reset();
+                        PauseEvent.WaitOne();
+                        OnPause = false;
+                    }
+
+                    if (Queue.Count == 0)
+                    {
+                        ActiveState = false;
+                        ResumeEvent.Reset();
+                        ResumeEvent.WaitOne();
+                    }
+                    else
+                    {
+                        ActiveState = true;
+                        PrismPollItem pollItem = Queue.Dequeue();
+
+                        if (pollItem != null)
+                        {
+                            string pollJson = null;
+
+                            try
+                            {
+                                Socket.Send(pollItem.Json, Encoding.UTF8).ToString();
+                                pollJson = Socket.Receive(Encoding.UTF8);
+                            }
+                            catch (SystemException e)
+                            {
+                                System.Diagnostics.Debug.WriteLine(e.ToString());
+                            }
+                            catch (ZmqSocketException e)
+                            {
+                                System.Diagnostics.Debug.WriteLine(e.ToString());
+                                Socket = null;
+                            }
+
+                            PollCallback cb = (PollCallback)pollItem.ReturnCb;
+
+                            try
+                            {
+                                List<ProducerChannelValue> packet = JsonConvert.DeserializeObject<List<ProducerChannelValue>>(pollJson);
+
+                                if (packet == null)
+                                {
+                                    cb("Result packet is null", new List<ProducerChannelValue>());
+                                }
+                                else
+                                {
+                                    cb(null, packet);
+                                }
+                            }
+                            catch (SystemException e)
+                            {
+                                System.Diagnostics.Debug.WriteLine(e.ToString());
+                                cb(e.ToString(), new List<ProducerChannelValue>());
+                            }
+                        }
+                    }
+                }
+
+                try
+                {
+                    Socket.Close();
+                }
+                catch (Exception e)
+                {
+                }
+
+                Socket = null;
+            });
+        }
+
+        public void Start()
+        {
+            if (Worker != null)
+            {
+                Worker.Start();
+            }
+        }
+
+        public void Abort()
+        {
+            if (Worker != null && Worker.ThreadState != ThreadState.Unstarted)
+            {
+                StopRequest = true;
+
+                ResumeEvent.Set();
+                PauseEvent.Set();
+
+                Worker.Join();
+                Worker = null;
+            }
+        }
+
+        public void Pause()
+        {
+            OnPause = true;
+        }
+
+        public void Resume()
+        {
+            if (PauseEvent != null)
+            {
+                PauseEvent.Set();
+            }
+        }
+
+        public void ProcessQueue()
+        {
+            if (ResumeEvent != null)
+            {
+                ResumeEvent.Set();
+            }
+        }
+
+        public void Enqueue(List<ProducerChannel> list, PollCallback cb)
+        {
+            try
+            {
+                Queue.Enqueue(new PrismPollItem(JsonConvert.SerializeObject(list), cb));
+                ProcessQueue();
+            }
+            catch (SystemException e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+                cb(e.ToString(), new List<ProducerChannelValue>());
+            }
+        }
+    }
+
     public class PrismSubscribeProducer
     {
         private ZmqContext Context = null;
@@ -869,6 +1058,54 @@ namespace Prism.General.Automation
             {
                 System.Diagnostics.Debug.WriteLine(e.ToString());
                 cb(e.ToString(), null);
+            }
+        }
+    }
+
+    public class PrismPollProducer
+    {
+        private ZmqContext Context = null;
+        private PrismPoll PollWorker = null;
+
+        public PrismPollProducer(string endpoint)
+        {
+            Context = ZmqContext.Create();
+            PollWorker = new PrismPoll(Context, endpoint);
+            PollWorker.Start();
+        }
+
+        public void Terminate()
+        {
+            if (PollWorker != null)
+            {
+                PrismPoll pollWorker = PollWorker;
+
+                PollWorker = null;
+                pollWorker.Abort();
+                Context.Terminate();
+                Context = null;
+            }
+        }
+
+        public void Pause()
+        {
+            PollWorker.Pause();
+        }
+
+        public void Resume()
+        {
+            PollWorker.Resume();
+        }
+
+        public void Enqueue(List<ProducerChannel> list, PrismPoll.PollCallback cb)
+        {
+            if (PollWorker != null)
+            {
+                PollWorker.Enqueue(list, cb);
+            }
+            else
+            {
+                cb("Poll worker not initialized", new List<ProducerChannelValue>());
             }
         }
     }
