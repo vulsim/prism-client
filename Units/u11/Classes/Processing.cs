@@ -379,7 +379,7 @@ namespace Prism.Units.Classes
 
                     if (error0 == null)
                     {
-                        List<string> expiredChannels = new List<string>(Alarms.Keys);
+                        List<string> expiredChannels = new List<string>(Values.Keys);
 
                         foreach (var channel in channels)
                         {
@@ -456,7 +456,7 @@ namespace Prism.Units.Classes
                 }
                 else
                 {
-                    UpdateTimer.Interval = 60000;
+                    UpdateTimer.Interval = 30000;
                 }
 
                 UpdateTimer.Start();
